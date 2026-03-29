@@ -23,7 +23,7 @@ jobs:
           # path where your already-built files live in the repo:
           local-dir: ./site/out/
           # path on Hostinger:
-          server-dir: ./hotproductsdot.com/public_html/
+          server-dir: ./domains/hotproductsdot.com/public_html/
           exclude: |
             **/.git*
             **/.github*
