@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # path where your already-built files live in the repo:
-          local-dir: ./site/out
+          local-dir: ./site/out/
           # path on Hostinger:
           server-dir: ./hotproductsdot.com/public_html/
           exclude: |
