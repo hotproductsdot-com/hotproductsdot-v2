@@ -1,4 +1,4 @@
-name: 🚀 FTP Deploy only
+name: 🚀 Deploy to Hostinger
 
 on:
   push:
