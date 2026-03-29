@@ -1,0 +1,19 @@
+# Ignore all node_modules, generated files, and other unnecessary assets.
+/node_modules/
+/.next/
+/dist/
+/public/.next/
+/public/dist/
+/tmp/
+/cache/
+/build-cache/
+!/*.js
+!/*.css
+!/*.html
+
+# Claude Code settings (user-specific)
+.claude/
+
+# Logs
+*.log
+qa_output.log

@@ -1,0 +1,2 @@
+- [x] Refresh the product list weekly, adding at least 20 new products.
+- [x] Send daily marketing posts to TikTok, Instagram and X.

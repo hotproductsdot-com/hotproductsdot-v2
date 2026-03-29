@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllProducts, getProductBySlug, getProductsByCategory } from "../../lib/products";
+import { SITE_URL } from "../../lib/constants";
 import RatingStars from "../../components/RatingStars";
 import ProductGrid from "../../components/ProductGrid";
 import Badge from "../../components/Badge";
-import { getCategoryIcon } from "../../components/CategoryIcon";
 import ProductImage from "../../components/ProductImage";
 
 interface Props { params: Promise<{ slug: string }> }
@@ -18,10 +18,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const p = getProductBySlug(slug);
   if (!p) return { title: "Product Not Found" };
+  const canonical = `${SITE_URL}/products/${p.slug}`;
   return {
     title: p.name,
-    description: `${p.name} — ${p.rating} stars, ${p.reviewCount.toLocaleString()} reviews, ${p.priceRange}. Find the best price on Amazon.`,
-    openGraph: { title: p.name, description: `${p.rating}★ · ${p.priceRange}` },
+    description: `${p.name} — ${p.rating} stars, ${p.reviewCount.toLocaleString()} reviews. Highly rated ${p.category} product. Check the latest price on Amazon.`,
+    alternates: { canonical },
+    openGraph: {
+      title: p.name,
+      description: `${p.rating}★ · ${p.reviewCount.toLocaleString()} reviews · ${p.category}`,
+      url: canonical,
+      images: p.imageUrl ? [{ url: p.imageUrl }] : [],
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -87,17 +95,11 @@ export default async function ProductDetailPage({ params }: Props) {
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
         {/* Image */}
-        <div className="relative aspect-square bg-white rounded-2xl border border-zinc-200 flex flex-col items-center justify-center gap-3 overflow-hidden">
+        <div className="relative aspect-square bg-white rounded-2xl border border-zinc-200 flex items-center justify-center overflow-hidden">
           <ProductImage
             src={product.imageUrl}
             alt={product.name}
             className="w-full h-full object-contain p-8"
-            fallback={
-              <>
-                <span className="text-8xl opacity-60">{getCategoryIcon(product.categorySlug)}</span>
-                <span className="text-sm font-semibold text-zinc-500 uppercase tracking-widest">{product.category}</span>
-              </>
-            }
           />
           {product.badge && (
             <div className="absolute top-4 left-4">

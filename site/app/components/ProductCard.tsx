@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Product } from "../lib/products";
+import { buildAffiliateUrl } from "../lib/affiliate";
 import RatingStars from "./RatingStars";
 import Badge from "./Badge";
-import { getCategoryIcon } from "./CategoryIcon";
 import ProductImage from "./ProductImage";
 
 function formatCount(n: number): string {
@@ -11,30 +11,15 @@ function formatCount(n: number): string {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
-  // No <a> here — this fallback renders inside a <Link> (which is an <a>).
-  // Nested anchors are invalid HTML; the card already has a "View Deal" button below.
-  const emojiFallback = (
-    <>
-      <span className="text-5xl opacity-60">
-        {getCategoryIcon(product.categorySlug)}
-      </span>
-      <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest">
-        {product.category}
-      </span>
-    </>
-  );
-
   return (
     <article className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5">
       {/* Image area — `relative` here so the skeleton overlay anchors correctly */}
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[4/3] bg-white flex flex-col items-center justify-center gap-2 overflow-hidden">
+        <div className="relative aspect-[4/3] bg-white flex items-center justify-center overflow-hidden">
           <ProductImage
             src={product.imageUrl}
             alt={product.name}
-            loading="lazy"
             className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-            fallback={emojiFallback}
           />
         </div>
         <Badge badge={product.badge} />
@@ -53,15 +38,15 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-[11px] text-zinc-500">{product.rating} ({formatCount(product.reviewCount)})</span>
         </div>
 
-        <div className="mt-auto flex items-center justify-between">
-          <div className="text-base font-bold text-white">{product.priceRange}</div>
+        <div className="mt-auto">
           <a
-            href={product.amazonUrl}
+            href={buildAffiliateUrl(product.amazonUrl, { campaign: "product-card", content: product.slug })}
             target="_blank"
-            rel="noopener noreferrer nofollow"
-            className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shrink-0"
+            rel="noopener noreferrer nofollow sponsored"
+            data-affiliate="true"
+            className="w-full flex items-center justify-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
           >
-            View Deal →
+            Check Price on Amazon →
           </a>
         </div>
       </div>

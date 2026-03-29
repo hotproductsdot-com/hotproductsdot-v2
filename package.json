@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "autofix-images": "node autofix-images.js"
+  },
+  "dependencies": {
+    "claude-code": "^1.0.0"
+  }
+}

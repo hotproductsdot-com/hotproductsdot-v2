@@ -4,7 +4,7 @@ const path = require('path');
 const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
 const toFix = [
-  { slug: 'hasselblad-907x-100c', search: 'Hasselblad 907X 100C medium format camera' },
+  { slug: 'leica-m11-camera', search: 'Leica M11 Monochrom Digital Rangefinder Camera Black' },
 ];
 
 async function searchAndDownload(product) {

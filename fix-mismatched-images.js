@@ -9,28 +9,7 @@ const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 
 // Products whose ASIN doesn't match (shared ASIN with different product, or wrong ASIN entirely)
 const toFix = [
-  // ASIN B0DYG9DKX8 is actually LG 45" OLED, not SANSUI
-  { slug: 'sansui-27-inch-240hz-monitor', search: 'SANSUI 27 inch 240Hz gaming monitor 1440p' },
-  // ASIN B0CZ1RTYQY is Dell UltraSharp 32, not AOC
-  { slug: 'aoc-27-monitor', search: 'AOC 27 inch monitor' },
-  // ASIN B09QF1H3VF is Dell XPS 17, not Leica M11
-  { slug: 'leica-m11-camera', search: 'Leica M11 camera' },
-  // ASIN B07Y47P31Y is Zhiyun Crane 4S, not WEEBill 3
-  { slug: 'zhiyun-weebill-3', search: 'Zhiyun WEEBill 3 gimbal stabilizer' },
-  // ASIN B0CXKXNNPX is Surface Pro 11, not Surface Laptop 5
-  { slug: 'microsoft-surface-laptop-5', search: 'Microsoft Surface Laptop 5' },
-  // ASIN B09N3G9T16 is LG 38", reused for LG 34" UltraWide
-  { slug: 'lg-ultrawide-gaming-monitor-34', search: 'LG 34 inch UltraWide gaming monitor' },
-  // ASIN B0CNS894RH shared — verify both are correct
-  { slug: 'theragun-pro-2', search: 'Theragun Pro Plus massage gun' },
-  // ASIN B0DFW9D66S shared
-  { slug: 'autonomous-desk-pro', search: 'Autonomous SmartDesk Pro standing desk' },
-  // ASIN B0D5BBYRJM shared — Nest Thermostat variants
-  { slug: 'nest-thermostat-thermo', search: 'Google Nest Learning Thermostat 4th gen' },
-  // ASIN B0DYJY27NS is a burner knob replacement part, not the actual stovetop
-  { slug: 'thermador-pro-stovetop', search: 'Thermador Pro Grand range stovetop 36 inch' },
-  // ASIN B09QF1H3VF is actually Leica M11, not Dell XPS 17
-  { slug: 'dell-xps-17-laptop', search: 'Dell XPS 17 laptop 2024' },
+
 ];
 
 async function searchAndDownload(product) {
