@@ -1,0 +1,5 @@
+:HL["/_next/static/chunks/cc5223975e790a8e.css","style"]
+:HL["/products/apple-macbook-air-13-m4.jpg","image"]
+:HL["/products/dell-xps-15-laptop.jpg","image"]
+:HL["/products/asus-rog-strix-g16-gaming-laptop.jpg","image"]
+0:{"buildId":"EpRF3Tx-eBrGHBKJx_FYH","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"guides","paramType":null,"paramKey":"guides","hasRuntimePrefetch":false,"slots":{"children":{"name":"slug","paramType":"d","paramKey":"best-laptops","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
