@@ -1,16 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 
-const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
-
+// Usage: node fix-single.js <slug> <search terms>
+// Example: node fix-single.js herman-miller-aeron-chair "Herman Miller Aeron Chair"
+const [,, slugArg, ...searchParts] = process.argv;
+if (!slugArg || searchParts.length === 0) {
+  console.error('Usage: node fix-single.js <slug> <search terms>');
+  process.exit(1);
+}
 const toFix = [
-  { slug: 'leica-m11-camera', search: 'Leica M11 Monochrom Digital Rangefinder Camera Black' },
+  { slug: slugArg, search: searchParts.join(' ') },
 ];
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+const USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+];
+
+function randomUA() {
+  return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+}
+
+async function fetchWithRetry(url, options, maxRetries = 4) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    if (attempt > 0) {
+      const delay = (2 ** attempt) * 2000 + Math.random() * 2000;
+      console.log(`  → Retry ${attempt}/${maxRetries - 1} after ${(delay / 1000).toFixed(1)}s...`);
+      await sleep(delay);
+    }
+    const res = await fetch(url, { ...options, headers: { ...options.headers, 'User-Agent': randomUA() } });
+    if (res.status === 503 || res.status === 429) continue;
+    return res;
+  }
+  throw new Error(`Search failed after ${maxRetries} attempts (rate limited)`);
+}
 
 async function searchAndDownload(product) {
   const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(product.search)}`;
-  const res = await fetch(searchUrl, {
-    headers: { 'User-Agent': ua, 'Accept': 'text/html,application/xhtml+xml', 'Accept-Language': 'en-US,en;q=0.9' },
+  const res = await fetchWithRetry(searchUrl, {
+    headers: {
+      'Accept': 'text/html,application/xhtml+xml',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Cache-Control': 'no-cache',
+    },
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`Search HTTP ${res.status}`);
@@ -30,7 +69,7 @@ async function main() {
       console.log(`[FIX] ${p.slug}...`);
       const imageUrl = await searchAndDownload(p);
       const jpgPath = path.join('./site/public/products', p.slug + '.jpg');
-      const res = await fetch(imageUrl, { headers: { 'User-Agent': ua, 'Accept': 'image/*' } });
+      const res = await fetch(imageUrl, { headers: { 'User-Agent': randomUA(), 'Accept': 'image/*' } });
       if (!res.ok) throw new Error(`Download failed: ${res.status}`);
       const buffer = Buffer.from(await res.arrayBuffer());
       fs.writeFileSync(jpgPath, buffer);

@@ -31,7 +31,7 @@ export default function HomePage() {
               Browse All Products →
             </Link>
             <a
-              href="https://www.amazon.com/bestsellers?tag=hotproducts-20"
+              href="https://www.amazon.com/bestsellers?tag=hotproduct033-20"
               target="_blank"
               rel="noopener noreferrer nofollow"
               className="border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-semibold px-6 py-3 rounded-xl transition-colors"
