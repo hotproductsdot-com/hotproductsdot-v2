@@ -17,3 +17,7 @@
 # Logs
 *.log
 qa_output.log
+
+# Build output (built in CI, not tracked in git)
+site/out/
+site/.next/

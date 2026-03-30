@@ -44,9 +44,13 @@ Run from the `site/` directory (`cd site`):
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start local development server with hot reload at http://localhost:3000 |
-| `npm run build` | Compile and bundle the site for production (outputs to `site/.next/`) |
+| `npm run build` | Compile and bundle via stable webpack build; skips rebuild if no inputs changed |
+| `npm run build:fast` | Compile and bundle via Turbopack for faster builds |
 | `npm run start` | Serve the production build locally (requires `build` first) |
 | `npm run lint` | Run ESLint to catch code errors and style issues |
+
+For build worker tuning, set `BUILD_CPUS` before running `npm run build` (defaults to all CPU cores minus one).
+Set `FORCE_BUILD=1` to force a full rebuild even if inputs are unchanged.
 
 ---
 
@@ -108,3 +112,30 @@ node validate-prices-parallel.js --workers=4  # apply fixes to CSV
 ```bash
 cd site && npm run build
 ```
+
+---
+
+## Deployment
+
+The site deploys automatically to Hostinger via GitHub Actions when you push to `main`. The CI workflow builds the site and FTP-syncs only changed files.
+
+**Build output (`site/out/`) is NOT tracked in git** — it's built fresh in CI each time.
+
+### Push changes and deploy
+```bash
+git add -A
+git commit -m "your message here"
+git push origin main
+```
+
+### Push to a branch for review first
+```bash
+git checkout -b your-branch-name
+git add -A
+git commit -m "your message here"
+git push -u origin HEAD
+# Then merge on GitHub → auto-deploys on merge to main
+```
+
+### Force a full rebuild
+Set `FORCE_BUILD=1` in the GitHub Actions workflow environment, or re-run the workflow from the Actions tab.

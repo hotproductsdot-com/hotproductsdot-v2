@@ -1,4 +1,4 @@
-name: 🚀 Deploy to Hostinger
+name: 🚀 Build & Deploy to Hostinger
 
 on:
   push:
@@ -6,13 +6,28 @@ on:
       - main
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy (delta only)
+  build-and-deploy:
+    name: 🎉 Build & Deploy (delta only)
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: 📥 Install dependencies
+        run: cd site && npm ci
+
+      - name: 🔨 Build site
+        run: cd site && npm run build
+        env:
+          FORCE_BUILD: 1
 
       - name: 📂 Sync changed files to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
@@ -22,9 +37,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./site/out/
           server-dir: ./domains/hotproductsdot.com/public_html/
-          # Delta-only: compares file hashes against .ftp-deploy-sync-state.json
-          # stored on the server. Only uploads files whose hashes have changed.
-          # Never delete and re-upload everything.
           dangerous-clean-slate: false
           log-level: standard
           exclude: |
