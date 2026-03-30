@@ -27,14 +27,64 @@ function findMissing() {
     if (seen.has(slug)) continue;
     seen.add(slug);
     if (!fs.existsSync(path.join(OUT_DIR, slug + '.jpg'))) {
-      missing.push({ slug, name });
+      const amazonUrl = (row['Amazon URL'] || '').trim();
+      missing.push({ slug, name, amazonUrl });
     }
   }
 
   return missing;
 }
 
-async function findImageUrl(name) {
+function extractAsin(url) {
+  const m = url.match(/\/dp\/([A-Z0-9]{10})/);
+  return m ? m[1] : null;
+}
+
+async function findImageUrlFromProductPage(asin) {
+  const productUrl = `https://www.amazon.com/dp/${asin}`;
+  const res = await fetch(productUrl, {
+    headers: {
+      'User-Agent': UA,
+      'Accept': 'text/html,application/xhtml+xml',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://www.amazon.com/',
+    },
+    redirect: 'follow',
+  });
+
+  if (!res.ok) throw new Error(`Product page HTTP ${res.status}`);
+  const html = await res.text();
+
+  // Prefer hiRes from JSON data (highest quality, most reliable)
+  const hiResMatch = html.match(/"hiRes":"(https:\/\/m\.media-amazon\.com\/images\/I\/[^"]+)"/);
+  if (hiResMatch) return hiResMatch[1];
+
+  // Try large from JSON data
+  const largeMatch = html.match(/"large":"(https:\/\/m\.media-amazon\.com\/images\/I\/[^"]+)"/);
+  if (largeMatch) {
+    return largeMatch[1].replace(/_AC_\._/, '_AC_SL1500_');
+  }
+
+  // Try landingImage src (may be low-res thumbnail — only use as last resort)
+  const landingMatch = html.match(/id="landingImage"[^>]*data-old-hires="(https:\/\/m\.media-amazon\.com\/images\/I\/[^"]+)"/);
+  if (landingMatch) return landingMatch[1];
+
+  throw new Error('No image found on product page');
+}
+
+async function findImageUrl(name, amazonUrl) {
+  // Prefer direct product page when we have a /dp/ ASIN URL
+  if (amazonUrl) {
+    const asin = extractAsin(amazonUrl);
+    if (asin) {
+      try {
+        return await findImageUrlFromProductPage(asin);
+      } catch (err) {
+        console.log(`  ! Product page fetch failed (${err.message}), falling back to search`);
+      }
+    }
+  }
+
   const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(name)}`;
   const res = await fetch(searchUrl, {
     headers: {
@@ -91,7 +141,7 @@ async function main() {
     const jpgPath = path.join(OUT_DIR, p.slug + '.jpg');
     try {
       console.log(`[SEARCH] ${p.slug}...`);
-      const imageUrl = await findImageUrl(p.name);
+      const imageUrl = await findImageUrl(p.name, p.amazonUrl);
       const size = await downloadImage(imageUrl, jpgPath);
       console.log(`  ✓ Saved ${p.slug}.jpg (${(size / 1024).toFixed(0)} KB)`);
       downloaded++;

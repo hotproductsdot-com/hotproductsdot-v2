@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node prebuild.js && next build",
+    "build": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js webpack",
+    "build:fast": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js turbopack",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@types/papaparse": "^5.5.2",
-    "next": "16.1.6",
+    "next": "^16.2.1",
     "papaparse": "^5.5.3",
     "react": "19.2.3",
     "react-dom": "19.2.3"
