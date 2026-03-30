@@ -3,28 +3,32 @@ name: 🚀 Deploy to Hostinger
 on:
   push:
     branches:
-      - main   # or whatever you use
+      - main
 
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: 🎉 Deploy (delta only)
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      - name: 📂 Sync files to FTP
+      - name: 📂 Sync changed files to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # path where your already-built files live in the repo:
           local-dir: ./site/out/
-          # path on Hostinger:
           server-dir: ./domains/hotproductsdot.com/public_html/
+          # Delta-only: compares file hashes against .ftp-deploy-sync-state.json
+          # stored on the server. Only uploads files whose hashes have changed.
+          # Never delete and re-upload everything.
+          dangerous-clean-slate: false
+          log-level: standard
           exclude: |
             **/.git*
             **/.github*
             **/node_modules/*
+            **/.ftp-deploy-sync-state.json
