@@ -114,7 +114,7 @@ export default async function GuidePage({ params }: Props) {
                         </div>
                       </div>
                       <div className="shrink-0 text-xs font-bold text-orange-500 group-hover:text-orange-400 transition-colors whitespace-nowrap">
-                        Check Price →
+                        Buy on Amazon →
                       </div>
                     </a>
                   ))}

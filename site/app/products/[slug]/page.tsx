@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllProducts, getProductBySlug, getProductsByCategory } from "../../lib/products";
 import { SITE_URL } from "../../lib/constants";
+import { buildAffiliateUrl } from "../../lib/affiliate";
 import RatingStars from "../../components/RatingStars";
 import ProductGrid from "../../components/ProductGrid";
 import Badge from "../../components/Badge";
@@ -151,12 +152,12 @@ export default async function ProductDetailPage({ params }: Props) {
 
           {/* CTA */}
           <a
-            href={product.amazonUrl}
+            href={buildAffiliateUrl(product.amazonUrl, { campaign: "product-page", content: product.slug })}
             target="_blank"
             rel="noopener noreferrer nofollow"
             className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-xl transition-colors text-lg mb-3"
           >
-            Check Price on Amazon
+            Buy on Amazon
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>

@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
             data-affiliate="true"
             className="w-full flex items-center justify-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
           >
-            Check Price on Amazon →
+            Buy on Amazon →
           </a>
         </div>
       </div>
