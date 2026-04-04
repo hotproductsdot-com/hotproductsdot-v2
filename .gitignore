@@ -21,3 +21,6 @@ qa_output.log
 # Build output (built in CI, not tracked in git)
 site/out/
 site/.next/
+
+# Local secrets — never commit API keys
+.env

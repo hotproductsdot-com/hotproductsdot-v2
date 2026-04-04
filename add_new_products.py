@@ -698,9 +698,30 @@ def run_single_batch(
     write_csv(CSV_PATH, all_rows)
     print(f"  CSV updated: {len(catalog)} -> {len(all_rows)} products")
 
-    # Download images
+    # Print a formatted preview of the new rows
+    print(f"\n  {'─'*90}")
+    print(f"  {'#':<4} {'Product Name':<50} {'Cat':<20} {'Price':<12} {'★':<5} {'Reviews'}")
+    print(f"  {'─'*90}")
+    for i, p in enumerate(all_new, 1):
+        name_trunc = p.name[:48] + ".." if len(p.name) > 50 else p.name
+        cat_trunc  = p.category[:18] + ".." if len(p.category) > 20 else p.category
+        print(
+            f"  {i:<4} {name_trunc:<50} {cat_trunc:<20} {p.price:<12} "
+            f"{p.rating:<5} {p.review_count:,}"
+        )
+        print(f"       {p.amazon_url}")
+    print(f"  {'─'*90}")
+
+    # Download images — ask for approval unless --skip-images was passed
     if not skip_images:
-        run_autofix_images()
+        try:
+            answer = input("\n  Download images now? [Y/n]: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            answer = "n"
+        if answer in ("", "y", "yes"):
+            run_autofix_images()
+        else:
+            print("  Skipping image download for this batch.")
 
     return len(all_new)
 
