@@ -74,6 +74,29 @@ Set `FORCE_BUILD=1` to force a full rebuild even if inputs are unchanged.
 
 Run from the **project root** (`node <script>`):
 
+### Oxylabs (optional Amazon product API)
+
+Structured Amazon product data via [Oxylabs Web Scraper API](https://oxylabs.io/products/scraper-api/ecommerce/amazon) (paid / trial — not the same as Amazon PA API). Copy `.env.example` to `.env` and set `OXYLABS_USERNAME` and `OXYLABS_PASSWORD` from [dashboard.oxylabs.io](https://dashboard.oxylabs.io/).
+
+```bash
+chmod +x oxylabs-amazon-product.sh
+./oxylabs-amazon-product.sh B07FZ8S74R 90210
+```
+
+Equivalent raw request:
+
+```bash
+curl 'https://realtime.oxylabs.io/v1/queries' \
+--user "USERNAME:PASSWORD" \
+-H "Content-Type: application/json" \
+-d '{
+        "source": "amazon_product",
+        "query": "B07FZ8S74R",
+        "geo_location": "90210",
+        "parse": true
+    }'
+```
+
 ### Images
 
 | Command | Description |
