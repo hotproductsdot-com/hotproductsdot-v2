@@ -19,6 +19,21 @@ hotproductsdot-v2/
 
 ---
 
+## Data quality (images, prices, links)
+
+**Honest expectation:** “100% correct” against live Amazon at all times is not something any static site can guarantee without continuous automated checks and manual review. This repo uses a **defense-in-depth** approach:
+
+| Area | How it stays accurate | You should still… |
+|------|------------------------|-------------------|
+| **Affiliate links** | `site/app/lib/affiliate.ts` enforces `AFFILIATE_TAG` on outbound Amazon URLs; product CTAs use `buildAffiliateUrl()` | Run `python fix_amazon_urls.py --audit` and fix rows missing `/dp/` ASINs; spot-check links after CSV edits |
+| **Prices** | CSV is the source of truth; copy on pages says prices may change | Run `node validate-prices-parallel.js --dry-run` (or apply) before big launches; rerun after bulk catalog updates |
+| **Images** | Local files under `site/public/products/` override Amazon CDN; **cache-busting** `?v=<file-mtime>` is appended on build so **replacing an image file and redeploying** yields a new URL (fixes “old image in every browser”) | After replacing a `.jpg`, run a full site build + deploy so `products.json` / HTML pick up the new query string |
+
+**Stale images after deploy (browsers showing old art):**  
+That happens when the **URL stays identical** and caches reuse the file. The site now adds **`?v=<mtime>`** to local `/products/*.jpg` and `/products/*.svg` URLs at prebuild time, so each image replacement changes the query string and forces a fresh fetch. If anything still looks wrong, hard-refresh once or clear site data for your domain.
+
+---
+
 ## QA Pipeline
 
 Run this before every deployment to lint, validate prices, check images, and build.

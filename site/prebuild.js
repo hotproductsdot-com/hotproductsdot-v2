@@ -69,9 +69,24 @@ function assignBadge(affiliatePotential, bsrRank, rating) {
 // Read image directory once
 const imageFiles = new Set(fs.existsSync(imgDir) ? fs.readdirSync(imgDir) : []);
 
+function localImageCacheToken(slug, ext) {
+  const fp = path.join(imgDir, `${slug}.${ext}`);
+  try {
+    return String(Math.floor(fs.statSync(fp).mtimeMs));
+  } catch {
+    return '0';
+  }
+}
+
 function getImageUrl(slug, asin) {
-  if (imageFiles.has(`${slug}.jpg`)) return `/products/${slug}.jpg`;
-  if (imageFiles.has(`${slug}.svg`)) return `/products/${slug}.svg`;
+  if (imageFiles.has(`${slug}.jpg`)) {
+    const v = localImageCacheToken(slug, 'jpg');
+    return `/products/${slug}.jpg?v=${v}`;
+  }
+  if (imageFiles.has(`${slug}.svg`)) {
+    const v = localImageCacheToken(slug, 'svg');
+    return `/products/${slug}.svg?v=${v}`;
+  }
   return asinToImageUrl(asin);
 }
 

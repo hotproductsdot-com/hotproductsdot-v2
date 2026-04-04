@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllProducts, getProductBySlug, getProductsByCategory } from "../../lib/products";
+import { getAllProducts, getProductBySlug, getProductsByCategory, toAbsoluteImageUrl } from "../../lib/products";
 import { SITE_URL } from "../../lib/constants";
 import { buildAffiliateUrl } from "../../lib/affiliate";
 import RatingStars from "../../components/RatingStars";
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: p.name,
       description: `${p.rating}★ · ${p.reviewCount.toLocaleString()} reviews · ${p.category}`,
       url: canonical,
-      images: p.imageUrl ? [{ url: p.imageUrl }] : [],
+      images: p.imageUrl ? [{ url: toAbsoluteImageUrl(p.imageUrl) }] : [],
     },
     twitter: { card: "summary_large_image" },
   };
@@ -73,7 +73,7 @@ export default async function ProductDetailPage({ params }: Props) {
       priceCurrency: "USD",
       price: product.priceMin || undefined,
       availability: "https://schema.org/InStock",
-      url: product.amazonUrl,
+      url: buildAffiliateUrl(product.amazonUrl, { campaign: "jsonld", content: product.slug }),
       seller: { "@type": "Organization", name: "Amazon" },
     },
   };
@@ -154,7 +154,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <a
             href={buildAffiliateUrl(product.amazonUrl, { campaign: "product-page", content: product.slug })}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel="noopener noreferrer nofollow sponsored"
             className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-xl transition-colors text-lg mb-3"
           >
             Buy on Amazon

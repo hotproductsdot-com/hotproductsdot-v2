@@ -2,6 +2,8 @@ import Papa from "papaparse";
 import fs from "fs";
 import path from "path";
 
+import { SITE_URL } from "./constants";
+
 export interface Product {
   name: string;
   slug: string;
@@ -77,11 +79,35 @@ function getLocalImageFiles(): Set<string> {
   return _imageFiles;
 }
 
+/** File mtime (ms) so replaced images get a new URL and browsers skip stale cache. */
+function localImageCacheToken(slug: string, ext: string): string {
+  const fp = path.join(process.cwd(), "public", "products", `${slug}.${ext}`);
+  try {
+    return String(Math.floor(fs.statSync(fp).mtimeMs));
+  } catch {
+    return "0";
+  }
+}
+
 function getImageUrl(slug: string, asin: string): string {
   const files = getLocalImageFiles();
-  if (files.has(`${slug}.jpg`)) return `/products/${slug}.jpg`;
-  if (files.has(`${slug}.svg`)) return `/products/${slug}.svg`;
+  if (files.has(`${slug}.jpg`)) {
+    const v = localImageCacheToken(slug, "jpg");
+    return `/products/${slug}.jpg?v=${v}`;
+  }
+  if (files.has(`${slug}.svg`)) {
+    const v = localImageCacheToken(slug, "svg");
+    return `/products/${slug}.svg?v=${v}`;
+  }
   return asinToImageUrl(asin);
+}
+
+/** Absolute URL for Open Graph / Twitter (relative paths become site root). */
+export function toAbsoluteImageUrl(imageUrl: string): string {
+  if (!imageUrl) return "";
+  if (imageUrl.startsWith("http")) return imageUrl;
+  const p = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+  return `${SITE_URL}${p}`;
 }
 
 function normalizeCategory(raw: string): string {
