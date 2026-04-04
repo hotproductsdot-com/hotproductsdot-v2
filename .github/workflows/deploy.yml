@@ -51,4 +51,4 @@ jobs:
             **/.git*
             **/.github*
             **/node_modules/*
-            **/.ftp-deploy-sync-state.json
+            /.ftp-deploy-sync-state.json
