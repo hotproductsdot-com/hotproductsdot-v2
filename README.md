@@ -195,3 +195,53 @@ git push -u origin HEAD
 
 ### Force a full rebuild
 Set `FORCE_BUILD=1` in the GitHub Actions workflow environment, or re-run the workflow from the Actions tab.
+
+---
+
+## Homepage featured picks (daily rotation)
+
+The homepage **Top Picks** grid is not a fixed “top 8 forever” list. It is built from a **quality pool** (roughly the strongest ~120 products by affiliate score and rating), then **shuffled with a deterministic seed** so the visible eight change **each UTC calendar day** when the site is rebuilt.
+
+| Piece | Role |
+|--------|------|
+| `site/app/lib/products.ts` — `getFeaturedProducts()` | Picks the pool, shuffles with seed `featured \| {YYYY-MM-DD} \| …` |
+| `site/scripts/build-smart.js` | Includes **`FEATURED_DAY`** (or today’s UTC date) in the build input hash so a new day is not treated as a no-op rebuild |
+| `.github/workflows/deploy.yml` | Sets `FEATURED_DAY` to `date -u +%Y-%m-%d` and runs on **push to `main`**, **daily schedule** (`cron`, UTC), and **`workflow_dispatch`** |
+
+**Operational notes:**
+
+- **UTC day** — “Midnight” for rotation follows UTC, not your local timezone.
+- **Static export** — Visitors see whatever was in the last deployed `out/`. A new mix appears after a successful build + deploy.
+- **Daily deploy** — The scheduled workflow rebuilds and FTP-syncs so Top Picks can change without you pushing code. Ensure **Actions** are enabled for the repo and the schedule is not disabled for inactive repos (GitHub may pause cron on forks or idle repos).
+- **Local preview** — `cd site && npm run build` uses today’s UTC date unless you override: `FEATURED_DAY=2026-04-10 npm run build` (PowerShell: `$env:FEATURED_DAY="2026-04-10"; npm run build`).
+
+**One-time walkthrough (end-to-end):**
+
+1. Commit and push your work to `main` **or** open **Actions → “Build & Deploy to Hostinger” → Run workflow** to deploy the current `main` without a new commit.
+2. Wait for the job to finish (build → FTP upload).
+3. Open the live site and confirm **Top Picks** matches a fresh slice of the catalog.
+4. The next calendar **UTC** day, either push again or let the **scheduled** run publish a new build so Top Picks can change again.
+
+---
+
+## When `git push` is rejected (remote has new commits)
+
+If you see `! [rejected] main -> main (fetch first)` or “the remote contains work that you do not have locally”, someone (or another machine, or GitHub) added commits on `main` that your clone does not have. **Integrate those commits, then push.**
+
+**Recommended (linear history):**
+
+```bash
+git fetch origin
+git pull --rebase origin main
+# resolve any conflicts, then:
+git push origin main
+```
+
+**Alternative (merge commit):**
+
+```bash
+git pull origin main
+git push origin main
+```
+
+After a successful push, deployment runs automatically if Actions is set up for `main`.
