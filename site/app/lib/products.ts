@@ -193,10 +193,56 @@ export function getProductsByCategory(categorySlug: string): Product[] {
   return getAllProducts().filter((p) => p.categorySlug === categorySlug);
 }
 
+/** UTC calendar day for seeded featured rotation; override in CI with FEATURED_DAY=YYYY-MM-DD. */
+function featuredCalendarDay(): string {
+  const fromEnv = (process.env.FEATURED_DAY || "").trim();
+  if (fromEnv) return fromEnv;
+  return new Date().toISOString().slice(0, 10);
+}
+
+function hashString(s: string): number {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h >>> 0;
+}
+
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle<T>(items: T[], seed: number): T[] {
+  const arr = [...items];
+  const rnd = mulberry32(seed);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    const tmp = arr[i]!;
+    arr[i] = arr[j]!;
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+/**
+ * Homepage "Top Picks": deterministic mix that changes each UTC day.
+ * Draws from the strongest products, then shuffles with a date seed so the grid is not static.
+ */
 export function getFeaturedProducts(count = 12): Product[] {
-  return getAllProducts()
+  const day = featuredCalendarDay();
+  const all = getAllProducts();
+  const poolSize = Math.min(Math.max(count * 15, 120), all.length);
+  const pool = [...all]
     .sort((a, b) => b.affiliatePotential - a.affiliatePotential || b.rating - a.rating)
-    .slice(0, count);
+    .slice(0, poolSize);
+  const seed = hashString(`featured|${day}|v1|${all.length}`);
+  return seededShuffle(pool, seed).slice(0, count);
 }
 
 export function getAllCategories() {

@@ -47,7 +47,7 @@ export default function HomePage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-bold text-white">Top Picks</h2>
-            <p className="text-zinc-500 text-sm mt-1">Highest rated &amp; most recommended</p>
+            <p className="text-zinc-500 text-sm mt-1">A fresh slice of our highest-potential picks — updated regularly</p>
           </div>
           <Link href="/products" className="text-sm text-orange-400 hover:text-orange-300 font-medium">
             View all →

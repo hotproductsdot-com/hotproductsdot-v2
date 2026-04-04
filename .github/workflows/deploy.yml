@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # Daily UTC — rebuild static site so homepage Top Picks rotate (see getFeaturedProducts).
+    - cron: "35 7 * * *"
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -32,10 +36,15 @@ jobs:
           restore-keys: |
             nextjs-${{ hashFiles('site/package-lock.json', 'site/next.config.ts') }}-
 
+      - name: 🗓️ Featured rotation date (UTC)
+        id: cal
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
       - name: 🔨 Build site
         run: cd site && npm run build
         env:
           FORCE_BUILD: 1
+          FEATURED_DAY: ${{ steps.cal.outputs.day }}
 
       - name: 📂 Sync changed files to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6

@@ -69,6 +69,9 @@ function computeInputHash() {
     hash.update(String(Math.floor(file.mtimeMs)));
     hash.update("\n");
   }
+  // Homepage featured picks rotate by calendar day (see app/lib/products.ts getFeaturedProducts).
+  hash.update("|featuredUtcDay|");
+  hash.update(process.env.FEATURED_DAY || new Date().toISOString().slice(0, 10));
   return hash.digest("hex");
 }
 
