@@ -1,0 +1,3 @@
+Date,Platform,Product,Status,Detail
+2026-04-04,instagram,UPPAbaby VISTA V2 Stroller,error,Missing IG_USER_ID or IG_ACCESS_TOKEN env var
+2026-04-04,tiktok,UPPAbaby VISTA V2 Stroller,error,TIKTOK_ACCESS_TOKEN not set
