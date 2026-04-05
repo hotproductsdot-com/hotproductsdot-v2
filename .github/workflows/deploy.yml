@@ -28,17 +28,17 @@ jobs:
       - name: 📥 Install dependencies
         run: cd site && npm ci
 
+      - name: 🗓️ Featured rotation date (UTC)
+        id: cal
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
       - name: 🗄️ Restore Next.js build cache
         uses: actions/cache@v4
         with:
           path: site/.next/cache
-          key: nextjs-${{ hashFiles('site/package-lock.json', 'site/next.config.ts') }}-${{ hashFiles('products/top-1000.csv', 'site/app/**', 'site/prebuild.js') }}
+          key: nextjs-${{ hashFiles('site/package-lock.json', 'site/next.config.ts') }}-${{ hashFiles('products/top-1000.csv', 'site/app/**', 'site/prebuild.js') }}-${{ steps.cal.outputs.day }}
           restore-keys: |
             nextjs-${{ hashFiles('site/package-lock.json', 'site/next.config.ts') }}-
-
-      - name: 🗓️ Featured rotation date (UTC)
-        id: cal
-        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
       - name: 🔨 Build site
         run: cd site && npm run build
