@@ -10,7 +10,9 @@ Affiliate product site built with Next.js 16. Lists top 1000 products with image
 hotproductsdot-v2/
 ├── site/                        # Next.js 16 app (the website)
 ├── products/
-│   └── top-1000.csv             # Product database (name, price, category, ASIN)
+│   ├── top-1000.csv             # Product database (name, price, category, ASIN)
+│   └── products4review.csv      # Oxylabs CSV vs live diffs (created/updated by script)
+├── oxylabs-amazon-product.sh    # Batch Oxylabs check; backs up & updates top-1000.csv
 ├── site/public/products/        # Downloaded product images (.jpg)
 ├── perform_qualityassurance.sh  # Full QA pipeline
 ├── *.js                         # JS utility scripts (run from project root)
@@ -74,27 +76,50 @@ Set `FORCE_BUILD=1` to force a full rebuild even if inputs are unchanged.
 
 Run from the **project root** (`node <script>`):
 
-### Oxylabs (optional Amazon product API)
+### Oxylabs Amazon product batch checker (`oxylabs-amazon-product.sh`)
 
 Structured Amazon product data via [Oxylabs Web Scraper API](https://oxylabs.io/products/scraper-api/ecommerce/amazon) (paid / trial — not the same as Amazon PA API). Copy `.env.example` to `.env` and set `OXYLABS_USERNAME` and `OXYLABS_PASSWORD` from [dashboard.oxylabs.io](https://dashboard.oxylabs.io/).
 
+**What it does:** Reads ASINs from `products/top-1000.csv` (five per batch), calls Oxylabs for each product, compares live data to the CSV, appends mismatches to `products/products4review.csv`, and writes **Price Range**, **Rating**, and **Review Count** updates back into `top-1000.csv`. Before any changes, it copies `top-1000.csv` to a dated backup (e.g. `products/top-1000.backup.2026-04-04.csv`; if that file already exists, a time suffix is added).
+
+**Requirements:** `bash`, `curl`, and `python3` on your PATH.
+
+**Usage:**
+
 ```bash
 chmod +x oxylabs-amazon-product.sh
-./oxylabs-amazon-product.sh B07FZ8S74R 90210
+./oxylabs-amazon-product.sh [--limit N] [--geo GEO] [--offset N]
 ```
 
-Equivalent raw request:
+**Options:**
+
+| Option | Description |
+|--------|-------------|
+| `--limit N` | Process at most **N** products after `--offset` (default: all rows) |
+| `--geo GEO` | Oxylabs `geo_location` (US ZIP code; default: **90210**) |
+| `--offset N` | Skip the first **N** rows of the CSV before applying `--limit` (default: **0**) |
+
+**Examples:**
+
+```bash
+./oxylabs-amazon-product.sh                          # full catalog
+./oxylabs-amazon-product.sh --limit 50              # first 50 rows (after offset)
+./oxylabs-amazon-product.sh --limit 10 --offset 20  # rows 21–30
+./oxylabs-amazon-product.sh --geo 10001             # use New York ZIP for geo
+```
+
+**Equivalent single-product request** (what the script issues per ASIN):
 
 ```bash
 curl 'https://realtime.oxylabs.io/v1/queries' \
---user "USERNAME:PASSWORD" \
--H "Content-Type: application/json" \
--d '{
+  --user "USERNAME:PASSWORD" \
+  -H "Content-Type: application/json" \
+  -d '{
         "source": "amazon_product",
         "query": "B07FZ8S74R",
         "geo_location": "90210",
         "parse": true
-    }'
+      }'
 ```
 
 ### Images
