@@ -1,0 +1,44 @@
+name: 🔄 Daily Homepage Rotation
+
+on:
+  schedule:
+    # Runs daily at 07:35 UTC — same slot the full build used to occupy.
+    - cron: "35 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  rotate:
+    name: 🗓️ Inject today's featured picks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: 📥 Install dependencies
+        run: cd site && npm ci
+
+      - name: 🗓️ Featured rotation date (UTC)
+        id: cal
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: 🛠️ Generate products.json
+        run: cd site && node prebuild.js
+
+      - name: 🔄 Rotate featured products
+        run: cd site && node scripts/rotate-homepage.js
+        env:
+          FEATURED_DAY: ${{ steps.cal.outputs.day }}
+
+      - name: 📤 Upload index.html via FTP
+        run: |
+          curl -s --ssl -T site/out/index.html \
+            "ftp://${{ secrets.FTP_SERVER }}/domains/hotproductsdot.com/public_html/index.html" \
+            --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}"

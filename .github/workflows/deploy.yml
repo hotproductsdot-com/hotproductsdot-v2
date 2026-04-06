@@ -4,10 +4,8 @@ on:
   push:
     branches:
       - main
-  schedule:
-    # Daily UTC — rebuild static site so homepage Top Picks rotate (see getFeaturedProducts).
-    - cron: "35 7 * * *"
   workflow_dispatch:
+  # Daily rotation is now handled by rotate.yml (no full rebuild needed).
 
 jobs:
   build-and-deploy:
@@ -45,6 +43,19 @@ jobs:
         env:
           FORCE_BUILD: 1
           FEATURED_DAY: ${{ steps.cal.outputs.day }}
+
+      - name: 📄 Extract rotation base
+        run: cd site && node scripts/extract-rotation-base.js
+
+      - name: 💾 Commit rotation-base.html
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add site/rotation-base.html
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: update rotation-base.html [skip ci]"
+            git push
+          fi
 
       - name: 📂 Sync changed files to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6

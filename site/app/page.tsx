@@ -53,7 +53,7 @@ export default function HomePage() {
             View all →
           </Link>
         </div>
-        <ProductGrid products={featured} />
+        <div id="featured-rotation"><ProductGrid products={featured} /></div>
       </section>
 
       {/* Categories */}

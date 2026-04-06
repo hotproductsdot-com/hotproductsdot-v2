@@ -1,0 +1,229 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775411991506,
+  "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {
+      "autofix-images": "node autofix-images.js"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "scripts"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "__pycache__": {
+      "path": "__pycache__",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1775411991402,
+      "keyFiles": [
+        "fix_amazon_urls.cpython-312.pyc",
+        "tiktok_api.cpython-312.pyc"
+      ]
+    },
+    "marketing": {
+      "path": "marketing",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775411991411,
+      "keyFiles": []
+    },
+    "marketing-campaigns": {
+      "path": "marketing-campaigns",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775411991421,
+      "keyFiles": [
+        "post_log.csv"
+      ]
+    },
+    "products": {
+      "path": "products",
+      "purpose": null,
+      "fileCount": 11,
+      "lastAccessed": 1775411991435,
+      "keyFiles": [
+        "check_duplicates.py",
+        "duplicates_found.csv",
+        "products4review.csv",
+        "top-1000.backup.2026-04-04.csv",
+        "top-1000.backup.2026-04-04_211418.csv"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 0,
+      "lastAccessed": 1775411991441,
+      "keyFiles": []
+    },
+    "site": {
+      "path": "site",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1775411991448,
+      "keyFiles": [
+        "README.md",
+        "eslint.config.mjs",
+        "next-env.d.ts",
+        "next.config.ts",
+        "package-lock.json"
+      ]
+    },
+    "site/app": {
+      "path": "site/app",
+      "purpose": "Application code",
+      "fileCount": 5,
+      "lastAccessed": 1775411991478,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "site/node_modules": {
+      "path": "site/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1775411991494,
+      "keyFiles": []
+    },
+    "site/out": {
+      "path": "site/out",
+      "purpose": "Build output",
+      "fileCount": 16,
+      "lastAccessed": 1775411991506,
+      "keyFiles": [
+        "404.html",
+        "__next.__PAGE__.txt",
+        "__next._full.txt"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1775477963084,
+      "type": "directory"
+    },
+    {
+      "path": "site/app/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1775478538184,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/products.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775477584840,
+      "type": "file"
+    },
+    {
+      "path": "site/next.config.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775477712444,
+      "type": "file"
+    },
+    {
+      "path": "site",
+      "accessCount": 1,
+      "lastAccessed": 1775477725344,
+      "type": "directory"
+    },
+    {
+      "path": "site/app/components/ProductCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775477908126,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/ProductGrid.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775477908332,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/RatingStars.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775477925302,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/Badge.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775477926538,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/affiliate.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775477944111,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/constants.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775477967410,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/ProductImage.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775478017412,
+      "type": "file"
+    },
+    {
+      "path": "site/scripts/extract-rotation-base.js",
+      "accessCount": 1,
+      "lastAccessed": 1775478549674,
+      "type": "file"
+    },
+    {
+      "path": "site/scripts/rotate-homepage.js",
+      "accessCount": 1,
+      "lastAccessed": 1775478594034,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
