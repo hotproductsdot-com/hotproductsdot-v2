@@ -11,6 +11,8 @@ jobs:
   build-and-deploy:
     name: 🎉 Build & Deploy (delta only)
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 🚚 Get latest code
