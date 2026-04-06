@@ -1,8 +1,9 @@
 {
+  "name": "hotproductsdot-v2",
+  "private": true,
   "scripts": {
-    "autofix-images": "node autofix-images.js"
-  },
-  "dependencies": {
-    "claude-code": "^1.0.0"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   }
 }
