@@ -2,8 +2,7 @@
   "name": "hotproductsdot-v2",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "cd site && npm install && npm run build",
+    "start": "cd site && npm start"
   }
 }
