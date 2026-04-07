@@ -1,40 +1,19 @@
 {
-  "date": "2026-04-06T21:42:16.993Z",
+  "date": "2026-04-07T12:19:08.873Z",
   "csvFile": "/mnt/e/GITHUB/hotproductsdot-v2/products/top-1000.csv",
   "summary": {
-    "total": 1012,
-    "ok": 1008,
-    "broken": 4,
+    "total": 1006,
+    "ok": 1005,
+    "broken": 1,
     "timeouts": 0
   },
   "broken": [
     {
-      "url": "https://www.amazon.com/dp/B094LVVY3F?tag=hotproduct033-20",
+      "url": "https://www.amazon.com/dp/B0CT8TJQHV?tag=hotproduct033-20",
       "status": 404,
       "broken": true,
       "detail": "404 Not Found",
-      "name": "iRobot Roomba j7+ Self-Emptying Robot Vacuum"
-    },
-    {
-      "url": "https://www.amazon.com/s?k=Control4+T4+Series+Touch+Screen&tag=hotproduct033-20",
-      "status": 503,
-      "broken": true,
-      "detail": "Server error 503",
-      "name": "Control4 T4 Series Touch Screen"
-    },
-    {
-      "url": "https://www.amazon.com/s?k=Frigidaire+FFHP092WQ2+Heat+Pump+Mini+Split&tag=hotproduct033-20",
-      "status": 503,
-      "broken": true,
-      "detail": "Server error 503",
-      "name": "Frigidaire FFHP092WQ2 Heat Pump Mini Split"
-    },
-    {
-      "url": "https://www.amazon.com/s?k=PowerVision+PowerEgg+X+Explorer+Drone&tag=hotproduct033-20",
-      "status": 503,
-      "broken": true,
-      "detail": "Server error 503",
-      "name": "PowerVision PowerEgg X Explorer Drone"
+      "name": "Bose SoundLink Max Portable Bluetooth Speaker"
     }
   ],
   "timeouts": []
