@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775511233702,
+  "lastScanned": 1775606651331,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -30,9 +30,7 @@
     "testCommand": null,
     "lintCommand": null,
     "devCommand": null,
-    "scripts": {
-      "autofix-images": "node autofix-images.js"
-    }
+    "scripts": {}
   },
   "conventions": {
     "namingStyle": null,
@@ -54,7 +52,7 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1775511233614,
+      "lastAccessed": 1775606651028,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
@@ -64,14 +62,14 @@
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775511233621,
+      "lastAccessed": 1775606651064,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775511233629,
+      "lastAccessed": 1775606651099,
       "keyFiles": [
         "post_log.csv"
       ]
@@ -80,7 +78,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1775511233637,
+      "lastAccessed": 1775606651139,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -92,14 +90,14 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1775511233646,
+      "lastAccessed": 1775606651167,
       "keyFiles": []
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775511233654,
+      "lastAccessed": 1775606651188,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -112,7 +110,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1775511233684,
+      "lastAccessed": 1775606651263,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -123,14 +121,14 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775511233694,
+      "lastAccessed": 1775606651302,
       "keyFiles": []
     },
     "site/out": {
       "path": "site/out",
       "purpose": "Build output",
       "fileCount": 16,
-      "lastAccessed": 1775511233702,
+      "lastAccessed": 1775606651331,
       "keyFiles": [
         "404.html",
         "__next.__PAGE__.txt",
@@ -155,6 +153,12 @@
       "path": "check-links.js",
       "accessCount": 4,
       "lastAccessed": 1775511972228,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 4,
+      "lastAccessed": 1775614636508,
       "type": "file"
     },
     {
@@ -227,12 +231,6 @@
       "path": "site/scripts/rotate-homepage.js",
       "accessCount": 1,
       "lastAccessed": 1775478594034,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 1,
-      "lastAccessed": 1775511351056,
       "type": "file"
     },
     {
