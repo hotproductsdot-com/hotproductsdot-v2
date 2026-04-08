@@ -56,7 +56,7 @@ jobs:
           git add site/rotation-base.html
           if ! git diff --staged --quiet; then
             git commit -m "chore: update rotation-base.html [skip ci]"
-            git push
+            git pull --rebase origin main && git push origin main
           fi
 
       - name: 📂 Sync changed files to FTP
