@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write        # needed to open/update GitHub issues
+              contents: read       # needed to checkout the repo
 
     steps:
       - uses: actions/checkout@v4
