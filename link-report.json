@@ -1,96 +1,33 @@
 {
-  "date": "2026-04-08T12:17:33.204Z",
+  "date": "2026-04-08T17:20:45.343Z",
   "csvFile": "/mnt/e/GITHUB/hotproductsdot-v2/products/top-1000.csv",
   "summary": {
-    "total": 1048,
-    "ok": 1036,
-    "broken": 12,
+    "total": 1036,
+    "ok": 1033,
+    "broken": 3,
     "timeouts": 0
   },
   "broken": [
     {
-      "url": "https://www.amazon.com/dp/B0CXMB5GS8?tag=hotproduct033-20",
+      "url": "https://www.amazon.com/dp/B09NQKR1QN?tag=hotproduct033-20",
       "status": 404,
       "broken": true,
       "detail": "404 Not Found",
-      "name": "Dell XPS 15 (2024) Laptop"
+      "name": "LEGO Technic McLaren F1 Race Car 42141"
     },
     {
-      "url": "https://www.amazon.com/dp/B0CY7BVJB3?tag=hotproduct033-20",
+      "url": "https://www.amazon.com/dp/B0CFPJYX4H?tag=hotproduct033-20",
       "status": 404,
       "broken": true,
       "detail": "404 Not Found",
-      "name": "Lenovo Legion Pro 7i Gen 9 Gaming Laptop"
+      "name": "Kindle Paperwhite 16GB (2024)"
     },
     {
-      "url": "https://www.amazon.com/dp/B0CTQMWJ7X?tag=hotproduct033-20",
+      "url": "https://www.amazon.com/dp/B082LDWNFC?tag=hotproduct033-20",
       "status": 404,
       "broken": true,
       "detail": "404 Not Found",
-      "name": "Gaming PC - RTX 5060 Ti System"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B0CX3WRMND?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Gaming PC - RTX 4080 Super System"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B0D29GHQ9M?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Microsoft Surface Pro 11 (2024)"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B09ZQNLHQQ?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "SteelSeries Arctis Nova 7 Wireless Gaming Headset"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B0C9W17FS8?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Hatch Rest 2nd Gen Baby Sound Machine"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B0CNHXZQPL?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Nikon Z50 II Mirrorless Camera"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B07Z3MZ1LN?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Therabody Wave Roller Smart Vibrating Foam Roller"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B08F9MJHSY?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Philips Hue Outdoor Lightstrip 5m"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B08L73ZL9C?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Levoit Core 400S Smart True HEPA Air Purifier"
-    },
-    {
-      "url": "https://www.amazon.com/dp/B07ZK42JM8?tag=hotproduct033-20",
-      "status": 404,
-      "broken": true,
-      "detail": "404 Not Found",
-      "name": "Zulay Kitchen Milk Frother Handheld"
+      "name": "TULA Skincare Face Filter Blurring Primer"
     }
   ],
   "timeouts": []
