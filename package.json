@@ -2,15 +2,8 @@
   "name": "hotproductsdot-v2",
   "private": true,
   "scripts": {
-<<<<<<< HEAD
     "build": "cd site && npm install && npm run build",
-    "start": "cd site && npm start"
-=======
+    "start": "cd site && npm start",
     "autofix-images": "node autofix-images.js"
-  },
-  "dependencies": {
-    "claude-code": "^1.0.0",
-    "code": "^5.2.4"
->>>>>>> b36e93fe (fix dead link - daily)
   }
 }
