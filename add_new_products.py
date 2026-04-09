@@ -80,6 +80,18 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "best sellers books 2025", "new york times best sellers", "top rated fiction books",
         "self help books popular", "business books best seller", "science fiction books new",
     ],
+    "Kindle Free E-Books": [
+        "kindle free ebooks bestseller", "free kindle books top rated", "kindle unlimited free books",
+        "free amazon kindle books fiction", "free kindle self help books", "free kindle mystery thriller",
+        "free kindle romance novels", "free kindle sci fi books", "free kindle children books",
+        "free kindle nonfiction best",
+    ],
+    "Kindle Paid E-Books": [
+        "kindle bestseller ebooks 2025", "top rated kindle books paid", "best kindle novels 2025",
+        "kindle business books best seller", "kindle fiction bestseller list", "kindle thriller mystery top",
+        "kindle romance bestseller 2025", "kindle self help top rated", "kindle sci fi fantasy best",
+        "kindle nonfiction bestseller 2025",
+    ],
     "Desktops & Mini PCs": [
         "best mini pc 2025", "desktop computer all in one", "small form factor pc",
         "mini pc for home office", "compact desktop computer", "intel nuc mini pc",
