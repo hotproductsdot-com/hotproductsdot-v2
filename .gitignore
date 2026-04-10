@@ -23,4 +23,4 @@ site/out/
 site/.next/
 
 # Local secrets — never commit API keys
-.env
+.env__pycache__/

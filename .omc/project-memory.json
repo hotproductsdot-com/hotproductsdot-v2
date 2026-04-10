@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775606651331,
+  "lastScanned": 1775785763938,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -26,11 +26,15 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": null,
+    "buildCommand": "npm run build",
     "testCommand": null,
     "lintCommand": null,
-    "devCommand": null,
-    "scripts": {}
+    "devCommand": "npm run start",
+    "scripts": {
+      "build": "cd site && npm install && npm run build",
+      "start": "cd site && npm start",
+      "autofix-images": "node autofix-images.js"
+    }
   },
   "conventions": {
     "namingStyle": null,
@@ -52,24 +56,37 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1775606651028,
+      "lastAccessed": 1775785763811,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
+      ]
+    },
+    "instagram": {
+      "path": "instagram",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1775785763827,
+      "keyFiles": [
+        "__init__.py",
+        "bot.py",
+        "caption.py",
+        "poster.py",
+        "scraper.py"
       ]
     },
     "marketing": {
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775606651064,
+      "lastAccessed": 1775785763841,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775606651099,
+      "lastAccessed": 1775785763852,
       "keyFiles": [
         "post_log.csv"
       ]
@@ -78,7 +95,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1775606651139,
+      "lastAccessed": 1775785763859,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -90,14 +107,14 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1775606651167,
+      "lastAccessed": 1775785763868,
       "keyFiles": []
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775606651188,
+      "lastAccessed": 1775785763880,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -110,7 +127,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1775606651263,
+      "lastAccessed": 1775785763914,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -121,14 +138,14 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775606651302,
+      "lastAccessed": 1775785763929,
       "keyFiles": []
     },
     "site/out": {
       "path": "site/out",
       "purpose": "Build output",
       "fileCount": 16,
-      "lastAccessed": 1775606651331,
+      "lastAccessed": 1775785763938,
       "keyFiles": [
         "404.html",
         "__next.__PAGE__.txt",
@@ -139,8 +156,8 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 4,
-      "lastAccessed": 1775477963084,
+      "accessCount": 8,
+      "lastAccessed": 1775786381259,
       "type": "directory"
     },
     {
@@ -162,6 +179,12 @@
       "type": "file"
     },
     {
+      "path": "products/top-1000.csv",
+      "accessCount": 4,
+      "lastAccessed": 1775786359070,
+      "type": "file"
+    },
+    {
       "path": "site/app/lib/products.ts",
       "accessCount": 3,
       "lastAccessed": 1775477584840,
@@ -171,6 +194,36 @@
       "path": "site/next.config.ts",
       "accessCount": 3,
       "lastAccessed": 1775477712444,
+      "type": "file"
+    },
+    {
+      "path": "instagram/scraper.py",
+      "accessCount": 3,
+      "lastAccessed": 1775778455957,
+      "type": "file"
+    },
+    {
+      "path": "add_new_products.py",
+      "accessCount": 2,
+      "lastAccessed": 1775692232550,
+      "type": "file"
+    },
+    {
+      "path": "instagram/bot.py",
+      "accessCount": 2,
+      "lastAccessed": 1775790553190,
+      "type": "file"
+    },
+    {
+      "path": "instagram/caption.py",
+      "accessCount": 2,
+      "lastAccessed": 1775790553790,
+      "type": "file"
+    },
+    {
+      "path": "instagram/poster.py",
+      "accessCount": 2,
+      "lastAccessed": 1775790652314,
       "type": "file"
     },
     {
@@ -237,6 +290,30 @@
       "path": "link-report.json",
       "accessCount": 1,
       "lastAccessed": 1775511938684,
+      "type": "file"
+    },
+    {
+      "path": "fetch_amazon_products.py",
+      "accessCount": 1,
+      "lastAccessed": 1775786392254,
+      "type": "file"
+    },
+    {
+      "path": "add_product_by_asin.py",
+      "accessCount": 1,
+      "lastAccessed": 1775786392304,
+      "type": "file"
+    },
+    {
+      "path": "scrape_top_affiliates.py",
+      "accessCount": 1,
+      "lastAccessed": 1775786402271,
+      "type": "file"
+    },
+    {
+      "path": "update_top_1000.py",
+      "accessCount": 1,
+      "lastAccessed": 1775786402573,
       "type": "file"
     }
   ],
