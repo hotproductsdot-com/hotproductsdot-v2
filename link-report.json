@@ -1,9 +1,9 @@
 {
-  "date": "2026-04-09T19:09:18.922Z",
+  "date": "2026-04-10T15:27:40.005Z",
   "csvFile": "/mnt/e/GITHUB/hotproductsdot-v2/products/top-1000.csv",
   "summary": {
-    "total": 1083,
-    "ok": 1083,
+    "total": 1090,
+    "ok": 1090,
     "broken": 0,
     "timeouts": 0
   },
