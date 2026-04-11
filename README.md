@@ -76,6 +76,16 @@ Set `FORCE_BUILD=1` to force a full rebuild even if inputs are unchanged.
 
 Run from the **project root** (`node <script>`):
 
+> **Script overlap / redundancy reference:**
+>
+> | Group | Preferred | Superseded / Narrower |
+> |-------|-----------|-----------------------|
+> | Add products to catalog | `add_new_products.py`, `scrape_top_affiliates.py` | `generate_products.py` (hardcoded data only — one-time fill) |
+> | Remove duplicates | `remove_duplicates.py` (model-aware, Python) | `check-duplicates.js` (quick JS check only) |
+> | Price validation | `validate-prices-parallel.js` | `validate-prices.js` (sequential — debugging only) |
+> | Image download | `autofix-images.js` → `download-missing.js` → `download-search.js` | `download-images.js` (full re-download, rarely needed) |
+> | Duplicate library | `products/check_duplicates.py` | (imported by all catalog scripts — not a standalone replacement) |
+
 ### Oxylabs Amazon product batch checker (`oxylabs-amazon-product.sh`)
 
 Structured Amazon product data via [Oxylabs Web Scraper API](https://oxylabs.io/products/scraper-api/ecommerce/amazon) (paid / trial — not the same as Amazon PA API). Copy `.env.example` to `.env` and set `OXYLABS_USERNAME` and `OXYLABS_PASSWORD` from [dashboard.oxylabs.io](https://dashboard.oxylabs.io/).
@@ -127,23 +137,47 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 | Command | Description |
 |---------|-------------|
 | `node check-images.js` | Report how many product images are present vs missing |
-| `node download-images.js` | Download all product images from Amazon |
+| `node autofix-images.js` | Download or re-download images for any product missing a local file; called automatically by Python catalog scripts after each batch |
+| `node download-images.js` | Download **all** product images from Amazon (full re-download; prefer `autofix-images.js` for incremental runs) |
 | `node download-missing.js` | Download only images that are not yet saved locally |
-| `node download-search.js` | Download images by searching when direct URL fails |
+| `node download-search.js` | Download images by searching Amazon by product name — more resilient when ASINs are stale |
 | `node fix-mismatched-images.js` | Detect and replace images that don't match their product |
 | `node fix-single.js` | Fix the image for one specific product |
 | `node generate-placeholders.js` | Generate grey placeholder images for any that are missing |
+
+> **Image script ranking (most → least useful for day-to-day):**
+> `autofix-images.js` → `download-missing.js` → `download-search.js` → `fix-mismatched-images.js` → `fix-single.js` → `download-images.js` (full re-download, rarely needed) → `generate-placeholders.js` (last resort)
 
 ### Prices
 
 | Command | Description |
 |---------|-------------|
-| `node validate-prices.js` | Check product prices against Amazon (sequential, slower) |
-| `node validate-prices-parallel.js` | Check product prices in parallel across multiple workers (faster) |
+| `node validate-prices-parallel.js` | Check product prices in parallel across multiple workers (faster — **prefer this**) |
 | `node validate-prices-parallel.js --dry-run` | Report price mismatches without updating the CSV |
 | `node validate-prices-parallel.js --workers=8` | Set number of parallel workers (default: 4) |
+| `node validate-prices.js` | Check product prices against Amazon (sequential, slower — use only for debugging) |
 
 > **Note:** Price validation scrapes Amazon live. It is slow and may hit CAPTCHAs. Run overnight or with `--dry-run` for a quick status check.
+> `validate-prices-parallel.js` supersedes `validate-prices.js` for all normal use.
+
+### Links & Affiliate Tags
+
+| Command | Description |
+|---------|-------------|
+| `node check-links.js` | Check all Amazon URLs in `top-1000.csv` for broken/404 links |
+| `node check-links.js --concurrency 5` | Set parallel request concurrency (default: 5) |
+| `node check-links.js --output report.json` | Write results to a JSON file |
+| `node fix-affiliate-tags.js` | Scan all CSV files for Amazon URLs missing the affiliate tag and add it |
+| `node fix-affiliate-tags.js --dry-run` | Preview affiliate tag fixes without writing |
+
+### Duplicate Detection (JS)
+
+| Command | Description |
+|---------|-------------|
+| `node check-duplicates.js` | Detect duplicate products in `top-1000.csv` |
+| `node check-duplicates.js --fix` | Auto-remove detected duplicates |
+
+> **Note:** For removing duplicates from the catalog, prefer `python remove_duplicates.py` (model-number-aware fuzzy matching). `check-duplicates.js` is a lighter JS alternative for quick checks.
 
 ---
 
@@ -174,7 +208,9 @@ pip install -r requirements.txt
 | `python remove_duplicates.py --show-skipped` | Also show pairs that are different models (correctly skipped) |
 | `python generate_products.py` | Fill `top-1000.csv` up to 1,000 products with curated product data |
 | `python scrape_top_affiliates.py` | Scrape Amazon bestsellers from high-commission categories and append to the CSV |
-| `python update_top_1000.py` | Validate and update entries in `top-1000.csv` |
+| `python scrape_top_affiliates.py --runs 5` | Run 5 back-to-back batches |
+| `python scrape_top_affiliates.py --category "Kitchen"` | Target a single category |
+| `python scrape_top_affiliates.py --dry-run` | Preview without writing |
 | `python fix_amazon_urls.py --audit` | Count how many products are missing an ASIN (no `/dp/`) — no scraping |
 | `python fix_amazon_urls.py` | Dry run — preview which search URLs would be resolved to direct `/dp/ASIN` links |
 | `python fix_amazon_urls.py --apply` | Search Amazon for each product and replace search URLs with `/dp/ASIN` links |
@@ -193,12 +229,24 @@ pip install -r requirements.txt
 
 > **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables (set as GitHub Actions secrets for CI use).
 
+### Instagram Module (`instagram/`)
+
+The `instagram/` package is used internally by `post_daily.py` for Instagram posting.
+
+| Module | Description |
+|--------|-------------|
+| `instagram/scraper.py` | Scrapes product data for Instagram content |
+| `instagram/caption.py` | Generates captions for Instagram posts |
+| `instagram/poster.py` | Publishes posts via the Meta Graph API |
+| `instagram/bot.py` | Orchestrates the full Instagram posting flow |
+
 ### Internal / Library Scripts
 
 | Script | Description |
 |--------|-------------|
 | `tiktok_api.py` | TikTok Content Posting API v2 client — imported by `post_daily.py` |
-| `fetch_amazon_products.py` | Minimal Amazon bestseller fetcher (prototype/utility) |
+| `products/check_duplicates.py` | Duplicate-guard library imported by `add_new_products.py`, `scrape_top_affiliates.py`, and `remove_duplicates.py`; also runnable standalone (`python products/check_duplicates.py`) |
+| `products/verify_products.py` | Stub — placeholder for future product-file verification logic; not yet implemented |
 
 ---
 

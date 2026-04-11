@@ -156,9 +156,15 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 9,
-      "lastAccessed": 1775835155368,
+      "accessCount": 10,
+      "lastAccessed": 1775910645029,
       "type": "directory"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 10,
+      "lastAccessed": 1775910874990,
+      "type": "file"
     },
     {
       "path": "site/app/page.tsx",
@@ -204,8 +210,8 @@
     },
     {
       "path": "add_new_products.py",
-      "accessCount": 2,
-      "lastAccessed": 1775692232550,
+      "accessCount": 3,
+      "lastAccessed": 1775910654851,
       "type": "file"
     },
     {
@@ -224,6 +230,30 @@
       "path": "instagram/poster.py",
       "accessCount": 2,
       "lastAccessed": 1775790652314,
+      "type": "file"
+    },
+    {
+      "path": "update_top_1000.py",
+      "accessCount": 2,
+      "lastAccessed": 1775910623795,
+      "type": "file"
+    },
+    {
+      "path": "fetch_amazon_products.py",
+      "accessCount": 2,
+      "lastAccessed": 1775910624675,
+      "type": "file"
+    },
+    {
+      "path": "scrape_top_affiliates.py",
+      "accessCount": 2,
+      "lastAccessed": 1775910627108,
+      "type": "file"
+    },
+    {
+      "path": "add_product_by_asin.py",
+      "accessCount": 2,
+      "lastAccessed": 1775910654684,
       "type": "file"
     },
     {
@@ -293,33 +323,51 @@
       "type": "file"
     },
     {
-      "path": "fetch_amazon_products.py",
-      "accessCount": 1,
-      "lastAccessed": 1775786392254,
-      "type": "file"
-    },
-    {
-      "path": "add_product_by_asin.py",
-      "accessCount": 1,
-      "lastAccessed": 1775786392304,
-      "type": "file"
-    },
-    {
-      "path": "scrape_top_affiliates.py",
-      "accessCount": 1,
-      "lastAccessed": 1775786402271,
-      "type": "file"
-    },
-    {
-      "path": "update_top_1000.py",
-      "accessCount": 1,
-      "lastAccessed": 1775786402573,
-      "type": "file"
-    },
-    {
       "path": "tiktok_strategy.txt",
       "accessCount": 1,
       "lastAccessed": 1775834903800,
+      "type": "file"
+    },
+    {
+      "path": "generate_products.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910625178,
+      "type": "file"
+    },
+    {
+      "path": "products/verify_products.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910626167,
+      "type": "file"
+    },
+    {
+      "path": "products/check_duplicates.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910626444,
+      "type": "file"
+    },
+    {
+      "path": "remove_duplicates.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910654761,
+      "type": "file"
+    },
+    {
+      "path": "fix_amazon_urls.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910654937,
+      "type": "file"
+    },
+    {
+      "path": "post_daily.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910655538,
+      "type": "file"
+    },
+    {
+      "path": "tiktok_api.py",
+      "accessCount": 1,
+      "lastAccessed": 1775910655998,
       "type": "file"
     }
   ],
