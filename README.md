@@ -226,8 +226,10 @@ pip install -r requirements.txt
 | `python post_daily.py --dry-run` | Preview posts without publishing |
 | `python post_daily.py --platform instagram` | Post to Instagram only |
 | `python post_daily.py --platform tiktok` | Post to TikTok only |
+| `python post_tiktok.py` | Post today's product to TikTok only (standalone — rotates through top-60 by affiliate potential) |
+| `python post_tiktok.py --dry-run` | Preview the TikTok post without publishing |
 
-> **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables (set as GitHub Actions secrets for CI use).
+> **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables. `post_tiktok.py` requires only `TIKTOK_ACCESS_TOKEN`. Both are set as GitHub Actions secrets for CI use.
 
 ### Instagram Module (`instagram/`)
 
@@ -244,9 +246,16 @@ The `instagram/` package is used internally by `post_daily.py` for Instagram pos
 
 | Script | Description |
 |--------|-------------|
-| `tiktok_api.py` | TikTok Content Posting API v2 client — imported by `post_daily.py` |
+| `tiktok_api.py` | TikTok Content Posting API v2 client — imported by `post_daily.py` and `post_tiktok.py` |
 | `products/check_duplicates.py` | Duplicate-guard library imported by `add_new_products.py`, `scrape_top_affiliates.py`, and `remove_duplicates.py`; also runnable standalone (`python products/check_duplicates.py`) |
 | `products/verify_products.py` | Stub — placeholder for future product-file verification logic; not yet implemented |
+
+### Tests
+
+| Command | Description |
+|---------|-------------|
+| `python test_instagram_post.py` | Unit tests for the `post_instagram` function in `post_daily.py`; mocks the Meta Graph API two-step flow (media creation + publish) |
+| `python -m pytest test_instagram_post.py -v` | Run with pytest for verbose output |
 
 ---
 

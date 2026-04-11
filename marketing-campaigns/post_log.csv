@@ -1,3 +1,15 @@
 Date,Platform,Product,Status,Detail
 2026-04-04,instagram,UPPAbaby VISTA V2 Stroller,error,Missing IG_USER_ID or IG_ACCESS_TOKEN env var
 2026-04-04,tiktok,UPPAbaby VISTA V2 Stroller,error,TIKTOK_ACCESS_TOKEN not set
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Error validating access token: The session is invalid because the user logged out.
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Error validating access token: The session is invalid because the user logged out.
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Error validating access token: The session is invalid because the user logged out.
+2026-04-11,tiktok,JBL Charge 5 Portable Bluetooth Speaker,error,TIKTOK_ACCESS_TOKEN not set
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Error validating access token: The session is invalid because the user logged out.
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Invalid OAuth access token - Cannot parse access token
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18328705333301676
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18111497794829994
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
+2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18099506200965508

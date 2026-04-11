@@ -6,7 +6,7 @@ Picks one product per day (rotating through the top 60 by affiliate potential)
 and posts it to Instagram and TikTok.
 
 Usage:
-    python post_daily.py [--dry-run] [--platform instagram|tiktok|all]
+    python post_instagram.py [--dry-run] [--platform instagram|tiktok|all]
 
 Required GitHub Actions secrets (set in repo Settings → Secrets):
     IG_USER_ID          — Instagram Business Account ID (numeric string)
@@ -26,6 +26,10 @@ from datetime import date
 from pathlib import Path
 
 import requests
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
 import tiktok_api
 
 # ─── Config ──────────────────────────────────────────────────────────────────
@@ -147,11 +151,13 @@ def post_instagram(product: dict, dry_run: bool = False) -> dict:
     if not user_id or not token:
         return {"ok": False, "error": "Missing IG_USER_ID or IG_ACCESS_TOKEN env var"}
 
+    api_base = "https://graph.instagram.com/v21.0" if token.startswith("IG") else "https://graph.facebook.com/v21.0"
+
     # Step 1 — create media container
     try:
         r1 = requests.post(
-            f"{IG_API_BASE}/{user_id}/media",
-            params={"image_url": image_url, "caption": caption, "access_token": token},
+            f"{api_base}/{user_id}/media",
+            data={"image_url": image_url, "caption": caption, "access_token": token},
             timeout=30,
         )
         d1 = r1.json()
@@ -170,8 +176,8 @@ def post_instagram(product: dict, dry_run: bool = False) -> dict:
     # Step 2 — publish
     try:
         r2 = requests.post(
-            f"{IG_API_BASE}/{user_id}/media_publish",
-            params={"creation_id": creation_id, "access_token": token},
+            f"{api_base}/{user_id}/media_publish",
+            data={"creation_id": creation_id, "access_token": token},
             timeout=30,
         )
         d2 = r2.json()
@@ -207,7 +213,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Post today's product to Instagram and TikTok")
     parser.add_argument("--dry-run",  action="store_true", help="Preview posts without sending")
-    parser.add_argument("--platform", choices=["instagram", "tiktok", "all"], default="all")
+    parser.add_argument("--platform", choices=["instagram", "tiktok", "all"], default="instagram")
     args = parser.parse_args()
 
     products = load_top_products(ROTATION_POOL)
