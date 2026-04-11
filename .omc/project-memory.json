@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775785763938,
+  "lastScanned": 1775874249573,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -56,7 +56,7 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1775785763811,
+      "lastAccessed": 1775874249416,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
@@ -66,7 +66,7 @@
       "path": "instagram",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1775785763827,
+      "lastAccessed": 1775874249433,
       "keyFiles": [
         "__init__.py",
         "bot.py",
@@ -79,14 +79,14 @@
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775785763841,
+      "lastAccessed": 1775874249441,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775785763852,
+      "lastAccessed": 1775874249448,
       "keyFiles": [
         "post_log.csv"
       ]
@@ -95,7 +95,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1775785763859,
+      "lastAccessed": 1775874249457,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -107,14 +107,14 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1775785763868,
+      "lastAccessed": 1775874249465,
       "keyFiles": []
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775785763880,
+      "lastAccessed": 1775874249469,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -127,7 +127,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1775785763914,
+      "lastAccessed": 1775874249504,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -138,14 +138,14 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775785763929,
+      "lastAccessed": 1775874249557,
       "keyFiles": []
     },
     "site/out": {
       "path": "site/out",
       "purpose": "Build output",
       "fileCount": 16,
-      "lastAccessed": 1775785763938,
+      "lastAccessed": 1775874249573,
       "keyFiles": [
         "404.html",
         "__next.__PAGE__.txt",
