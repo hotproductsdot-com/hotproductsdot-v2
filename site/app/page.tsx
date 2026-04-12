@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { getAllProducts, getAllCategories, getFeaturedProducts } from "./lib/products";
+import { getAllProducts, getAllCategories, getFeaturedProducts, getSaleProducts } from "./lib/products";
 import ProductGrid from "./components/ProductGrid";
+import DealCard from "./components/DealCard";
 import { getCategoryIcon } from "./components/CategoryIcon";
 
 export default function HomePage() {
   const featured = getFeaturedProducts(8);
+  const deals = getSaleProducts(6);
   const categories = getAllCategories();
   const allProducts = getAllProducts();
 
@@ -41,6 +43,35 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Hot Deals */}
+      {deals.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                <span className="text-orange-400 text-xs font-bold uppercase tracking-widest">Live Deals</span>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Today&apos;s Hot Deals</h2>
+              <p className="text-zinc-500 text-sm mt-1">Top-performing picks with the best prices right now</p>
+            </div>
+            <a
+              href="https://www.amazon.com/deals?tag=hotproduct033-20"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="text-sm text-orange-400 hover:text-orange-300 font-medium whitespace-nowrap"
+            >
+              All Amazon Deals →
+            </a>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {deals.map((product) => (
+              <DealCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Featured */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">

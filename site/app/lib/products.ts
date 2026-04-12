@@ -271,6 +271,17 @@ export function getFeaturedProducts(count = 12): Product[] {
   return seededShuffle(pool, seed).slice(0, count);
 }
 
+/**
+ * "Hot Deals" section: highest affiliate-potential products with strong BSR.
+ * Sorted by affiliate potential desc, then BSR rank asc (lower = better).
+ */
+export function getSaleProducts(count = 6): Product[] {
+  return getAllProducts()
+    .filter((p) => p.affiliatePotential >= 8)
+    .sort((a, b) => b.affiliatePotential - a.affiliatePotential || a.bsrRank - b.bsrRank)
+    .slice(0, count);
+}
+
 export function getAllCategories() {
   const products = getAllProducts();
   const map = new Map<string, { name: string; slug: string; count: number }>();

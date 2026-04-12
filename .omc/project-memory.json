@@ -156,6 +156,12 @@
   },
   "hotPaths": [
     {
+      "path": "post_daily.py",
+      "accessCount": 25,
+      "lastAccessed": 1776029628146,
+      "type": "file"
+    },
+    {
       "path": "",
       "accessCount": 18,
       "lastAccessed": 1775949623746,
@@ -171,6 +177,12 @@
       "path": "app-icon.png",
       "accessCount": 9,
       "lastAccessed": 1775917025448,
+      "type": "file"
+    },
+    {
+      "path": ".env",
+      "accessCount": 6,
+      "lastAccessed": 1776006351916,
       "type": "file"
     },
     {
@@ -198,12 +210,6 @@
       "type": "file"
     },
     {
-      "path": ".env",
-      "accessCount": 4,
-      "lastAccessed": 1775950357722,
-      "type": "file"
-    },
-    {
       "path": "site/next.config.ts",
       "accessCount": 4,
       "lastAccessed": 1775995852293,
@@ -222,6 +228,18 @@
       "type": "file"
     },
     {
+      "path": "instagram/poster.py",
+      "accessCount": 4,
+      "lastAccessed": 1776003355691,
+      "type": "file"
+    },
+    {
+      "path": "instagram/caption.py",
+      "accessCount": 4,
+      "lastAccessed": 1776003356953,
+      "type": "file"
+    },
+    {
       "path": "instagram/scraper.py",
       "accessCount": 3,
       "lastAccessed": 1775778455957,
@@ -231,24 +249,6 @@
       "path": "add_new_products.py",
       "accessCount": 3,
       "lastAccessed": 1775910654851,
-      "type": "file"
-    },
-    {
-      "path": "instagram/caption.py",
-      "accessCount": 3,
-      "lastAccessed": 1775914244212,
-      "type": "file"
-    },
-    {
-      "path": "instagram/poster.py",
-      "accessCount": 3,
-      "lastAccessed": 1775914244284,
-      "type": "file"
-    },
-    {
-      "path": "post_daily.py",
-      "accessCount": 3,
-      "lastAccessed": 1775949792907,
       "type": "file"
     },
     {
@@ -291,6 +291,12 @@
       "path": "site/app/lib/affiliate.ts",
       "accessCount": 2,
       "lastAccessed": 1775995885817,
+      "type": "file"
+    },
+    {
+      "path": "test_instagram_post.py",
+      "accessCount": 2,
+      "lastAccessed": 1776003356682,
       "type": "file"
     },
     {
@@ -405,12 +411,6 @@
       "path": ".claude/Untitled.png",
       "accessCount": 1,
       "lastAccessed": 1775934180121,
-      "type": "file"
-    },
-    {
-      "path": "test_instagram_post.py",
-      "accessCount": 1,
-      "lastAccessed": 1775949627339,
       "type": "file"
     },
     {

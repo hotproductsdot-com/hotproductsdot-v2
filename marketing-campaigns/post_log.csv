@@ -13,3 +13,7 @@ Date,Platform,Product,Status,Detail
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18099506200965508
+2026-04-12,instagram,Garmin Forerunner 965 GPS Running Watch,error,"Error validating access token: Session has expired on Saturday, 11-Apr-26 18:00:00 PDT. The current time is Sunday, 12-Apr-26 13:59:06 PDT."
+2026-04-12,instagram,Garmin Forerunner 965 GPS Running Watch,ok,18112517698686973
+2026-04-12,instagram,Yamaha YAS-280 Student Alto Saxophone,ok,18025991393803148
+2026-04-12,instagram,Sony A7S III,ok,17912477487363150
