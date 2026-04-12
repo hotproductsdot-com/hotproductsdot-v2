@@ -2,11 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllGuides } from "../lib/guides";
 import { getCategoryIcon } from "../components/CategoryIcon";
+import { SITE_URL } from "../lib/constants";
+
+const canonical = `${SITE_URL}/guides`;
 
 export const metadata: Metadata = {
-  title: "Buying Guides",
+  title: "Buying Guides — Expert Amazon Product Advice",
   description:
     "In-depth buying guides to help you choose the best products. Expert advice on laptops, smart home, photography, kitchen gear, and more.",
+  alternates: { canonical },
+  openGraph: {
+    title: "Buying Guides — Expert Amazon Product Advice",
+    description: "In-depth buying guides for laptops, smart home, photography, kitchen gear, and more.",
+    url: canonical,
+  },
 };
 
 export default function GuidesPage() {

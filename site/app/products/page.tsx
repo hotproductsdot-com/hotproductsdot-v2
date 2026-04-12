@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
 import { getAllProducts, getAllCategories } from "../lib/products";
+import { SITE_URL } from "../lib/constants";
 import SearchFilter from "../components/SearchFilter";
 
+const canonical = `${SITE_URL}/products`;
+
 export const metadata: Metadata = {
-  title: "All Products",
-  description: "Browse all top-rated Amazon products. Filter by category, sort by price or rating.",
+  title: "All Products — Top-Rated Amazon Picks",
+  description:
+    "Browse hundreds of top-rated, best-selling Amazon products. Filter by category, sort by price or rating. Updated weekly.",
+  alternates: { canonical },
+  openGraph: {
+    title: "All Products — Top-Rated Amazon Picks",
+    description: "Browse top-rated Amazon products across every category. Updated weekly.",
+    url: canonical,
+  },
 };
 
 export default function ProductsPage() {

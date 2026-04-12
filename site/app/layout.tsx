@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AffiliateDisclosure from "./components/AffiliateDisclosure";
+import PageViewTracker from "./components/PageViewTracker";
 import { SITE_NAME, SITE_URL } from "./lib/constants";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
+        <PageViewTracker />
         <Header />
         {/* FTC-required disclosure — must appear before any affiliate content */}
         <AffiliateDisclosure variant="banner" />

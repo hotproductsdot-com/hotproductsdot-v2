@@ -4,6 +4,7 @@ import { buildAffiliateUrl } from "../lib/affiliate";
 import RatingStars from "./RatingStars";
 import Badge from "./Badge";
 import ProductImage from "./ProductImage";
+import TrackedAffiliateLink from "./TrackedAffiliateLink";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
@@ -39,15 +40,17 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="mt-auto">
-          <a
+          <TrackedAffiliateLink
             href={buildAffiliateUrl(product.amazonUrl, { campaign: "product-card", content: product.slug })}
-            target="_blank"
-            rel="noopener noreferrer nofollow sponsored"
-            data-affiliate="true"
+            slug={product.slug}
+            name={product.name}
+            category={product.category}
+            campaign="product-card"
+            priceMin={product.priceMin}
             className="w-full flex items-center justify-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
           >
             Buy on Amazon →
-          </a>
+          </TrackedAffiliateLink>
         </div>
       </div>
     </article>

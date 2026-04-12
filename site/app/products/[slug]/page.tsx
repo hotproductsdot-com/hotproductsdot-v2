@@ -8,6 +8,7 @@ import RatingStars from "../../components/RatingStars";
 import ProductGrid from "../../components/ProductGrid";
 import Badge from "../../components/Badge";
 import ProductImage from "../../components/ProductImage";
+import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -78,9 +79,21 @@ export default async function ProductDetailPage({ params }: Props) {
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Products", item: `${SITE_URL}/products` },
+      { "@type": "ListItem", position: 3, name: product.category, item: `${SITE_URL}/category/${product.categorySlug}` },
+      { "@type": "ListItem", position: 4, name: product.name, item: `${SITE_URL}/products/${product.slug}` },
+    ],
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-zinc-500 mb-8">
@@ -151,17 +164,20 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
 
           {/* CTA */}
-          <a
+          <TrackedAffiliateLink
             href={buildAffiliateUrl(product.amazonUrl, { campaign: "product-page", content: product.slug })}
-            target="_blank"
-            rel="noopener noreferrer nofollow sponsored"
+            slug={product.slug}
+            name={product.name}
+            category={product.category}
+            campaign="product-page"
+            priceMin={product.priceMin}
             className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-xl transition-colors text-lg mb-3"
           >
             Buy on Amazon
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-          </a>
+          </TrackedAffiliateLink>
           <p className="text-[11px] text-zinc-600 text-center">
             As an Amazon Associate we earn from qualifying purchases. Price subject to change.
           </p>
