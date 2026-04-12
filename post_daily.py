@@ -92,7 +92,7 @@ def _score_product(p: dict) -> float:
     return rating * math.log(review_count) * price * bsr_factor
 
 
-def load_top_products(n: int) -> list[dict]:
+def load_top_products(n: int | None = None) -> list[dict]:
     """
     Read CSV, filter for availability, then return top-N products ranked by
     composite score: rating × log(reviews) × price × BSR-sales-proxy.
@@ -152,7 +152,7 @@ def load_top_products(n: int) -> list[dict]:
             products.append(product)
 
     products.sort(key=lambda x: x["_score"], reverse=True)
-    return products[:n]
+    return products[:n] if n is not None else products
 
 
 def load_posted_products() -> set[str]:
@@ -167,6 +167,11 @@ def load_posted_products() -> set[str]:
                 if name:
                     posted.add(name)
     return posted
+
+
+def filter_by_category(products: list[dict], category: str) -> list[dict]:
+    """Return products matching the given category (case-insensitive)."""
+    return [p for p in products if p["category"].lower() == category.lower()]
 
 
 def pick_next_product(products: list[dict], force: bool = False) -> dict:
@@ -455,12 +460,40 @@ def main() -> None:
     parser.add_argument("--platform", choices=["instagram", "tiktok", "all"], default="instagram")
     parser.add_argument("--force",    action="store_true",
                         help="Ignore post history and pick via day-of-year rotation")
+    parser.add_argument("--category", metavar="CATEGORY",
+                        help="Only pick from products in this category (case-insensitive). "
+                             "Use --list-categories to see available options.")
+    parser.add_argument("--list-categories", action="store_true",
+                        help="Print all available product categories and exit")
     args = parser.parse_args()
 
-    products = load_top_products(ROTATION_POOL)
-    if not products:
+    # Load all qualifying products for category operations; cap to pool for normal rotation
+    all_products = load_top_products()
+    if not all_products:
         print("[!] No products loaded from CSV.")
         sys.exit(1)
+
+    if args.list_categories:
+        categories = sorted({p["category"] for p in all_products if p["category"]})
+        print("Available categories:")
+        for cat in categories:
+            count = sum(1 for p in all_products if p["category"] == cat)
+            print(f"  {cat} ({count} product{'s' if count != 1 else ''})")
+        sys.exit(0)
+
+    if args.category:
+        filtered = filter_by_category(all_products, args.category)
+        if not filtered:
+            all_cats = sorted({p["category"] for p in all_products if p["category"]})
+            print(f"[!] No products found for category: '{args.category}'")
+            print("    Available categories:")
+            for cat in all_cats:
+                print(f"      {cat}")
+            sys.exit(1)
+        products = filtered[:ROTATION_POOL]
+        print(f"Category filter  : {args.category} ({len(products)} product(s) in pool)")
+    else:
+        products = all_products[:ROTATION_POOL]
 
     product = pick_next_product(products, force=args.force)
     print(f"Today's product  : {product['name']}")
