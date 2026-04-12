@@ -23,4 +23,13 @@ site/out/
 site/.next/
 
 # Local secrets — never commit API keys
-.env__pycache__/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OMC runtime files (session state, not source)
+.omc/sessions/
+.omc/state/
+site/.omc/

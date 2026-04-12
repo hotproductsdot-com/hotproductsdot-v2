@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775874249573,
+  "lastScanned": 1775995703916,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -55,10 +55,11 @@
     "__pycache__": {
       "path": "__pycache__",
       "purpose": null,
-      "fileCount": 2,
-      "lastAccessed": 1775874249416,
+      "fileCount": 3,
+      "lastAccessed": 1775995703624,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
+        "post_daily.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
       ]
     },
@@ -66,7 +67,7 @@
       "path": "instagram",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1775874249433,
+      "lastAccessed": 1775995703648,
       "keyFiles": [
         "__init__.py",
         "bot.py",
@@ -79,14 +80,14 @@
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775874249441,
+      "lastAccessed": 1775995703675,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775874249448,
+      "lastAccessed": 1775995703688,
       "keyFiles": [
         "post_log.csv"
       ]
@@ -95,7 +96,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1775874249457,
+      "lastAccessed": 1775995703698,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -107,14 +108,14 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1775874249465,
+      "lastAccessed": 1775995703713,
       "keyFiles": []
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775874249469,
+      "lastAccessed": 1775995703743,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -127,7 +128,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1775874249504,
+      "lastAccessed": 1775995703860,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -138,14 +139,14 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775874249557,
+      "lastAccessed": 1775995703893,
       "keyFiles": []
     },
     "site/out": {
       "path": "site/out",
       "purpose": "Build output",
       "fileCount": 16,
-      "lastAccessed": 1775874249573,
+      "lastAccessed": 1775995703916,
       "keyFiles": [
         "404.html",
         "__next.__PAGE__.txt",
@@ -156,20 +157,32 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 10,
-      "lastAccessed": 1775910645029,
+      "accessCount": 18,
+      "lastAccessed": 1775949623746,
       "type": "directory"
     },
     {
       "path": "README.md",
-      "accessCount": 10,
-      "lastAccessed": 1775910874990,
+      "accessCount": 13,
+      "lastAccessed": 1775949659865,
+      "type": "file"
+    },
+    {
+      "path": "app-icon.png",
+      "accessCount": 9,
+      "lastAccessed": 1775917025448,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 5,
+      "lastAccessed": 1775995808457,
       "type": "file"
     },
     {
       "path": "site/app/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1775478538184,
+      "accessCount": 5,
+      "lastAccessed": 1775995838204,
       "type": "file"
     },
     {
@@ -179,27 +192,33 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 4,
-      "lastAccessed": 1775614636508,
-      "type": "file"
-    },
-    {
       "path": "products/top-1000.csv",
       "accessCount": 4,
       "lastAccessed": 1775786359070,
       "type": "file"
     },
     {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775477584840,
+      "path": ".env",
+      "accessCount": 4,
+      "lastAccessed": 1775950357722,
       "type": "file"
     },
     {
       "path": "site/next.config.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775477712444,
+      "accessCount": 4,
+      "lastAccessed": 1775995852293,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/products.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775995853793,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/ProductCard.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1775996014143,
       "type": "file"
     },
     {
@@ -215,21 +234,33 @@
       "type": "file"
     },
     {
-      "path": "instagram/bot.py",
-      "accessCount": 2,
-      "lastAccessed": 1775790553190,
-      "type": "file"
-    },
-    {
       "path": "instagram/caption.py",
-      "accessCount": 2,
-      "lastAccessed": 1775790553790,
+      "accessCount": 3,
+      "lastAccessed": 1775914244212,
       "type": "file"
     },
     {
       "path": "instagram/poster.py",
+      "accessCount": 3,
+      "lastAccessed": 1775914244284,
+      "type": "file"
+    },
+    {
+      "path": "post_daily.py",
+      "accessCount": 3,
+      "lastAccessed": 1775949792907,
+      "type": "file"
+    },
+    {
+      "path": "site/app/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775996016497,
+      "type": "file"
+    },
+    {
+      "path": "instagram/bot.py",
       "accessCount": 2,
-      "lastAccessed": 1775790652314,
+      "lastAccessed": 1775790553190,
       "type": "file"
     },
     {
@@ -257,16 +288,16 @@
       "type": "file"
     },
     {
+      "path": "site/app/lib/affiliate.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775995885817,
+      "type": "file"
+    },
+    {
       "path": "site",
       "accessCount": 1,
       "lastAccessed": 1775477725344,
       "type": "directory"
-    },
-    {
-      "path": "site/app/components/ProductCard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775477908126,
-      "type": "file"
     },
     {
       "path": "site/app/components/ProductGrid.tsx",
@@ -284,12 +315,6 @@
       "path": "site/app/components/Badge.tsx",
       "accessCount": 1,
       "lastAccessed": 1775477926538,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/affiliate.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775477944111,
       "type": "file"
     },
     {
@@ -359,15 +384,75 @@
       "type": "file"
     },
     {
-      "path": "post_daily.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910655538,
-      "type": "file"
-    },
-    {
       "path": "tiktok_api.py",
       "accessCount": 1,
       "lastAccessed": 1775910655998,
+      "type": "file"
+    },
+    {
+      "path": "site/app/api/instagram/deauthorize/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775916154151,
+      "type": "file"
+    },
+    {
+      "path": "site/app/api/instagram/data-deletion/route.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775916154947,
+      "type": "file"
+    },
+    {
+      "path": ".claude/Untitled.png",
+      "accessCount": 1,
+      "lastAccessed": 1775934180121,
+      "type": "file"
+    },
+    {
+      "path": "test_instagram_post.py",
+      "accessCount": 1,
+      "lastAccessed": 1775949627339,
+      "type": "file"
+    },
+    {
+      "path": "post_tiktok.py",
+      "accessCount": 1,
+      "lastAccessed": 1775949627812,
+      "type": "file"
+    },
+    {
+      "path": "project_goals.md",
+      "accessCount": 1,
+      "lastAccessed": 1775995827310,
+      "type": "file"
+    },
+    {
+      "path": "site/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1775995831952,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/analytics.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775995990115,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/TrackedAffiliateLink.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775995996495,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/PageViewTracker.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775995999836,
+      "type": "file"
+    },
+    {
+      "path": "site/app/dashboard/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775996061257,
       "type": "file"
     }
   ],
