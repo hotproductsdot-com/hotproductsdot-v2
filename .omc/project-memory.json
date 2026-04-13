@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775995703916,
+  "lastScanned": 1776085459217,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -56,38 +56,45 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1775995703624,
+      "lastAccessed": 1776085458963,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "post_daily.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
       ]
     },
+    "generated_images": {
+      "path": "generated_images",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1776085459004,
+      "keyFiles": []
+    },
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 5,
-      "lastAccessed": 1775995703648,
+      "fileCount": 7,
+      "lastAccessed": 1776085459023,
       "keyFiles": [
         "__init__.py",
+        "banner_compose.py",
         "bot.py",
         "caption.py",
-        "poster.py",
-        "scraper.py"
+        "image_gen.py"
       ]
     },
     "marketing": {
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775995703675,
+      "lastAccessed": 1776085459040,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775995703688,
+      "lastAccessed": 1776085459059,
       "keyFiles": [
         "post_log.csv"
       ]
@@ -96,7 +103,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1775995703698,
+      "lastAccessed": 1776085459076,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -108,14 +115,14 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1775995703713,
+      "lastAccessed": 1776085459087,
       "keyFiles": []
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775995703743,
+      "lastAccessed": 1776085459102,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -128,7 +135,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1775995703860,
+      "lastAccessed": 1776085459188,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -139,19 +146,8 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775995703893,
+      "lastAccessed": 1776085459217,
       "keyFiles": []
-    },
-    "site/out": {
-      "path": "site/out",
-      "purpose": "Build output",
-      "fileCount": 16,
-      "lastAccessed": 1775995703916,
-      "keyFiles": [
-        "404.html",
-        "__next.__PAGE__.txt",
-        "__next._full.txt"
-      ]
     }
   },
   "hotPaths": [

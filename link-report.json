@@ -1,19 +1,19 @@
 {
-  "date": "2026-04-12T22:57:53.003Z",
+  "date": "2026-04-13T13:05:27.165Z",
   "csvFile": "/mnt/e/GITHUB/hotproductsdot-v2/products/top-1000.csv",
   "summary": {
-    "total": 1088,
-    "ok": 1087,
+    "total": 1087,
+    "ok": 1086,
     "broken": 1,
     "timeouts": 0
   },
   "broken": [
     {
-      "url": "https://www.amazon.com/dp/B0DTZ616WZ?tag=hotproduct033-20",
+      "url": "https://www.amazon.com/dp/B0FLDH3B1M?tag=hotproduct033-20",
       "status": 404,
       "broken": true,
       "detail": "404 Not Found",
-      "name": "Dexcom G7 Continuous Glucose Monitor"
+      "name": "DJI Neo Beginner Drone"
     }
   ],
   "timeouts": []
