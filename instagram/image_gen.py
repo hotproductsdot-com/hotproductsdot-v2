@@ -1,17 +1,17 @@
 """
-fal.ai nano-banana-2 image generation for Instagram post images.
+ModelsLab FLUX image generation for Instagram post images.
 
 Strategy for accuracy:
-  1. Passes the actual product photo URL from the site to nano-banana-2 as image_url
+  1. Passes the actual product photo URL from the site to ModelsLab as image_url
      — the model restyling the real product photo, not hallucinating one
   2. Falls back to text-to-image if the product photo URL is inaccessible
   3. Claude (haiku) writes tailored prompts for each style variant
 
-fal.ai returns public URLs, so no separate image hosting is needed.
+ModelsLab returns public URLs, so no separate image hosting is needed.
 Images are also saved locally in save_dir for dry-run preview.
 
 Required env vars:
-  FAL_KEY          — fal.ai API key (get credits at fal.ai)
+  MODELSLAB_KEY    — ModelsLab API key (get at modelslab.com)
   ANTHROPIC_API_KEY — optional, improves prompt quality
 """
 import json
@@ -20,11 +20,12 @@ import sys
 import urllib.request
 from pathlib import Path
 
+import anthropic
 import requests
 
-FAL_API_BASE = "https://fal.run"
-MODEL_ID     = "fal-ai/nano-banana-2"
-SITE_URL     = "https://hotproductsdot.com"
+MODELSLAB_API_BASE = "https://modelslab.com/api/v6"
+MODEL_ID           = "flux"
+SITE_URL           = "https://hotproductsdot.com"
 
 # Brand visual DNA: dark charcoal studio backdrop + orange (#FF6B00) accent lighting
 # Matches the HotProducts banner style: dark radial gradient, premium affiliate editorial feel
@@ -117,41 +118,32 @@ def _build_prompts_claude(product: dict, edit_mode: bool) -> dict[str, str]:
             "Each prompt must be under 250 characters."
         )
 
-    payload = json.dumps({
-        "model": "claude-haiku-4-5-20251001",
-        "max_tokens": 700,
-        "system": (
-            f"You write concise fal.ai nano-banana-2 image prompts. {instruction} "
-            "Return valid JSON only — no markdown, no explanation."
-        ),
-        "messages": [{
-            "role": "user",
-            "content": (
-                f"Product: {product['name']}\n"
-                f"Category: {product.get('category', 'consumer product')}\n\n"
-                f"Write one prompt for each style: {styles_list}.\n"
-                f"Return a JSON object with those exact keys."
-            ),
-        }],
-    }).encode()
-
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=payload,
-        headers={
-            "x-api-key":         api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type":      "application/json",
-        },
-        method="POST",
-    )
+    client = anthropic.Anthropic(api_key=api_key)
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data    = json.loads(resp.read())
-            text    = data["content"][0]["text"].strip()
-            prompts = json.loads(text)
-            if all(s in prompts for s in _STYLES):
-                return prompts
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=700,
+            system=(
+                f"You write concise ModelsLab FLUX image prompts. {instruction} "
+                "Return valid JSON only — no markdown, no explanation."
+            ),
+            messages=[{
+                "role": "user",
+                "content": (
+                    f"Product: {product['name']}\n"
+                    f"Category: {product.get('category', 'consumer product')}\n\n"
+                    f"Write one prompt for each style: {styles_list}.\n"
+                    f"Return a JSON object with those exact keys."
+                ),
+            }],
+        )
+        text = response.content[0].text.strip()
+        # Strip markdown code blocks if present
+        if text.startswith("```"):
+            text = text.split("```")[1].lstrip("json\n").rstrip("\n")
+        prompts = json.loads(text)
+        if all(s in prompts for s in _STYLES):
+            return prompts
     except Exception as exc:
         print(f"  [claude prompt error: {exc} — using templates]")
 
@@ -226,38 +218,65 @@ def _describe_product_visually(product: dict) -> str:
         return product["name"]
 
 
-def _call_fal(prompt: str, fal_key: str, image_url: str | None, seed: int) -> str | None:
+def _call_modelslab_api(
+    prompt: str,
+    api_key: str,
+    image_url: str | None = None,
+    model: str = "flux",
+    width: int = 1024,
+    height: int = 1024,
+) -> str | None:
     """
-    POST to fal.ai nano-banana-2. Returns image URL or None on failure.
-    If image_url is provided, uses image-to-image (edit) mode.
+    POST to ModelsLab API. Returns image URL or None on failure.
+    If image_url is provided, uses image-to-image (img2img) mode.
+    Otherwise uses text-to-image (text2img) mode.
     """
-    body: dict = {
-        "prompt":     prompt,
-        "image_size": "square",
-        "num_images": 1,
-        "seed":       seed,
-    }
     if image_url:
-        body["image_url"] = image_url
+        # Image-to-image (edit) mode
+        endpoint = f"{MODELSLAB_API_BASE}/images/img2img"
+        payload = {
+            "key": api_key,
+            "model_id": model,
+            "prompt": prompt,
+            "image_url": image_url,
+            "strength": 0.75,
+            "width": width,
+            "height": height,
+            "samples": 1,
+            "num_inference_steps": 30,
+        }
+    else:
+        # Text-to-image mode
+        endpoint = f"{MODELSLAB_API_BASE}/images/text2img"
+        payload = {
+            "key": api_key,
+            "model_id": model,
+            "prompt": prompt,
+            "width": width,
+            "height": height,
+            "samples": 1,
+            "num_inference_steps": 30,
+        }
 
     try:
         resp = requests.post(
-            f"{FAL_API_BASE}/{MODEL_ID}",
-            headers={
-                "Authorization":  f"Key {fal_key}",
-                "Content-Type":   "application/json",
-            },
-            json=body,
+            endpoint,
+            headers={"Content-Type": "application/json"},
+            json=payload,
             timeout=60,
         )
         if not resp.ok:
             print(f"FAILED (HTTP {resp.status_code}: {resp.text[:300]})")
             return None
-        images = resp.json().get("images", [])
-        if not images:
-            print("FAILED (empty images list)")
+        data = resp.json()
+        if data.get("status") != "success":
+            print(f"FAILED (API error: {data.get('message', 'unknown')})")
             return None
-        return images[0]["url"]
+        output = data.get("output", [])
+        if not output:
+            print("FAILED (empty output list)")
+            return None
+        return output[0]
     except requests.RequestException as exc:
         print(f"FAILED ({exc})")
         return None
@@ -271,16 +290,16 @@ def generate_product_images(
     save_dir: Path | None = None,
 ) -> list[dict]:
     """
-    Generate n styled image variants for a product using fal.ai nano-banana-2.
+    Generate n styled image variants for a product using ModelsLab FLUX.
 
     Returns list of dicts:
         {index, style, url, local_path (str|None), prompt}
 
-    Raises ValueError if FAL_KEY is missing.
+    Raises ValueError if MODELSLAB_KEY is missing.
     """
-    fal_key = os.environ.get("FAL_KEY", "")
-    if not fal_key:
-        raise ValueError("FAL_KEY not set — add it to .env to generate images")
+    modelslab_key = os.environ.get("MODELSLAB_KEY", "")
+    if not modelslab_key:
+        raise ValueError("MODELSLAB_KEY not set — add it to .env to generate images")
 
     if save_dir:
         save_dir.mkdir(parents=True, exist_ok=True)
@@ -307,13 +326,12 @@ def generate_product_images(
 
     styles  = _STYLES[:n]
     results: list[dict] = []
-    seeds   = [42, 1337, 9999, 2025, 7777]
 
     for i, style in enumerate(styles):
         prompt = prompts[style]
         print(f"  [{i + 1}/{n}] {style:10s} ... ", end="", flush=True)
 
-        url = _call_fal(prompt, fal_key, product_img_url, seeds[i % len(seeds)])
+        url = _call_modelslab_api(prompt, modelslab_key, image_url=product_img_url)
         if not url:
             continue
 
@@ -342,9 +360,12 @@ def generate_product_images(
     return results
 
 
-def pick_image(variants: list[dict]) -> dict:
+def pick_image(variants: list[dict]) -> dict | None:
     """
     Interactive picker. Auto-selects variant 1 in non-TTY environments (CI).
+
+    In a TTY, enter 1–N to choose a variant, or 0 to skip AI images and use
+    the catalog product photo URL from the site instead.
     """
     if not variants:
         raise RuntimeError("No image variants to pick from")
@@ -359,14 +380,17 @@ def pick_image(variants: list[dict]) -> dict:
         path_hint = f"  → {v['local_path']}" if v["local_path"] else ""
         print(f"  [{v['index']}] {v['style']}{path_hint}")
 
+    lo, hi = 0, len(variants)
     while True:
         try:
-            raw    = input(f"\nPick image [1-{len(variants)}]: ").strip()
+            raw    = input(f"\nPick image [{lo}-{hi}] (0 = catalog site photo, no AI): ").strip()
             choice = int(raw)
-            match  = next((v for v in variants if v["index"] == choice), None)
+            if choice == 0:
+                return None
+            match = next((v for v in variants if v["index"] == choice), None)
             if match:
                 return match
-            print(f"  Enter a number between 1 and {len(variants)}")
+            print(f"  Enter {lo} (catalog) or a variant index from 1 to {hi}")
         except (ValueError, EOFError):
             print("  Invalid input — try again")
         except KeyboardInterrupt:
