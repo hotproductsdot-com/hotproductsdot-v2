@@ -6,7 +6,17 @@ Picks one product per day (rotating through the top 60 by affiliate potential)
 and posts it to Instagram and TikTok.
 
 Usage:
-    python post_instagram.py [--dry-run] [--platform instagram|tiktok|all]
+    python post_daily.py [--dry-run] [--platform instagram|tiktok|all]
+        [--catalog-image-only] [--on-empty-ai-images catalog|abort]
+        [-v|-q] [--log-file PATH]
+
+Instagram publishing: Meta often cannot fetch third-party CDNs (e.g. ImgBB). The script writes a
+1080×1080 JPEG under site/public/instagram-feed/{slug}.jpg. That URL must return HTTP 200 image/jpeg
+on the public web (git push + deploy). Use INSTAGRAM_MEDIA_BASE_URL for a preview host, or
+INSTAGRAM_RAW_GITHUB_BASE (optional) — if unset, the script tries to infer
+https://raw.githubusercontent.com/OWNER/REPO/BRANCH from `git remote origin` so you can
+`git push` the instagram-feed JPEG (public repo) without waiting for Hostinger deploy.
+ImgBB is tried last: it often passes our HTTP probe but Meta’s fetcher still rejects it.
 
 Required GitHub Actions secrets (set in repo Settings → Secrets):
     IG_USER_ID          — Instagram Business Account ID (numeric string)
@@ -18,8 +28,12 @@ Required GitHub Actions secrets (set in repo Settings → Secrets):
 
 import argparse
 import csv
+import logging
+import math
 import os
 import re
+import shutil
+import subprocess
 import sys
 import time
 from datetime import date
@@ -38,8 +52,36 @@ from instagram import image_gen, banner_compose
 SITE_URL        = "https://hotproductsdot.com"
 CSV_PATH        = Path(__file__).parent / "products" / "top-1000.csv"
 LOG_PATH        = Path(__file__).parent / "marketing-campaigns" / "post_log.csv"
-IG_API_BASE     = "https://graph.facebook.com/v21.0"
 ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
+
+logger = logging.getLogger(__name__)
+
+
+def configure_logging(*, verbose: bool, quiet: bool, log_file: str | None) -> None:
+    """Console + optional file; idempotent for repeated calls in tests."""
+    if quiet:
+        level = logging.WARNING
+    elif verbose:
+        level = logging.DEBUG
+    else:
+        level = logging.INFO
+    fmt = "%(asctime)s %(levelname)s %(message)s"
+    datefmt = "%Y-%m-%d %H:%M:%S"
+    formatter = logging.Formatter(fmt, datefmt=datefmt)
+    handlers: list[logging.Handler] = [logging.StreamHandler(sys.stderr)]
+    if log_file:
+        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
+    for h in handlers:
+        h.setFormatter(formatter)
+    root = logging.getLogger()
+    root.handlers.clear()
+    root.setLevel(level)
+    for h in handlers:
+        root.addHandler(h)
+    # Library noise
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("requests").setLevel(logging.WARNING)
+
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -79,7 +121,6 @@ def _score_product(p: dict) -> float:
 
     All factors are multiplied so any zero collapses the score.
     """
-    import math
     rating       = p["rating"]                          # 0–5
     review_count = max(p["review_count"], 1)            # guard log(0)
     price        = p["price_num"]                       # raw float
@@ -207,6 +248,143 @@ def product_image_url(product: dict) -> str:
     return f"{SITE_URL}/products/{product['slug']}.jpg"
 
 
+def _instagram_media_origin() -> str:
+    """Public origin for /instagram-feed/… JPEGs (production or preview deploy)."""
+    raw = (os.environ.get("INSTAGRAM_MEDIA_BASE_URL") or SITE_URL).strip().rstrip("/")
+    return raw or SITE_URL.rstrip("/")
+
+
+def prepare_instagram_site_feed_jpeg(product: dict, banner_path: str | None) -> tuple[str | None, str | None]:
+    """
+    Write site/public/instagram-feed/{slug}.jpg (1080×1080, Instagram-safe aspect ratio).
+
+    Prefer the composed banner file when present; otherwise build a square crop from the
+    catalog product JPG. Meta can fetch this URL from your domain (after deploy).
+
+    Returns (public_https_url, local_dest_path) or (None, None) if site/ tree is missing.
+    """
+    repo_root = Path(__file__).resolve().parent
+    site_public = repo_root / "site" / "public"
+    if not site_public.is_dir():
+        logger.warning("No site/public — cannot write instagram-feed mirror (clone layout expected)")
+        return None, None
+
+    dest_dir = site_public / "instagram-feed"
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / f"{product['slug']}.jpg"
+
+    try:
+        if banner_path and Path(banner_path).is_file():
+            shutil.copy2(banner_path, dest)
+            logger.info("Instagram feed mirror: copied banner → %s", dest)
+        else:
+            banner_compose.download_square_instagram_feed_jpeg(product_image_url(product), dest)
+            logger.info("Instagram feed mirror: square crop from catalog → %s", dest)
+    except Exception as exc:
+        logger.exception("Instagram feed mirror failed: %s", exc)
+        print(f"   [!] Could not write site/instagram-feed JPEG: {exc}")
+        return None, None
+
+    url = f"{_instagram_media_origin()}/instagram-feed/{product['slug']}.jpg"
+    print(
+        "   Instagram feed JPEG (Meta must GET this as image/jpeg, not 404 HTML):\n"
+        f"      file: {dest}\n"
+        f"      URL:  {url}\n"
+        "      → git add this file && git push (public repo). Raw URL is inferred from `git remote`\n"
+        "        when INSTAGRAM_RAW_GITHUB_BASE is unset. Deploy the site too if you use /instagram-feed/ there."
+    )
+    return url, str(dest)
+
+
+def infer_github_raw_root_from_git(repo_root: Path) -> str | None:
+    """
+    Build https://raw.githubusercontent.com/OWNER/REPO/BRANCH from git remote (HTTPS or SSH).
+    Returns None if not a GitHub repo, git missing, or parse fails.
+    """
+    try:
+        remote = subprocess.check_output(
+            ["git", "-C", str(repo_root), "config", "--get", "remote.origin.url"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+            timeout=8,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+        return None
+    if "github.com" not in remote:
+        return None
+    m = re.search(r"github\.com[/:]([\w.-]+)/([\w.-]+?)(?:\.git)?\s*$", remote)
+    if not m:
+        return None
+    owner, repo = m.group(1), m.group(2)
+    try:
+        branch = subprocess.check_output(
+            ["git", "-C", str(repo_root), "rev-parse", "--abbrev-ref", "HEAD"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+            timeout=8,
+        ).strip()
+    except (subprocess.CalledProcessError, OSError):
+        branch = "main"
+    if not branch or branch == "HEAD":
+        branch = "main"
+    return f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
+
+
+def instagram_raw_github_feed_url(slug: str) -> str | None:
+    """
+    Raw GitHub URL for site/public/instagram-feed/{slug}.jpg.
+
+    Uses INSTAGRAM_RAW_GITHUB_BASE if set (branch root, no trailing slash), else infers from git.
+    """
+    repo_root = Path(__file__).resolve().parent
+    base = (os.environ.get("INSTAGRAM_RAW_GITHUB_BASE") or "").strip().rstrip("/")
+    inferred = False
+    if not base:
+        base = infer_github_raw_root_from_git(repo_root) or ""
+        inferred = bool(base)
+    if not base:
+        return None
+    if inferred:
+        logger.info("Inferred GitHub raw base from git: %s", base)
+    return f"{base}/site/public/instagram-feed/{slug}.jpg"
+
+
+def _is_imgbb_url(url: str) -> bool:
+    u = (url or "").lower()
+    return "i.ibb.co" in u or "ibb.co/" in u
+
+
+_META_FETCH_UA = (
+    "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+)
+
+
+def probe_instagram_image_url(url: str, timeout: int = 20) -> tuple[bool, str]:
+    """
+    Check whether Meta's crawler can plausibly use this URL (HTTP 200, image/jpeg or image/png).
+    HEAD is tried first; GET with stream on 405/501 or missing content-type.
+    """
+    headers = {"User-Agent": _META_FETCH_UA}
+    try:
+        r = requests.head(url, timeout=timeout, allow_redirects=True, headers=headers)
+        status = r.status_code
+        ct = (r.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+
+        if status in (405, 501) or not ct:
+            r = requests.get(url, timeout=timeout, allow_redirects=True, headers=headers, stream=True)
+            status = r.status_code
+            ct = (r.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+            r.close()
+
+        if status != 200:
+            return False, f"HTTP {status} (Instagram needs 200 + image/jpeg or image/png; got {ct!r})"
+        if ct not in ("image/jpeg", "image/jpg", "image/png"):
+            return False, f"HTTP {status} but Content-Type={ct!r} — often a 404 HTML page, not an image"
+        return True, f"HTTP {status} {ct}"
+    except requests.RequestException as exc:
+        return False, f"fetch error: {exc}"
+
+
 def format_stars(rating: float) -> str:
     full = int(rating)
     half = rating - full >= 0.5
@@ -222,7 +400,10 @@ def _fmt_price(raw: str) -> str:
         val = float(p)
         return f"${val:,.2f}" if val > 0 else "Check price"
     except ValueError:
-        return raw if raw.startswith("$") else f"${raw}" if raw else "Check price"
+        raw_s = str(raw or "").strip()
+        if not raw_s:
+            return "Check price"
+        return raw_s if raw_s.startswith("$") else raw_s
 
 
 def instagram_body(product: dict) -> str:
@@ -247,7 +428,8 @@ def instagram_body(product: dict) -> str:
 
 def instagram_tags(product: dict) -> str:
     """Hashtag block only."""
-    cat_tag = "#" + re.sub(r"[^a-z0-9]", "", product["category"].lower())
+    cat_slug = re.sub(r"[^a-z0-9]", "", product["category"].lower())
+    cat_tag = "#" + (cat_slug or "products")
     return (
         f"#hotproducts #amazonfinds #bestproducts {cat_tag} "
         "#dealoftheday #productreview #amazondeals #mustbuy #shopping"
@@ -260,7 +442,8 @@ def instagram_caption(product: dict) -> str:
 
 def tiktok_caption(product: dict) -> str:
     price   = product["price"] if product["price"] not in ("", "N/A") else "Check price"
-    cat_tag = "#" + re.sub(r"[^a-z0-9]", "", product["category"].lower())
+    cat_slug = re.sub(r"[^a-z0-9]", "", product["category"].lower())
+    cat_tag = "#" + (cat_slug or "products")
 
     return "\n".join([
         f"🔥 {product['name']}",
@@ -273,13 +456,54 @@ def tiktok_caption(product: dict) -> str:
 
 # ─── Instagram ───────────────────────────────────────────────────────────────
 
-def post_instagram(product: dict, dry_run: bool = False, image_url: str | None = None) -> dict:
+def _instagram_rejected_image_fetch(err: dict) -> bool:
+    """
+    True when Meta could not download image_url (misleading copy: 'Only photo or video...').
+    See OAuthException code 9004 / error_subcode 2207052.
+    """
+    msg = (err.get("message") or "").lower()
+    code = err.get("code")
+    sub = err.get("error_subcode")
+    if sub == 2207052 or code == 9004:
+        return True
+    if "only photo or video" in msg:
+        return True
+    if "could not retrieve media" in msg or "media download" in msg:
+        return True
+    return False
+
+
+def _instagram_try_next_image_url(err: dict) -> bool:
+    """True if another image_url might succeed (CDN fetch failure or unsupported aspect ratio)."""
+    if _instagram_rejected_image_fetch(err):
+        return True
+    return "aspect ratio" in (err.get("message") or "").lower()
+
+
+def post_instagram(
+    product: dict,
+    dry_run: bool = False,
+    image_url: str | None = None,
+    image_urls: tuple[str, ...] | list[str] | None = None,
+) -> dict:
     """Two-step Instagram Graph API publish: create container → publish."""
-    caption   = instagram_caption(product)
-    image_url = image_url or product_image_url(product)
+    caption = instagram_caption(product)
+    if image_urls is not None:
+        raw = list(image_urls)
+    else:
+        raw = [image_url or product_image_url(product)]
+
+    urls: list[str] = []
+    seen: set[str] = set()
+    for u in raw:
+        if u and u not in seen:
+            seen.add(u)
+            urls.append(u)
+    if not urls:
+        urls = [product_image_url(product)]
 
     if dry_run:
-        print(f"[DRY RUN] Instagram\n  image  : {image_url}\n  caption:\n{caption}\n")
+        print(f"[DRY RUN] Instagram\n  try URLs: {urls}\n  caption:\n{caption}\n")
         return {"ok": True, "dry_run": True}
 
     user_id = os.environ.get("IG_USER_ID", "")
@@ -290,16 +514,77 @@ def post_instagram(product: dict, dry_run: bool = False, image_url: str | None =
 
     api_base = "https://graph.instagram.com/v21.0" if token.startswith("IG") else "https://graph.facebook.com/v21.0"
 
-    # Step 1 — create media container
-    try:
-        r1 = requests.post(
-            f"{api_base}/{user_id}/media",
-            data={"image_url": image_url, "caption": caption, "access_token": token},
-            timeout=30,
-        )
-        d1 = r1.json()
-    except requests.RequestException as exc:
-        return {"ok": False, "error": str(exc)}
+    # Drop URLs that clearly are not fetchable as JPEG/PNG (e.g. 404 HTML on production).
+    verified: list[str] = []
+    probe_lines: list[str] = []
+    for u in urls:
+        ok, detail = probe_instagram_image_url(u)
+        probe_lines.append(f"  {u}\n    → {detail}")
+        if ok:
+            verified.append(u)
+        else:
+            logger.warning("Instagram URL probe failed: %s — %s", u, detail)
+
+    if not verified:
+        return {
+            "ok": False,
+            "error": (
+                "No image URL passes a Meta-style fetch check (HTTP 200 + image/jpeg or image/png):\n"
+                + "\n".join(probe_lines)
+                + f"\n\nPush site/public/instagram-feed/{product['slug']}.jpg to GitHub (public repo) "
+                "and `git push`, or deploy it on your site. Raw GitHub URLs are auto-inferred from "
+                "`git remote` when INSTAGRAM_RAW_GITHUB_BASE is unset."
+            ),
+        }
+
+    if len(verified) < len(urls):
+        print("  [!] Some image URLs were skipped (not publicly reachable as JPEG/PNG). Trying:")
+        for u in verified:
+            print(f"      • {u}")
+
+    urls = verified
+
+    # Step 1 — create media container (site + raw GitHub before ImgBB — Meta often blocks ImgBB anyway)
+    d1: dict = {}
+    for i, attempt_url in enumerate(urls):
+        try:
+            r1 = requests.post(
+                f"{api_base}/{user_id}/media",
+                data={"image_url": attempt_url, "caption": caption, "access_token": token},
+                timeout=30,
+            )
+            d1 = r1.json()
+        except requests.RequestException as exc:
+            return {"ok": False, "error": str(exc)}
+
+        if "error" not in d1:
+            if i > 0:
+                logger.info("Instagram /media succeeded with URL #%s: %s", i + 1, attempt_url)
+            break
+
+        err = d1["error"]
+        msg = err.get("message", str(err))
+        if not _instagram_try_next_image_url(err):
+            return {"ok": False, "error": msg}
+
+        logger.warning("Instagram /media rejected URL %s: %s", attempt_url, msg)
+        if i + 1 < len(urls):
+            print(f"  [!] Trying alternate image URL ({i + 2}/{len(urls)})…")
+    else:
+        last_msg = (d1.get("error") or {}).get("message", "All Instagram image URLs were rejected")
+        slug = product["slug"]
+        if urls and all(_is_imgbb_url(u) for u in urls):
+            extra = (
+                f"\n\nImgBB often returns HTTP 200 to our probe, but Meta’s servers still reject i.ibb.co. "
+                f"Push `site/public/instagram-feed/{slug}.jpg` to your public GitHub default branch, then "
+                f"re-run this script (it tries raw.githubusercontent.com before ImgBB when `git remote` is GitHub)."
+            )
+        else:
+            extra = (
+                "\n\nEnsure at least one URL is raw.githubusercontent.com (git push) or your live site "
+                "returning 200 image/jpeg — Meta frequently blocks ImgBB."
+            )
+        return {"ok": False, "error": f"{last_msg}{extra}"}
 
     if "error" in d1:
         return {"ok": False, "error": d1["error"].get("message", str(d1["error"]))}
@@ -409,7 +694,8 @@ def show_draft(
 
     # ── Stats ─────────────────────────────────────────────────────────────────
     print()
-    limit  = 2200 if platform == "instagram" else 2200
+    # Instagram captions and TikTok Content Posting titles both cap at 2200 (see tiktok_api.py).
+    limit = 2200
     bar_w  = 40
     filled = int(bar_w * min(char_count / limit, 1.0))
     bar    = "█" * filled + "░" * (bar_w - filled)
@@ -465,11 +751,35 @@ def main() -> None:
                              "Use --list-categories to see available options.")
     parser.add_argument("--list-categories", action="store_true",
                         help="Print all available product categories and exit")
+    parser.add_argument(
+        "--catalog-image-only",
+        action="store_true",
+        help="Skip ModelsLab generation; use the on-site product JPG (ImgBB banner still uses it if configured).",
+    )
+    parser.add_argument(
+        "--on-empty-ai-images",
+        choices=("catalog", "abort"),
+        default="catalog",
+        metavar="MODE",
+        help="When MODELSLAB_KEY is set and generation yields no variants: 'catalog' (default) uses site image; "
+             "'abort' exits with an error.",
+    )
+    log_group = parser.add_mutually_exclusive_group()
+    log_group.add_argument("-v", "--verbose", action="store_true", help="Debug logging to stderr")
+    log_group.add_argument("-q", "--quiet", action="store_true", help="Only warnings and errors on stderr")
+    parser.add_argument("--log-file", metavar="PATH", help="Append logs to this file (UTF-8)")
     args = parser.parse_args()
+
+    configure_logging(verbose=args.verbose, quiet=args.quiet, log_file=args.log_file)
+    logger.info("post_daily start platform=%s dry_run=%s", args.platform, args.dry_run)
+
+    # Set when branded banner compositing runs (ImgBB path).
+    banner_path: str | None = None
 
     # Load all qualifying products for category operations; cap to pool for normal rotation
     all_products = load_top_products()
     if not all_products:
+        logger.error("No products loaded from CSV at %s", CSV_PATH)
         print("[!] No products loaded from CSV.")
         sys.exit(1)
 
@@ -496,6 +806,13 @@ def main() -> None:
         products = all_products[:ROTATION_POOL]
 
     product = pick_next_product(products, force=args.force)
+    logger.info(
+        "Selected product name=%r slug=%s category=%r force=%s",
+        product["name"],
+        product["slug"],
+        product["category"],
+        args.force,
+    )
     print(f"Today's product  : {product['name']}")
     print(f"Category         : {product['category']}")
     print(f"Rating           : {product['rating']}/5")
@@ -505,38 +822,64 @@ def main() -> None:
 
     # ── Image generation ─────────────────────────────────────────────────────
     chosen_image_url: str | None = None
-    if os.environ.get("FAL_KEY"):
+    if args.catalog_image_only:
+        logger.info("Skipping ModelsLab (--catalog-image-only); image source=catalog")
+        print(">> Using catalog product image only (--catalog-image-only).")
+        print(f"   Image URL: {product_image_url(product)}")
+    elif os.environ.get("MODELSLAB_KEY"):
         save_dir = (
             Path(__file__).parent
             / "generated_images"
             / date.today().isoformat()
             / product["slug"]
         )
-        print(">> Generating 5 image variants with fal.ai nano-banana-2...")
+        print(">> Generating 5 image variants with ModelsLab FLUX...")
+        logger.info("FAL image generation save_dir=%s", save_dir)
         try:
             variants = image_gen.generate_product_images(product, n=5, save_dir=save_dir)
             if variants:
                 chosen = image_gen.pick_image(variants)
-                chosen_image_url = chosen["url"]
-                print(f"   Selected: [{chosen['index']}] {chosen['style']}  {chosen_image_url}")
+                if chosen is None:
+                    logger.info("No AI variant selected (picker 0); image source=catalog")
+                    chosen_image_url = None
+                    print("   Using catalog site photo (no AI variant selected).")
+                else:
+                    chosen_image_url = chosen["url"]
+                    logger.info(
+                        "AI image selected index=%s style=%s url=%s",
+                        chosen["index"],
+                        chosen["style"],
+                        chosen_image_url,
+                    )
+                    print(f"   Selected: [{chosen['index']}] {chosen['style']}  {chosen_image_url}")
             else:
+                logger.warning("FAL returned no variants (empty list)")
                 print("   [!] No variants generated — falling back to site image")
+                if args.on_empty_ai_images == "abort":
+                    logger.error("Exiting (--on-empty-ai-images=abort)")
+                    print("[!] Aborting because no AI images were produced.")
+                    sys.exit(1)
         except ValueError as exc:
+            logger.warning("FAL skipped: %s", exc)
             print(f"   [!] {exc} — falling back to site image")
         except KeyboardInterrupt:
+            logger.info("Interrupted during image generation")
             print("Aborted.")
             sys.exit(0)
     else:
+        logger.info("MODELSLAB_KEY unset; image source=catalog")
         print(f"Image URL        : {product_image_url(product)}")
-        print("   (set FAL_KEY in .env to generate custom images)")
+        print("   (set MODELSLAB_KEY in .env to generate custom images)")
 
     # ── Banner composition (HotProducts brand style) ──────────────────────────
     # Composes the product image into the branded 1080×1080 banner format.
     # Requires IMGBB_API_KEY in .env to upload the banner to a public URL.
-    # Falls back to the raw fal.ai image if no upload key is configured.
+    # Falls back to the ModelsLab/site image if no upload key is configured.
     imgbb_key = os.environ.get("IMGBB_API_KEY", "")
-    if imgbb_key and (chosen_image_url or True):
+    if imgbb_key:
+        # Compose from ModelsLab/site image whenever ImgBB is configured (MODELSLAB_KEY optional).
         source = chosen_image_url or product_image_url(product)
+        logger.debug("Banner compose source URL=%s", source)
         banner_save_dir = (
             Path(__file__).parent
             / "generated_images"
@@ -549,17 +892,28 @@ def main() -> None:
             banner_compose.compose_banner(product, source, banner_path)
             print(f"   Banner saved → {banner_path}")
             print("   Uploading to imgbb...")
-            public_url = banner_compose.upload_to_imgbb(banner_path, imgbb_key)
+            public_url = banner_compose.upload_to_imgbb(
+                banner_path,
+                imgbb_key,
+                name=f"{product['slug']}-hotproducts-banner",
+            )
             if public_url:
                 chosen_image_url = public_url
+                logger.info("ImgBB upload OK public_url=%s", public_url)
                 print(f"   Banner URL: {chosen_image_url}")
             else:
+                logger.warning("ImgBB upload returned no URL")
                 print("   [!] Upload failed — using original image URL")
         except Exception as exc:
+            logger.exception("Banner compose failed: %s", exc)
             print(f"   [!] Banner compose failed: {exc} — using original image URL")
     elif not imgbb_key:
         print("   (set IMGBB_API_KEY in .env to enable branded banner compositing)")
     print()
+
+    feed_mirror_url: str | None = None
+    if args.platform in ("instagram", "all") and not args.dry_run:
+        feed_mirror_url, _ = prepare_instagram_site_feed_jpeg(product, banner_path)
 
     results: dict[str, dict] = {}
 
@@ -572,19 +926,38 @@ def main() -> None:
             platform  = "instagram",
             body      = ig_body,
             tags      = ig_tags,
-            banner_local  = banner_path if "banner_path" in dir() else None,
+            banner_local  = banner_path,
             banner_public = chosen_image_url,
         )
         if ask_approval("instagram", args.dry_run):
+            gh = instagram_raw_github_feed_url(product["slug"])
+            if gh and not (os.environ.get("INSTAGRAM_RAW_GITHUB_BASE") or "").strip():
+                print(f"   GitHub raw image (after push): {gh}")
+
+            # Site + GitHub before ImgBB: Meta’s fetcher often rejects i.ibb.co even when our probe passes.
+            ig_urls: list[str] = []
+            if feed_mirror_url:
+                ig_urls.append(feed_mirror_url)
+            if gh:
+                ig_urls.append(gh)
+            if chosen_image_url:
+                ig_urls.append(chosen_image_url)
+            if not ig_urls:
+                ig_urls.append(product_image_url(product))
+
+            logger.info("Posting Instagram try_urls=%s", ig_urls)
             print(">> Posting to Instagram...")
-            result = post_instagram(product, dry_run=False, image_url=chosen_image_url)
+            result = post_instagram(product, dry_run=False, image_urls=ig_urls)
             results["instagram"] = result
             if result["ok"]:
+                logger.info("Instagram OK post_id=%s", result.get("post_id", ""))
                 print(f"  OK  post_id: {result.get('post_id', '')}")
             else:
+                logger.error("Instagram failed: %s", result.get("error"))
                 print(f"  FAIL {result['error']}")
             log_result(product, "instagram", result)
         else:
+            logger.info("Instagram post skipped (not approved)")
             print("  Skipped.")
 
     # ── TikTok draft + approval ───────────────────────────────────────────────
@@ -596,24 +969,30 @@ def main() -> None:
             platform  = "tiktok",
             body      = tt_body,
             tags      = tt_tags,
-            banner_local  = banner_path if "banner_path" in dir() else None,
+            banner_local  = banner_path,
             banner_public = chosen_image_url,
         )
         if ask_approval("tiktok", args.dry_run):
-            print(">> Posting to TikTok...")
             tik_image = chosen_image_url or product_image_url(product)
+            logger.info("Posting TikTok image_url=%s", tik_image)
+            print(">> Posting to TikTok...")
             result    = tiktok_api.post_photo([tik_image], tt_caption)
             results["tiktok"] = result
             if result["ok"]:
+                logger.info("TikTok OK publish_id=%s", result.get("publish_id", ""))
                 print(f"  OK  publish_id: {result.get('publish_id', '')}")
             else:
+                logger.error("TikTok failed: %s", result.get("error"))
                 print(f"  FAIL {result['error']}")
             log_result(product, "tiktok", result)
         else:
+            logger.info("TikTok post skipped (not approved)")
             print("  Skipped.")
 
     if any(not r["ok"] for r in results.values()):
+        logger.error("One or more platforms failed; exiting 1")
         sys.exit(1)
+    logger.info("post_daily finished ok results=%s", list(results.keys()))
 
 
 if __name__ == "__main__":
