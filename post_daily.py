@@ -46,6 +46,7 @@ load_dotenv(override=True)
 
 import tiktok_api
 from instagram import image_gen, banner_compose
+# Optional: local FLUX generation (imported conditionally based on CLI flag)
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -757,6 +758,12 @@ def main() -> None:
         help="Skip ModelsLab generation; use the on-site product JPG (ImgBB banner still uses it if configured).",
     )
     parser.add_argument(
+        "--use-local-flux",
+        action="store_true",
+        help="Use local FLUX.1 [schnell] for image generation (GTX 1070 compatible). "
+             "Requires: pip install -r requirements-flux.txt; First run downloads ~5.5GB model.",
+    )
+    parser.add_argument(
         "--on-empty-ai-images",
         choices=("catalog", "abort"),
         default="catalog",
@@ -826,6 +833,47 @@ def main() -> None:
         logger.info("Skipping ModelsLab (--catalog-image-only); image source=catalog")
         print(">> Using catalog product image only (--catalog-image-only).")
         print(f"   Image URL: {product_image_url(product)}")
+    elif args.use_local_flux:
+        # Use local FLUX.1 [schnell] for image generation (GTX 1070 compatible)
+        from instagram import image_gen_local_flux
+        save_dir = (
+            Path(__file__).parent
+            / "generated_images"
+            / date.today().isoformat()
+            / product["slug"]
+        )
+        print(">> Generating 5 image variants with local FLUX.1 [schnell]...")
+        print("   ⚠️  WARNING: GTX 1070 will be SLOW (30-45 sec per image, ~2-4 min total)")
+        logger.info("Local FLUX image generation save_dir=%s", save_dir)
+        try:
+            variants = image_gen_local_flux.generate_product_images(product, n=5, save_dir=save_dir)
+            if variants:
+                chosen = image_gen.pick_image(variants)
+                if chosen is None:
+                    logger.info("No AI variant selected (picker 0); image source=catalog")
+                    chosen_image_url = None
+                    print("   Using catalog site photo (no AI variant selected).")
+                else:
+                    chosen_image_url = chosen["url"]
+                    logger.info("Selected image style=%s url=%s", chosen.get("style"), chosen_image_url)
+                    print(f"   ✓ Selected variant: {chosen.get('style', 'unknown')}")
+            else:
+                logger.warning("No image variants generated")
+                if args.on_empty_ai_images == "abort":
+                    logger.error("Generation failed; aborting (--on-empty-ai-images abort)")
+                    print("[!] Image generation failed and --on-empty-ai-images abort is set. Exiting.")
+                    sys.exit(1)
+                chosen_image_url = None
+                print("   ✗ Generation failed; using catalog image.")
+        except Exception as exc:
+            logger.exception("Local FLUX generation error: %s", exc)
+            if args.on_empty_ai_images == "abort":
+                print(f"[!] Generation error: {exc}")
+                print("    Exiting (--on-empty-ai-images abort).")
+                sys.exit(1)
+            chosen_image_url = None
+            print(f"   ✗ Generation error: {exc}")
+            print("   Using catalog image instead.")
     elif os.environ.get("MODELSLAB_KEY"):
         save_dir = (
             Path(__file__).parent

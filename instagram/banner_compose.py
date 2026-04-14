@@ -14,7 +14,7 @@ Creates a 1080×1080 branded banner per the hotproducts-banner-style skill:
 Requires: Pillow>=10.0.0
 
 Public upload:
-  Use upload_to_imgbb(path, api_key) to get a publicly accessible URL
+  Use upload_to_imgbb(path, api_key, name="slug-banner") so ImgBB titles are per-product (not "banner").
   suitable for the Instagram Graph API. Set IMGBB_API_KEY in .env to enable.
 """
 import re
@@ -357,6 +357,38 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
+def download_square_instagram_feed_jpeg(source_url: str, dest: Path, size: int = 1080) -> None:
+    """
+    Download an image URL and write a baseline size×size JPEG (cover crop).
+    Instagram feed requires aspect ratio roughly between 4:5 and 1.91:1; a
+    square (1:1) is valid. Raw product JPGs are often wider than tall.
+    """
+    resp = requests.get(source_url, timeout=30)
+    resp.raise_for_status()
+    im = Image.open(BytesIO(resp.content)).convert("RGB")
+    w, h = im.size
+    if w <= 0 or h <= 0:
+        raise ValueError("Invalid image dimensions")
+
+    scale = max(size / w, size / h)
+    nw, nh = int(w * scale), int(h * scale)
+    im = im.resize((nw, nh), Image.LANCZOS)
+    left = (nw - size) // 2
+    top = (nh - size) // 2
+    im = im.crop((left, top, left + size, top + size))
+
+    dest = Path(dest)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    im.save(
+        str(dest),
+        "JPEG",
+        quality=93,
+        optimize=True,
+        progressive=False,
+        subsampling=0,
+    )
+
+
 def compose_banner(
     product: dict,
     product_image_url_or_path: str,
@@ -378,22 +410,39 @@ def compose_banner(
 
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    canvas.convert("RGB").save(str(out), "JPEG", quality=93)
+    # Baseline JPEG, 4:4:4 — Instagram Content Publishing rejects some progressive / odd subsampling.
+    canvas.convert("RGB").save(
+        str(out),
+        "JPEG",
+        quality=93,
+        optimize=True,
+        progressive=False,
+        subsampling=0,
+    )
     return str(out)
 
 
-def upload_to_imgbb(local_path: str, api_key: str) -> str | None:
+def upload_to_imgbb(local_path: str, api_key: str, *, name: str | None = None) -> str | None:
     import base64
     with open(local_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode()
+    # ImgBB "name" is the gallery title — local file is always banner.jpg, so pass a unique name.
+    title = (name or Path(local_path).stem or "hotproducts-banner").strip()[:100] or "hotproducts-banner"
     try:
         resp = requests.post(
             "https://api.imgbb.com/1/upload",
-            data={"key": api_key, "image": b64},
+            data={
+                "key": api_key,
+                "image": b64,
+                "name": title,
+            },
             timeout=30,
         )
         resp.raise_for_status()
-        return resp.json()["data"]["url"]
+        payload = resp.json().get("data") or {}
+        # Prefer nested image.url (full-size JPEG) over top-level url when present.
+        nested = (payload.get("image") or {}) if isinstance(payload.get("image"), dict) else {}
+        return nested.get("url") or payload.get("url")
     except Exception as exc:
         print(f"  [imgbb upload failed: {exc}]")
         return None
