@@ -302,9 +302,9 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
         y += lh + 6
     y += 14
 
-    # ── Star dots ─────────────────────────────────────────────────────────────
-    star_bottom = _draw_stars(draw, CANVAS // 2, y, rating, dot_r=9, gap=7)
-    y = star_bottom + 10
+    # ── Star dots (DISABLED - remove orange rating dots) ──────────────────────
+    # star_bottom = _draw_stars(draw, CANVAS // 2, y, rating, dot_r=9, gap=7)
+    # y = star_bottom + 10
 
     # ── Review count + rating text ────────────────────────────────────────────
     try:
