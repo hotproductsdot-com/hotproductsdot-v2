@@ -45,7 +45,15 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 import tiktok_api
-from instagram import image_gen, banner_compose
+from instagram import image_gen, image_gen_gemini, banner_compose
+
+# Optional: AI-powered affiliate tools (guarded import)
+try:
+    from instagram import affiliate_tools as _affiliate_tools
+    _AFFILIATE_TOOLS_AVAILABLE = True
+except ImportError:
+    _AFFILIATE_TOOLS_AVAILABLE = False
+
 # Optional: local FLUX generation (imported conditionally based on CLI flag)
 
 # ─── Config ──────────────────────────────────────────────────────────────────
@@ -407,8 +415,8 @@ def _fmt_price(raw: str) -> str:
         return raw_s if raw_s.startswith("$") else raw_s
 
 
-def instagram_body(product: dict) -> str:
-    """Post body without hashtags."""
+def instagram_body(product: dict, *, ai_hook: str | None = None, ai_cta: str | None = None) -> str:
+    """Post body without hashtags. Optionally inject AI hook and CTA."""
     stars   = format_stars(product["rating"])
     price   = _fmt_price(product["price"]) if product["price"] not in ("", "N/A") else "Check price"
     reviews = product["reviews"]
@@ -417,14 +425,20 @@ def instagram_body(product: dict) -> str:
     except (ValueError, AttributeError):
         review_str = reviews or "many"
 
-    return "\n".join([
-        f"🔥 {product['name']}",
+    lines = [
+        ai_hook or f"🔥 {product['name']}",  # use AI hook if provided
         "",
         f"{stars} {product['rating']}/5 · {review_str} verified reviews",
         f"💰 {price}",
         "",
         f"👉 Full details + link → {product_page_url(product)}",
-    ])
+    ]
+
+    if ai_cta:
+        lines.append("")
+        lines.append(ai_cta)
+
+    return "\n".join(lines)
 
 
 def instagram_tags(product: dict) -> str:
@@ -441,18 +455,26 @@ def instagram_caption(product: dict) -> str:
     return instagram_body(product) + "\n\n" + instagram_tags(product)
 
 
-def tiktok_caption(product: dict) -> str:
+def tiktok_caption(product: dict, *, ai_hook: str | None = None, ai_cta: str | None = None) -> str:
+    """TikTok caption. Optionally inject AI hook and CTA."""
     price   = product["price"] if product["price"] not in ("", "N/A") else "Check price"
     cat_slug = re.sub(r"[^a-z0-9]", "", product["category"].lower())
     cat_tag = "#" + (cat_slug or "products")
 
-    return "\n".join([
-        f"🔥 {product['name']}",
+    lines = [
+        ai_hook or f"🔥 {product['name']}",  # use AI hook if provided
         f"⭐ {product['rating']}/5  💰 {price}",
         f"🔗 {product_page_url(product)}",
         "",
-        f"#hotproducts #amazonfinds #TikTokMadeMeBuyIt {cat_tag} #dealoftheday",
-    ])
+    ]
+
+    if ai_cta:
+        lines.append(ai_cta)
+        lines.append("")
+
+    lines.append(f"#hotproducts #amazonfinds #TikTokMadeMeBuyIt {cat_tag} #dealoftheday")
+
+    return "\n".join(lines)
 
 
 # ─── Instagram ───────────────────────────────────────────────────────────────
@@ -758,6 +780,11 @@ def main() -> None:
         help="Skip ModelsLab generation; use the on-site product JPG (ImgBB banner still uses it if configured).",
     )
     parser.add_argument(
+        "--banner-only",
+        action="store_true",
+        help="Skip AI image variant generation (banner, studio_dark, etc.); compose and post the banner only.",
+    )
+    parser.add_argument(
         "--use-local-flux",
         action="store_true",
         help="Use local FLUX.1 [schnell] for image generation (GTX 1070 compatible). "
@@ -768,7 +795,7 @@ def main() -> None:
         choices=("catalog", "abort"),
         default="catalog",
         metavar="MODE",
-        help="When MODELSLAB_KEY is set and generation yields no variants: 'catalog' (default) uses site image; "
+        help="When GEMINI_API_KEY is set and generation yields no variants: 'catalog' (default) uses site image; "
              "'abort' exits with an error.",
     )
     log_group = parser.add_mutually_exclusive_group()
@@ -874,58 +901,58 @@ def main() -> None:
             chosen_image_url = None
             print(f"   ✗ Generation error: {exc}")
             print("   Using catalog image instead.")
-    elif os.environ.get("MODELSLAB_KEY"):
+    elif os.environ.get("GEMINI_API_KEY"):
         save_dir = (
             Path(__file__).parent
             / "generated_images"
             / date.today().isoformat()
             / product["slug"]
         )
-        print(">> Generating 5 image variants with ModelsLab FLUX...")
-        logger.info("FAL image generation save_dir=%s", save_dir)
+        print(">> Generating 5 image variants with Google Gemini (Nano Banana)...")
+        logger.info("Gemini image generation save_dir=%s", save_dir)
         try:
-            variants = image_gen.generate_product_images(product, n=5, save_dir=save_dir)
+            variants = image_gen_gemini.generate_product_images(product, n=5, save_dir=save_dir)
             if variants:
-                chosen = image_gen.pick_image(variants)
+                chosen = image_gen_gemini.pick_image(variants)
                 if chosen is None:
                     logger.info("No AI variant selected (picker 0); image source=catalog")
                     chosen_image_url = None
                     print("   Using catalog site photo (no AI variant selected).")
                 else:
-                    chosen_image_url = chosen["url"]
+                    chosen_image_url = chosen["local_path"]
                     logger.info(
-                        "AI image selected index=%s style=%s url=%s",
+                        "AI image selected index=%s style=%s local_path=%s",
                         chosen["index"],
                         chosen["style"],
                         chosen_image_url,
                     )
                     print(f"   Selected: [{chosen['index']}] {chosen['style']}  {chosen_image_url}")
             else:
-                logger.warning("FAL returned no variants (empty list)")
+                logger.warning("Gemini returned no variants (empty list)")
                 print("   [!] No variants generated — falling back to site image")
                 if args.on_empty_ai_images == "abort":
                     logger.error("Exiting (--on-empty-ai-images=abort)")
                     print("[!] Aborting because no AI images were produced.")
                     sys.exit(1)
         except ValueError as exc:
-            logger.warning("FAL skipped: %s", exc)
+            logger.warning("Gemini skipped: %s", exc)
             print(f"   [!] {exc} — falling back to site image")
         except KeyboardInterrupt:
             logger.info("Interrupted during image generation")
             print("Aborted.")
             sys.exit(0)
     else:
-        logger.info("MODELSLAB_KEY unset; image source=catalog")
+        logger.info("GEMINI_API_KEY unset; image source=catalog")
         print(f"Image URL        : {product_image_url(product)}")
-        print("   (set MODELSLAB_KEY in .env to generate custom images)")
+        print("   (set GEMINI_API_KEY in .env to generate custom images)")
 
     # ── Banner composition (HotProducts brand style) ──────────────────────────
     # Composes the product image into the branded 1080×1080 banner format.
     # Requires IMGBB_API_KEY in .env to upload the banner to a public URL.
-    # Falls back to the ModelsLab/site image if no upload key is configured.
+    # Falls back to the generated/site image if no upload key is configured.
     imgbb_key = os.environ.get("IMGBB_API_KEY", "")
     if imgbb_key:
-        # Compose from ModelsLab/site image whenever ImgBB is configured (MODELSLAB_KEY optional).
+        # Compose from generated/site image whenever ImgBB is configured (GEMINI_API_KEY optional).
         source = chosen_image_url or product_image_url(product)
         logger.debug("Banner compose source URL=%s", source)
         banner_save_dir = (
@@ -965,9 +992,25 @@ def main() -> None:
 
     results: dict[str, dict] = {}
 
+    # ── AI caption enrichment (Hook Writer + CTA Builder) ──────────────────────
+    ai_hook: str | None = None
+    ai_cta_ig: str | None = None
+    ai_cta_tt: str | None = None
+    if _AFFILIATE_TOOLS_AVAILABLE and os.environ.get("ANTHROPIC_API_KEY"):
+        logger.info("Generating AI hook + CTAs for %s", product["name"])
+        try:
+            hooks = _affiliate_tools.generate_hooks(product, count=5)
+            ai_hook = hooks[0] if hooks else None  # best hook (first)
+            ai_cta_ig = _affiliate_tools.build_cta(product, platform="instagram")
+            ai_cta_tt = _affiliate_tools.build_cta(product, platform="tiktok")
+            if ai_hook:
+                logger.info("AI hook selected: %r", ai_hook)
+        except Exception as exc:
+            logger.warning("AI caption generation failed: %s", exc)
+
     # ── Instagram draft + approval ────────────────────────────────────────────
     if args.platform in ("instagram", "all"):
-        ig_body = instagram_body(product)
+        ig_body = instagram_body(product, ai_hook=ai_hook, ai_cta=ai_cta_ig)
         ig_tags = instagram_tags(product)
         show_draft(
             product   = product,
@@ -1010,7 +1053,7 @@ def main() -> None:
 
     # ── TikTok draft + approval ───────────────────────────────────────────────
     if args.platform in ("tiktok", "all"):
-        tt_caption = tiktok_caption(product)
+        tt_caption = tiktok_caption(product, ai_hook=ai_hook, ai_cta=ai_cta_tt)
         tt_body, tt_tags = (tt_caption.rsplit("\n\n", 1) + [""])[:2]
         show_draft(
             product   = product,

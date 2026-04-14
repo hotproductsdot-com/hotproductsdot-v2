@@ -222,8 +222,9 @@ pip install -r requirements.txt
 
 | Command | Description |
 |---------|-------------|
-| `python post_daily.py` | Post today's featured product to both Instagram and TikTok |
+| `python post_daily.py` | Post today's featured product to Instagram |
 | `python post_daily.py --dry-run` | Preview posts without publishing |
+| `python post_daily.py --platform all` | Post to both Instagram and TikTok |
 | `python post_daily.py --platform instagram` | Post to Instagram only |
 | `python post_daily.py --platform tiktok` | Post to TikTok only |
 | `python post_tiktok.py` | Post today's product to TikTok only (standalone — rotates through top-60 by affiliate potential) |
@@ -231,12 +232,176 @@ pip install -r requirements.txt
 
 > **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables. `post_tiktok.py` requires only `TIKTOK_ACCESS_TOKEN`. Both are set as GitHub Actions secrets for CI use.
 
+#### `post_daily.py` — Complete Command-Line Reference
+
+**Core Posting Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--dry-run` | flag | off | Preview posts without sending to Instagram/TikTok |
+| `--platform` | choice | instagram | Platform: `instagram`, `tiktok`, or `all` |
+
+**Product Selection:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--force` | flag | off | Ignore post history; cycle via day-of-year rotation |
+| `--category CATEGORY` | string | — | Only pick from products in this category (case-insensitive) |
+| `--list-categories` | flag | off | Show all available product categories and exit |
+
+**Image Generation:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--catalog-image-only` | flag | off | Skip AI generation; use the on-site product JPG |
+| `--banner-only` | flag | off | Skip AI image variants (banner, studio_dark, etc.); compose and post the banner only |
+| `--use-local-flux` | flag | off | Use local FLUX.1 [schnell] instead of Gemini (requires `pip install -r requirements-flux.txt`) |
+| `--on-empty-ai-images` | choice | catalog | When AI generation fails: `catalog` (use site image) or `abort` (exit with error) |
+
+**Logging:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `-v, --verbose` | flag | off | Enable debug logging to stderr (mutually exclusive with `-q`) |
+| `-q, --quiet` | flag | off | Only warnings/errors to stderr (mutually exclusive with `-v`) |
+| `--log-file PATH` | string | — | Append all logs to a file (UTF-8 encoded) |
+
+**Common Examples:**
+
+```bash
+# Preview today's product
+python post_daily.py --dry-run
+
+# Post to Instagram (real)
+python post_daily.py
+
+# Post to both platforms
+python post_daily.py --platform all
+
+# List available categories
+python post_daily.py --list-categories
+
+# Post from Photography category only
+python post_daily.py --category Photography
+
+# Force a specific product (via day-of-year rotation)
+python post_daily.py --force --dry-run
+
+# Skip AI variants, just compose and post the banner
+python post_daily.py --banner-only
+
+# Use local FLUX instead of Gemini
+python post_daily.py --use-local-flux --platform instagram
+
+# Verbose logging with file output
+python post_daily.py -v --log-file posts.log
+
+# Fallback to site image if Gemini fails
+python post_daily.py --on-empty-ai-images catalog
+```
+
+#### Image Generation Options for Social Posts
+
+`post_daily.py` supports three image generation backends. Choose one based on your hardware and API access:
+
+| Option | Pros | Cons | Setup | Environment Variable |
+|--------|------|------|-------|----------------------|
+| **Google Gemini** (Nano Banana) | Fast, cloud-based, no GPU needed, includes Claude prompt optimization | Requires Google AI Pro plan | `pip install -r requirements.txt` + API key | `GEMINI_API_KEY` |
+| **Local FLUX.1 [schnell]** | Zero API costs, offline, full control | Requires GPU (GTX 1070+), slow (~2–4 min per 5 images) | `pip install -r requirements-flux.txt` | N/A (uses `--use-local-flux` flag) |
+| **ModelsLab** (legacy) | Fast cloud generation | Paid API, being phased out | Manual setup | `MODELSLAB_KEY` |
+
+**Google Gemini (recommended for most users):**
+```bash
+# Set your API key in .env
+echo "GEMINI_API_KEY=your-key-here" >> .env
+
+# Run with automatic image generation
+python post_daily.py
+
+# Preview without publishing
+python post_daily.py --dry-run
+
+# Fall back to catalog image if generation fails
+python post_daily.py --on-empty-ai-images catalog
+
+# Exit with error if generation produces no variants
+python post_daily.py --on-empty-ai-images abort
+```
+
+**Local FLUX.1 [schnell]:**
+```bash
+# Install local dependencies (one-time)
+pip install -r requirements-flux.txt
+
+# Generate using local GPU
+python post_daily.py --use-local-flux
+
+# Note: Initial model download (~5.5GB), then ~2–4 min per product
+```
+
+**How image generation integrates with `post_daily.py`:**
+- When an image source is set (Gemini, local FLUX), `post_daily.py` generates 5 styled variants
+- User selects one interactively (or auto-picks first variant in CI)
+- Chosen image is composed into the branded 1080×1080 banner (if `IMGBB_API_KEY` is set)
+- Falls back to catalog product image if generation fails or is skipped
+
+**Image styles (all backends):**
+- `banner` — Premium affiliate marketing style (dark charcoal + orange accent)
+- `studio_dark` — Professional studio lighting
+- `lifestyle` — Real-world home setting
+- `vibrant` — Bold, Gen-Z Instagram energy
+- `detail` — Close-up macro photography
+
+### AI-Powered Affiliate Content Tools
+
+Generate scroll-stopping hooks, platform-specific CTAs, content calendars, and optimized bios using Claude AI. Set `ANTHROPIC_API_KEY` in `.env` to enable (falls back to templates if not set).
+
+| Command | Description |
+|---------|-------------|
+| `python generate_content_calendar.py` | Generate a 7-day posting plan with products, hooks, CTAs, and platform assignments |
+| `python generate_content_calendar.py --days 14` | Plan 14 days ahead (adjustable 1–30) |
+| `python generate_content_calendar.py --output my_calendar.json` | Save to custom path |
+| `streamlit run dashboard.py` | Launch interactive web dashboard with 4 tools (Hook Writer, CTA Builder, Content Calendar, Bio Optimizer) |
+
+**How it integrates with `post_daily.py`:**
+- When you run `post_daily.py` with `ANTHROPIC_API_KEY` set, each post automatically gets AI-generated hooks and platform-specific CTAs
+- Instagram hooks: "This one's blowing up on Amazon 🔥" style
+- TikTok hooks: adapted for platform engagement
+- CTAs: Instagram "Link in bio → $X 🛒", TikTok "Comment LINK 👇"
+- Falls back gracefully to templates if API is unavailable
+
+**Example content calendar output** (`marketing-campaigns/content_calendar.json`):
+```json
+{
+  "generated_at": "2026-04-14T12:00:00",
+  "days": 7,
+  "entries": [
+    {
+      "day": 1,
+      "date": "2026-04-14",
+      "platform": "instagram",
+      "product": { "name": "Wireless Earbuds", "price": "$49.99", ... },
+      "hook": "Everyone's grabbing this right now 👀",
+      "cta": "Link in bio → $49.99 🛒",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    }
+  ]
+}
+```
+
+**Dashboard tabs:**
+1. **🎣 Hook Writer** — Generate 5 scroll-stopping opening lines for a product
+2. **📢 CTA Builder** — Create Instagram or TikTok call-to-action text
+3. **📅 Content Calendar** — Plan N days of posts; download as JSON
+4. **✨ Bio Optimizer** — Generate optimized Instagram/TikTok bio text
+
 ### Instagram Module (`instagram/`)
 
-The `instagram/` package is used internally by `post_daily.py` for Instagram posting.
+The `instagram/` package is used internally by `post_daily.py` for Instagram posting and content generation.
 
 | Module | Description |
 |--------|-------------|
+| `instagram/affiliate_tools.py` | AI-powered content tools: hooks, CTAs, content calendars, bio optimization (Claude Haiku via Anthropic API) |
 | `instagram/scraper.py` | Scrapes product data for Instagram content |
 | `instagram/caption.py` | Generates captions for Instagram posts |
 | `instagram/poster.py` | Publishes posts via the Meta Graph API |
