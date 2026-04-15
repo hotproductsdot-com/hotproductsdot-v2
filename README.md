@@ -530,3 +530,104 @@ git push origin main
 ```
 
 After a successful push, deployment runs automatically if Actions is set up for `main`.
+
+---
+
+## Daily Development Checklist
+
+A three-phase workflow for fixing links, generating content, and shipping to production.
+
+### 🌅 Morning (9:00–12:00)
+
+**Goal:** Audit and validate the catalog
+
+- [ ] **Pull latest:** `git fetch origin && git pull --rebase origin main`
+- [ ] **Check link health:** `node check-links.js --concurrency 8 --output morning-links.json`
+  - 🎯 **Progress:** All URLs return `status: 200` or are marked “known-broken”
+- [ ] **Fix broken affiliate tags:** `node fix-affiliate-tags.js --dry-run` → review output
+  - 🎯 **Progress:** No missing `/dp/ASIN` patterns in output
+- [ ] **Apply fixes:** `node fix-affiliate-tags.js` (if dry-run showed issues)
+- [ ] **Verify images:** `node check-images.js`
+  - 🎯 **Progress:** <5% missing (all recent products have images)
+- [ ] **Commit if needed:** `git add -A && git commit -m “chore: morning link audit and affiliate tag fixes”`
+
+**When done:** You've validated that outbound links are live and formatted correctly.
+
+---
+
+### ☀️ Afternoon (12:00–17:00)
+
+**Goal:** Generate content and refresh the social media queue
+
+- [ ] **List available categories:** `python post_daily.py --list-categories`
+- [ ] **Preview today's post:** `python post_daily.py --dry-run` (or `--dry-run --platform all`)
+  - 🎯 **Progress:** Generated post preview shown; select best image variant
+- [ ] **Generate content calendar:** `python generate_content_calendar.py --days 7 --output marketing-campaigns/calendar_refresh.json`
+  - 🎯 **Progress:** 7-day plan with hooks, CTAs, and hashtags saved
+- [ ] **Post to social (real):** `python post_daily.py --platform all` or `--platform instagram` / `--platform tiktok`
+  - 🎯 **Progress:** New post published to selected platform(s); screenshot confirmation
+- [ ] **Optional:** Refresh product catalog if adding new items
+  - `python add_new_products.py --dry-run --batch-size 10` (preview)
+  - `python add_new_products.py --batch-size 10` (apply, auto-fixes images)
+- [ ] **Commit content updates:** `git add -A && git commit -m “feat: afternoon social media post + content calendar refresh”`
+
+**When done:** Today's product is featured on social, and content plan is refreshed for the next 7 days.
+
+---
+
+### 🌆 Evening (17:00–21:00)
+
+**Goal:** Quality assurance, bug fixes, and production deploy
+
+- [ ] **Run full QA pipeline:**
+  ```bash
+  ./perform_qualityassurance.sh
+  ```
+  - 🎯 **Progress:** ESLint ✅, prices ✅, images ✅, build ✅
+- [ ] **Spot-check price accuracy** (optional, if prices updated during day):
+  - `node validate-prices-parallel.js --dry-run` (fast preview, no updates)
+  - 🎯 **Progress:** <10% mismatch rate or none
+- [ ] **Test locally before deploy:**
+  ```bash
+  cd site && npm run build
+  npm run start  # visit http://localhost:3000 and spot-check Top Picks, product links
+  ```
+  - 🎯 **Progress:** Site loads, products render, affiliate links open correctly
+- [ ] **Fix any issues found:**
+  - Bad image? `node fix-single.js <product-id>`
+  - Bad price? `node validate-prices-parallel.js --workers 4` (update CSV)
+  - Broken link? `node fix-amazon-urls.py --apply --limit 10`
+- [ ] **Final commit + push to main:**
+  ```bash
+  git add -A
+  git commit -m “fix: evening QA pass and production fixes”
+  git push origin main
+  ```
+  - 🎯 **Progress:** Pushed to `main`; GitHub Actions deploy starts automatically
+- [ ] **Verify deployment:** Monitor GitHub Actions → wait for “Build & Deploy to Hostinger” to complete
+  - 🎯 **Progress:** Deployment ✅; live site updated
+- [ ] **Smoke test live site:** Open https://hotproductsdot.official (or your domain) in browser
+  - 🎯 **Progress:** Homepage loads, Top Picks visible, click one affiliate link
+- [ ] **Close day:** Log any blocking issues or next-day priorities in project notes
+
+**When done:** Code is clean, site is tested, deployment is live, and you're ready for tomorrow.
+
+---
+
+## Quick Reference: Daily One-Liner Shortcuts
+
+```bash
+# Morning audit (one command)
+node check-links.js && node check-images.js && node fix-affiliate-tags.js --dry-run
+
+# Afternoon social (one command)
+python post_daily.py --dry-run && python generate_content_calendar.py --days 7
+
+# Evening QA + deploy (one command)
+./perform_qualityassurance.sh && cd site && npm run build && git add -A && git commit -m “deploy” && git push
+
+# Full catalog maintenance (run overnight)
+python add_new_products.py --runs 3 && python remove_duplicates.py --apply && python fix_amazon_urls.py --apply --limit 50
+```
+
+---
