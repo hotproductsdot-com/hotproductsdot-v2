@@ -26,5 +26,20 @@ jobs:
         env:
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN:     ${{ secrets.IG_ACCESS_TOKEN }}
-#          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
-        run: python post_daily.py
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+          IMGBB_API_KEY:       ${{ secrets.IMGBB_API_KEY }}
+          GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+          MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}
+        run: python post_daily.py --platform instagram --verbose
+
+      - name: Commit generated assets
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add site/public/instagram-feed/ generated_images/ marketing-campaigns/post_log.csv
+          git diff --quiet && git diff --staged --quiet || (
+            git commit -m "chore: add instagram feed images and post log [skip ci]" &&
+            git push
+          )
