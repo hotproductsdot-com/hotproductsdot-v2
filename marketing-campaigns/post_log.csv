@@ -26,3 +26,4 @@ Date,Platform,Product,Status,Detail
 2026-04-13,instagram,Vitamix 7500,error,"Only photo or video can be accepted as media type.
 
 If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked by Meta’s fetcher. Use a deployed hotproductsdot.com file or INSTAGRAM_RAW_GITHUB_BASE (raw.githubusercontent.com) so the JPEG is reachable before you post."
+2026-04-16,instagram,Canon EOS R5 Camera,ok,17885956107374878

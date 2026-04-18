@@ -1,19 +1,3211 @@
 {
-  "date": "2026-04-14T12:14:02.413Z",
+  "date": "2026-04-17T02:13:03.975Z",
   "csvFile": "/mnt/e/GITHUB/hotproductsdot-v2/products/top-1000.csv",
   "summary": {
-    "total": 1085,
-    "ok": 1084,
-    "broken": 1,
+    "total": 1084,
+    "ok": 627,
+    "broken": 457,
     "timeouts": 0
   },
   "broken": [
     {
-      "url": "https://www.amazon.com/dp/B0GFNDJPM2?tag=hotproduct033-20",
-      "status": 404,
+      "url": "https://www.amazon.com/dp/B09XS7JWHH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
       "broken": true,
-      "detail": "404 Not Found",
-      "name": "Frisco 72-inch Cat Tree Scratcher Post Condo"
+      "name": "Sony WH-1000XM5 Headphones"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GBWYX9VW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bose QuietComfort Ultra Headphones"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F1H9CTPQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JBL Boombox 4"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CVL1K7DX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bose SoundLink Max Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F9S5NFJT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony ULT Field 7 Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FDRBB72D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung HW-Q930D Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F57R276D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung HW-Q800D Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09GPYL7BJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sonos Beam Gen 2"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DD2ZB3DZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell SE2726HG Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CZSGWLD5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Alienware 27 AW2725DM Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYG9DKX8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SANSUI 27-inch 240Hz Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08K2NT2G7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS PA247CV Professional Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DVMWCLR9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gaming PC - RTX 5090 System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FC92QYNT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gaming PC - RTX 5060 System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FDMDJQSW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gaming PC - RTX 5070 Ti System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CW25XR5R?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Viper V3 Pro Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07GBZ4Q68?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G502 HERO Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BYJ7N7LX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G Pro X Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F6BDV5Q8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SteelSeries Rival 650"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CSP61VR4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer DeathAdder V3 Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FH5XX7GP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SteelSeries Arctis Nova Pro Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CYSWTLZY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HyperX Cloud III Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DWD3GVJL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer BlackShark V2 X Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GC529BMZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G435 Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DFWF728F?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HOROW Black Smart Toilet"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B081HT5LD6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Moen Flo Smart Water Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DC96PPZK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Show 10 4th Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07L6KVGXV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Google Nest Hub Max"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07GG3XXNX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ring Video Doorbell Wired"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FK8JL74Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple HomePod mini 2nd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C683F516?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Arlo Ultra 2 Floodlight"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D5BBYRJM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nest Learning Thermostat"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09XXTQPXC?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ecobee Smart Thermostat Premium"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F9W85LWF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SwitchBot Curtain 3"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D65VQMZR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dreo 44 in Smart Ceiling Fan"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F6XN1J7K?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DJI Mini 4 Pro Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07FVZFX73?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DJI Air 3S Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C1S95YZQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker Nebula Mars 3 Projector"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00CH9QWOU?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Breville Espresso Machine"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D5NKX2HF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ninja AF400 Air Fryer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D365PHCD?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Instant Pot Pro Max"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G318V8TR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dyson V15 Detect Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F1N21NKM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Shark Stratos Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C3QQMMRJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "GoveeLife Smart Purifier"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09VY5LQ9G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nuwave OxyPure Air Purifier"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C7HL4GHP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "NuWave Precision Induction Cooktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D983BKZY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Smeg Retro Toaster"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01K31X4HG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Herman Miller Aeron Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DFW9D66S?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Autonomous Standing Desk"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DT93JWJP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Flexispot Standing Desk Pro"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B4N2T7GL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Fitbit Sense 2"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLQNCDJK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Peloton Bike+"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CNS894RH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Theragun Pro Massage"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FRMBRH3J?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Rode Wireless GO II Microphone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CHZ5WBTH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "GoPro Hero 12 Black"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FNNH6Y4G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BenQ SW240 Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01MY2YDW9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DJI Inspire 3 Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07Y47P31Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Zhiyun Crane 4S Stabilizer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CH8ZT8Y1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Profoto B10 Plus Head"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FKD5HXDJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Canon RF 70-200mm f/2.8"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09QF4TSZF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Leica M11 Monochrom Digital Rangefinder Camera, Black"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F59K7M9N?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Zeiss Otus 85mm f/1.4"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FGJYQHK3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Hasselblad X2D 100C 100MP Medium Format Mirrorless Camera with XCD 75mm f/3.4 P Lens"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09QF1H3VF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell XPS 17 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F3BXY5M1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "iRobot Roomba i7+"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DXMXY3SC?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Neo QLED TV 55"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B073TYYM91?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Breville Oracle Touch"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08V226T8Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony A1 Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BDGJ24QQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "GoPro Hero11 Black"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DHG4G5L2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DJI Mavic 3 Pro Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09KHC4XCT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nikon Z9 II"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CGZ38M6B?&tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Leica Q3"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLPYQ693?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bose Headphones 700"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09JL41N9C?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Beats Fit Pro"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09R9QBX2W?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Canon RF 100-500mm"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CS6LM24Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony A7S III"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DF44RTTP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Roku Ultra 2023"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BLD1KBHQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DJI RS 3 Pro Gimbal"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLL5V2K7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Arlo Ultra 2 Plus"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DT43P9D5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "EufyCam 3"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B9TWY11Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Wyze Cam v4"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D9R7Q449?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker 4K USB-C Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FXFB9XS7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Herman Miller Mirra Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C3WND2QB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "IKEA Bekant Standing Desk"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLQQ6Q4P?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Peloton Tread"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09SZ1LC36?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Cuisinart Chef's Knife Set"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09DR9K8XB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "AMOREPACIFIC Treatment Enzyme Peel Cleansing Powder | Korean Gentle Daily Exfoliator with Hyaluronic Acid and Green Tea Enzymes, 1.9 oz."
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09QXHK528?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Clé de Peau Beauté, Concealer SPF 27"
+    },
+    {
+      "url": "https://www.amazon.com/dp/149263817X?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "How to Catch the Easter Bunny"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00U2VQZDS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Neutrogena Makeup Remover Wipes Micellar Alcohol-Free Face Towelettes Remove Waterproof Mascara & Oil, Compostable 100% Plant-Based Cloth, Dermatologist & Ophthalmologist Tested, Twin Pack 2 x 25 ct"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00BETY3O0?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "AMOREPACIFIC Color Control Cushion Compact Broad Spectrum SPF 50+ | Korean Foundation with Buildable Coverage & Dewy Finish"
+    },
+    {
+      "url": "https://www.amazon.com/dp/0394861027?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "It's Not Easy Being a Bunny: An Early Reader Book for Kids (Beginner Books)"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07PBXXNCY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Clean Skin Club Clean Towels XL®, 100% USDA Biobased Face Towel, Disposable Face Towelette, Eczema Association Accepted, Makeup Remover Dry Wipes, Ultra Soft, 1 Pack, 50 Ct"
+    },
+    {
+      "url": "https://www.amazon.com/dp/0593135229?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Project Hail Mary: A Novel"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BZYCJK89?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Owala FreeSip Insulated Stainless Steel Water Bottle with Straw, BPA-Free Sports Water Bottle, Great for Travel, 24 Oz, Denim"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CP9YB3Q4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "STANLEY Quencher H2.0 Tumbler with Handle and Straw 30 oz | Flowstate 3-Position Lid | Cup Holder Compatible for Travel | Insulated Stainless Steel Cup | BPA-Free | Rose Quartz 2.0"
+    },
+    {
+      "url": "https://www.amazon.com/dp/1668236516?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Theo of Golden: A Novel"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DLBTPDCS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple Mac Mini M4 (2024)"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FHQ3736N?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSI Titan GT77 HX Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMKSGKJN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo Legion Pro 5i Gen 9"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FT4XJK89?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Acer Predator Helios 16 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DQ62MCLB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS TUF Gaming A15 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CPP726HK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Blade 16 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DK7R3ZZ1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Galaxy Book4 Ultra Gaming"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F538NQPH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell G16 Gaming Laptop RTX 4060"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F789W1V3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gigabyte AORUS 15 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DN5RWNNC?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Victus 16 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FP32XDWZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ROG Strix SCAR 16 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D1KQTFT4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Alienware x16 R2 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G48HHJF8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSI Vector GP68HX Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CPJ4Z8CY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Blade 14 2024 Edition"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BQZHLNZN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair Voyager a1600 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DT7MNLTD?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ROG Flow X16 Gaming Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DLXSH2YB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sonos Arc Ultra Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07ZJQSGFF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Yamaha YAS-209 Soundbar with Subwoofer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08CGVTVMN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Vizio V-Series 5.1 Home Theater Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYKS9L32?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "LG SP9YA 5.1.2 Soundbar Dolby Atmos"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0961X3R2H?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Klipsch Cinema 600 Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08LB2JX68?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Denon Home 350 Wireless Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0856M2T37?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony HT-A7000 7.1.2ch Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F7169WG1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung HW-B650 3.1ch Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BLB9H4ZN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bose Smart Soundbar 600"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09X1LXDVN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TCL Alto 8+ 2.1 Soundbar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B61ZKHXR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Denon AVR-X2800H 7.2ch AV Receiver"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMGW1JC7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Marantz Cinema 60 Receiver"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07MYV2527?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Audioengine A2+ Wireless Desktop Speakers"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07FKH3VPV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Klipsch R-41M Bookshelf Speakers"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B002RJLHB8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Polk Audio T15 Bookshelf Speakers"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07B4Q5587?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ELAC Debut 2.0 B6.2 Bookshelf Speakers"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DKG8G5J3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Alienware Aurora R16 Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GR5BZGHS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Omen 45L RTX 5080 Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CJZ57J4T?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "CyberPowerPC Gamer Xtreme RTX 4070"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMXXD6FS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "iBUYPOWER Pro Gaming PC RTX 4080"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DTBR9P1Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSI MEG Aegis Ti5 Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B086XMC6GW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ROG Strix G16CHR Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BDR8YKF1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo IdeaCentre Gaming 5 Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F8Q53BRZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Skytech Chronos Gaming PC RTX 4070"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BYTGQ3SM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair Vengeance i7400 Gaming PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FM3PH3F2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "NZXT Player 3 Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GBSRFZ52?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Periphio Vortex Gaming Desktop RTX 4060 Ti"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B091ZWD5BQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Skytech Blaze 3.0 Gaming PC RTX 3060"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09HC5NNT7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Pavilion Gaming Desktop TG01"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07X6BR5W3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell G5 Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLVRS6GB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSI Trident X Plus Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FVQYBVGP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ROG Huracan G21CX Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09FYNM2GW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Thermaltake Glacier 360 Liquid Cooled PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CNYB5N16?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "CLX Set Liquid Cooled Gaming Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07L4BM851?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G502 X Plus Wireless Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B6XZLNHQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer DeathAdder V3 HyperSpeed Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D1SCV5WR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SteelSeries Arctis Nova Pro Wireless"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09SVB353S?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair K95 RGB Platinum Keyboard"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CCVYHZ9N?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair Scimitar Elite Wireless Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07HYXKWS9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SteelSeries QcK Prism XL Mouse Pad"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08QSNNV5H?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair MM700 RGB Extended Mouse Pad"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07ZDWHL4M?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Firefly V2 Pro Mouse Pad"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CDWSWLWV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Elgato Stream Deck MK.2"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09DTJBLXN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "NZXT Capsule Mini USB Microphone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07RL8H55Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Elgato Stream Deck XL"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07GR31BZZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Blue Yeti X Professional Microphone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09PMFN3GB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Kraken V3 HyperSense Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DMQ16T9R?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G Pro X 2 Lightspeed Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DVZ9D58R?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Turtle Beach Stealth 600 Gen 3 Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DSLZF8HB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Astro A50 X Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09L9QK63G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Corsair Virtuoso RGB Wireless XT"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FC93C427?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer BlackShark V2 Pro Wireless"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CXC2L283?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech G535 Lightspeed Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BX76VRZL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Turtle Beach Stealth Pro Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BP6BC17P?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Audeze Maxwell Wireless Gaming Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07XYG56HS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Beyerdynamic MMX 300 Pro Gaming Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C6YLJGQP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nacon RIG 600 Pro HS Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BQL6J6D2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JBL Quantum 910 Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07ZQRNWDH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sennheiser GSP 370 Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CBG4VQ71?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Plantronics RIG 800LX Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CBG4X8DM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Astro A40 TR Headset with MixAmp Pro"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FKX1M63D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Show 10 3rd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07L6KVGXV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Google Nest Hub Max"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07XKWKQYT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Facebook Portal Plus Smart Display"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BHZX3TYV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Show 15 Smart Display"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CLBN88HN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo Smart Display 10 Google Assistant"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CQ24XLMZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JBL Link View Smart Display"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08J45RP1C?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Show 8 2nd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09Z48TGPH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Show 5 2nd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07W7LW3VJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logi Dock Flex Video Bar Smart Display"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BR5L35MR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Potensic ATOM GPS Drone 4K"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FJ1S18HF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Skydio 2+ Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07WH66PT4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ruko F11GIM2 GPS Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B085HNMHKJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Holy Stone HS720E GPS Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B723MLCW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Hubsan Zino Mini Pro Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09TP7H1H9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Parrot Anafi USA Drone"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GQJWPRCQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Shark IZ462H Stratos Cordless Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CFRH6NF2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dyson V15 Detect Absolute Cordless Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F1468WTK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "iRobot Roomba j9+ Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CDPJ2C94?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ecovacs DEEBOT X2 Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07SXD5KKG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bissell CrossWave Cordless Max"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07RBBPD9S?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Miele Complete C3 Cat & Dog Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B6BKPRG3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "LG CordZero A9 Kompressor Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BPC54599?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Shark AV2501WD AI Ultra Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FS712RGX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dreame L10s Ultra Gen 2 Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09NCKR934?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Black+Decker 20V Max Cordless Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C1QHF68W?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Hoover ONEPWR Evolve Pet Cordless Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GTK39HYY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Electrolux UltimateHome 900 Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D9QD5LZM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Roborock Q8 Max+ Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07V39K883?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bissell 2694 CrossWave HF3 Steam Mop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B083JBZXYS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Eureka AirSpeed Ultra-Lightweight Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00CCYLBZ0?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Black+Decker BDH2020FL Max Flex Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BBH9RHWN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dyson Outsize Plus Cordless Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09V3FPPZY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Jet Bot AI+ Robot Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08H8HJD7L?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Kenmore Elite 31150 Pet Friendly Vacuum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D4XCZZ5B?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple iPad Pro 11-inch M4"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYR6FH7V?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Galaxy Tab S10 Ultra"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D4XRPST5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple iPad Air 13-inch M2"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CN44YDYK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BOOX Tab Ultra C Pro E-Ink Tablet"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D154FWWQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "reMarkable 2 Paper Tablet"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BL5RZMLR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Fire HD 10 Plus Tablet"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FR4L5XMV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Onyx BOOX Note Air3 C Color E-Ink"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G25G961Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Mac Pro M4 Ultra Tower"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BM4BLDCB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Minisforum UM790 Pro Mini PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DKNMV258?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Beelink SER8 Mini PC AMD Ryzen 9"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CHF3DY7S?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "GEEKOM IT13 Mini PC Intel Core i9"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DTLBMJLS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple iMac 24-inch M4"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FWRP2GDW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo ThinkCentre M90q Gen 4 Tiny PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FRF2WHJK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Elite Mini 800 G9 Desktop PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BHRFZGHG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell OptiPlex 3000 Micro Desktop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GGYB66SN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Acemagic S1 Mini PC Intel Core i9"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CVS9YZ7Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ExpertCenter PN42 Mini PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CD7Y4C5Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "GMKtec NucBox M5 Plus Mini PC"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09Q9BVW8Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Roku Ultra 4K Streaming Player"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07S864GPW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Shark IQ Robot Self-Empty XL RV1001AE"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DBMRP8V1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Fire TV Stick HD"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B075SLGR9Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TiVo Stream 4K Streaming Device"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B7Q4XFB3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Fire TV Cube 3rd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C3HHTNJ1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BuzzTV XRS 4900 Ultra Android TV Box"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G2BTYY58?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Mecool KM2 Plus Android TV Box"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F5BSVSVB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Philips Sonicare DiamondClean 9900 Toothbrush"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B088CKP4BL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Oral-B iO Series 7 Electric Toothbrush"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BFQLHRXK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Foreo Luna 4 Face Massager"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01GNVF8S8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Waterpik Cordless Advanced Water Flosser"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D233F7W7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Panasonic ES-LV97 Wet Dry Electric Razor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07PRC3959?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "PMD Clean Pro Rose Quartz Smart Facial Cleansing Device"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C7FZB9Q9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dyson Corrale Hair Straightener"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DCH7W6Q9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Philips Norelco OneBlade Face + Body"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00TQ0A316?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BaByliss PRO Titanium Hair Iron"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01HZ5K8UE?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Revlon One-Step Hair Dryer and Volumizer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07S7PCYNH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Conair InfinitiPRO Hair Dryer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09GKY436P?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Remington Shine Therapy Flat Iron"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01DW8KPXS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Veet Easy Wax Roll-On Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMRXP1HP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Silk'n Flash&Go Hair Removal Device"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07WYY6KKC?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Tria Beauty Hair Removal Laser 4X"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FHQ2RSS3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ulike Air3 IPL Hair Removal Handset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CL1GSK4C?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Finishing Touch Flawless Hair Remover"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00UKVNSS0?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Wahl Lithium Ion Stainless Steel Grooming Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BXQHC5ZF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Charlotte Tilbury Magic Cream Moisturiser"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B072NNC2LR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Tatcha The Water Cream Moisturizer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07D67TR31?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Estée Lauder Advanced Night Repair Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C83MRDQS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dior Capture Totale Super Potent Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00B195I7Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Hourglass Ambient Lighting Powder"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B078QZ2FBG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "NARS Natural Radiant Longwear Foundation"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CCPHGWR2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Pat McGrath Labs Skin Fetish Foundation"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B9YW39MN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sulwhasoo Concentrated Ginseng Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D93RL2CY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Chanel Le Lift Firming Anti-Wrinkle Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DTFSY24K?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "YSL Beauty Pure Shots Night Reboot Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B084CWTSZM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Guerlain Orchidée Impériale Cream"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FR9XSS5Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Augustinus Bader The Rich Cream"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D5RDW3WV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "The Anxious Generation by Jonathan Haidt"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FBHP8KSP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Intermezzo by Sally Rooney"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G912K6R1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Orbital by Samantha Harvey"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DC5CPZ2Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "All Fours by Miranda July"
+    },
+    {
+      "url": "https://www.amazon.com/dp/1719893705?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "The God of the Woods by Lauren Fox"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F45BSJ11?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Wind and Truth by Brandon Sanderson"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DXVXBSCN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Onyx Storm by Rebecca Yarros"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DMCVHJ6B?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nexus by Yuval Noah Harari"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FQ5J34GT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "The Let Them Theory by Mel Robbins"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CR6CZKTH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Iron Flame by Rebecca Yarros"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DW62T7Z9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "CeraVe Moisturizing Cream 19oz"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F6D35G3G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "La Roche-Posay Toleriane Double Repair Moisturizer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D6Q5GVFR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Neutrogena Hydro Boost Water Gel"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00ZPWR0N8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "EltaMD UV Clear Broad-Spectrum SPF 46"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01MDTVZTZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "The Ordinary Niacinamide 10% + Zinc 1%"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FR5KRT22?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Paula's Choice CLEAR Regular Strength BHA Liquid Exfoliant"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09B4B1ZJQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Drunk Elephant C-Firma Fresh Day Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BXVGW13J?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Tatcha Violet-C Brightening Serum"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0037LRZHA?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sunday Riley Good Genes Glycolic Acid Treatment"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLF3RP1M?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Maybelline Sky High Mascara"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DHY9JSNV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "NYX Professional Makeup Setting Spray"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BJW7MHJT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Charlotte Tilbury Flawless Filter"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B158KL19?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Olaplex No. 3 Hair Perfector"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DCCF51RW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Living Proof Perfect Hair Day Shampoo"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B001AO0WCG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Moroccanoil Treatment Original"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B3RDWTDD?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Secretlab TITAN Evo 2022 Gaming Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08PPVCCST?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Steelcase Leap V2 Office Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B097Q4GKTK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "IKEA MARKUS Office Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C66JYTVX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Uplift V2 Standing Desk"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FXMJ6DDK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Hbada Ergonomic Reclining Office Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BZL3G1K6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "X Rocker Pro Series Gaming Chair"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09334M3V8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TOPSKY L-Shaped Computer Desk"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CB1DRDJ1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bestier 95 inch L-Shaped Gaming Desk"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BZY94QYW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "VASAGLE Industrial Ladder Shelf"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CV1RHF2V?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nathan James Piper 5-Shelf Bookcase"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01GOW5L2E?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SONGMICS 3-Tier Bookshelf"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00EV00ODI?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sauder Barrister Lane Bookcase"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B004S6L2WW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Furinno Turn-N-Tube 5-Tier Bookcase"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FBTYSRQ3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony WH-1000XM6 Wireless Headphones"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08B8XVBM6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Jabra Evolve2 85 Wireless Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00HVLURL8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Audio-Technica ATH-M50x Professional Headphones"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BHCLZGTW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker Soundcore Space Q45 Headphones"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08LN1J229?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JLab JBuds Air ANC True Wireless Earbuds"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BZV4QFP8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker Soundcore Liberty 4 NC Earbuds"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B094LS37Z4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JBL Charge 5 Portable Bluetooth Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BC27MM5Z?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Marshall Stanmore III Bluetooth Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BXW5JQ21?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker Soundcore Motion X600 Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08DG5J6QJ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bang & Olufsen Beosound A1 Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08B443QJ9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony SRS-XB43 Wireless Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BRYQ641F?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Harman Kardon Onyx Studio 8 Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D9Y7N23T?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Tribit StormBox Blast Portable Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08N1N9D5K?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "JBL PartyBox 310 Bluetooth Party Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07TFBDHBK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sonos One Gen 2 Smart Speaker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B1N7LJD3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Blink Outdoor 4 Security Camera 4-Pack"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09J6Y8Y73?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Google Nest Cam Indoor Wired"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GSS8YDN1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Arlo Ultra 2 Wireless 4K Security Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07C38HT49?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SimpliSafe 8-Piece Home Security System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C6PG4GR3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ring Alarm 8-Piece Security Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08WRZJJGM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lorex 4K Ultra HD IP Security System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BWSPP9HH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Wyze Cam Pan v3 Security Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07K734ZTW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Reolink 4K Security Camera System 8CH NVR"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FP24GWW1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Whoop 4.0 Fitness Tracker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CFT1CC3J?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Suunto Race GPS Multisport Watch"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DG2S6GC1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Oura Ring Gen 4 Health Tracker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DZ4984QF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TRX All-in-One Suspension Training System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09Z1BXM53?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Rogue Ohio Power Bar"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B002OP1Z44?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "CAP Barbell 300-Pound Olympic Set"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00NH9WEUA?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Concept2 RowErg Rowing Machine"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B087F16GKW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gaiam Premium Yoga Mat"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYDND45H?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Assault AirBike Classic"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FPGQ98T9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "REP Fitness FB-5000 Competition Flat Bench"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DRSWVTMN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple MacBook Pro 14-inch M4 Pro"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DRSTX7MT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Apple MacBook Pro 16-inch M4 Max"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09TPWFK6F?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ZenBook Pro 16X OLED"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F1YZ4X67?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "LG Gram 17 Lightweight Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYJY82YM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP EliteBook 840 G10 Business Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FL7BTYKX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo ThinkPad T14s Gen 4 AMD"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FS2C1CR9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell Latitude 7450 Business Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GDRNJJZ1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Spectre x360 16 2-in-1 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C6PF997Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Galaxy Book3 Pro 360"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FGGNLY2L?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Acer Swift Go 16 OLED Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0GM24XLYL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Dragonfly Pro Chromebook"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CKNZJCC3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lenovo Yoga 9i Gen 9 2-in-1 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09NJ8SJB9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Dell XPS 13 Plus Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BYD6QFMV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Razer Book 13 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C23WY7DM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Microsoft Surface Laptop 6"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FL8YTZVP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Acer Aspire 5 Slim Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D1DB11TY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP Envy 17 Laptop"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CP6HW894?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Odyssey G9 Super Ultrawide"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B081V1M5CR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BenQ EW3280U 4K Entertainment Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B078GVTD9N?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "LG 27UK850-W 4K UHD Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CV26XVMD?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ASUS ROG Swift PG32UCDM OLED Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08TZR782B?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ViewSonic VP2768a Professional Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B083GRVFXN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Gigabyte M32U 4K Gaming Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BD95YZ4J?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSI Optix MAG274QRF-QD Gaming Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FSBW8F96?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Acer Predator X34 Ultrawide Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F5FP39MK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "AOC C27G2 Curved Gaming Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00FLYWNYQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Instant Pot Duo 7-in-1 Electric Pressure Cooker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DF6SW1NL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "HP ENVY 32 All-in-One Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08LB3LZL5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ninja Foodi 9-in-1 Pressure Cooker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07T2FWL8Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Traeger Pro 575 Wood Pellet Grill"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07HSKFGYQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "All-Clad D3 Stainless Steel 10-Piece Cookware Set"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DPH6NNTB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Weber Spirit II E-310 Gas Grill"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DK3XYGNY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Instant Vortex Plus 6-Quart Air Fryer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B000A7NN4I?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Zojirushi Neuro Fuzzy Rice Cooker 5.5 Cup"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0055FSN0Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Aroma Housewares 20-Cup Digital Rice Cooker"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09B9CD1YB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Echo Dot 5th Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G6G177M4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Google Nest Mini 2nd Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMGR8TGB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Philips Hue White and Color Ambiance Starter Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D7FZ97T5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TP-Link Tapo P115 Mini Smart Plug 4-Pack"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D5BGST5N?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Google Nest Learning Thermostat 4th Gen"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FMXX1W7D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Meross Smart Garage Door Opener"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DHYJKVX9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TP-Link Kasa Smart Dimmer Switch 3-Pack"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09JL9N6R7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Chamberlain myQ Smart Garage Control"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07GG3XXNX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ring Video Doorbell Wired"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09LWVWN8M?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nanoleaf Lines Hexagons Smart Lights Starter Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09WDL1J8J?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Govee LED Strip Lights 65.6ft"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B089DR29T6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Smart Plug"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BFWH2WD8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "SwitchBot Hub 2 Smart Home Controller"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BKLQFFSF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sony A7R V Full-Frame Mirrorless Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CCMTFYJ8?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nikon Z8 Mirrorless Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D9KNWMZH?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Canon EOS R5 Mark II Mirrorless Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FC81M3Z4?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Fujifilm X-T5 Mirrorless Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B093JGV2FN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Sigma 35mm f/1.4 DG DN Art Lens"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B2KV35NX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Canon EOS R10 Mirrorless Camera"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09HL44W23?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Tamron 28-75mm f/2.8 Di III VXD G2 Lens"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G59XNHB9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lowepro ProTactic 450 AW II Camera Bag"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B013JS85E2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Manfrotto 290 Xtra Aluminum Tripod"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07JMMCR17?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Joby GorillaPod 3K Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0F1Z8MN9Y?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Furbo 360 Dog Camera Pet Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01IUPTKFM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "KONG Classic Dog Chew Toy Large"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07MZBX5ZW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "FURminator deShedding Tool for Large Dogs"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09315VP9K?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Whisker Litter-Robot 3 Connect Automatic Litter Box"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FPZ96ZYG?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ruffwear Front Range Dog Harness"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0002AT590?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Petmate Indigo Dog House Extra Large"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BMT55MW9?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Zesty Paws Allergy Immune Supplement for Dogs"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B084LR734D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Orvis Waterproof Bolster Dog Bed Large"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00K2TK7A2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nutramax Cosequin DS Plus MSM Joint Supplement"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CZPPQD1M?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Baby Trend Expedition Jogger Travel System"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DHLRZSJ7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Graco Slim Fit 3 in 1 Convertible Car Seat"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FLQJXMBL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Chicco NextFit Max Convertible Car Seat"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FDSHXWYY?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Owlet Dream Sock Baby Monitor"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0915Y5S5D?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Ergobaby Omni Breeze Baby Carrier"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07L5W4N5Q?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Skip Hop Moby Bathtub Rinser"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FXM712Y2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Honest Company Clean Conscious Diapers Size 1"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D1DV6FV5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Canon PIXMA TR8620a All-In-One Printer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B096N9JMXF?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Epson EcoTank ET-4850 Wireless Printer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BKW3LB2B?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech MX Keys S Wireless Keyboard"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BZ7756C5?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Brother MFC-J995DW INKvestment Tank Printer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G7729LHK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Logitech MX Master 3S Wireless Mouse"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07L755X9G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Elgato Key Light Professional Desk Light"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DK59YKRS?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "BenQ ScreenBar Halo Monitor Light"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B000WB397I?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Fellowes Powershred 79Ci Shredder"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08VPFB5G3?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Amazon Basics Mesh Office Desk Organizer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CZ7QGDMT?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "AmazonBasics Padfolio Resume Portfolio"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0D9XZBH7P?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Quartet Glass Dry-Erase Board 6x4ft"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01N5O7551?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "MSR PocketRocket 2 Stove"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09NQK2581?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Black Diamond Spot 400 Headlamp"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0CS6587Z1?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Nemo Tensor Ultralight Sleeping Pad"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FTTZ9SPR?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Patagonia Nano Puff Jacket"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DM3DB4SX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Arc'teryx Beta AR Jacket"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DBMFCJGP?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Wilson Blade 98 v8 Tennis Racket"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FP3Q99XK?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "TaylorMade Stealth 2 Driver"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08MMP4ZTN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Head Radical MP Tennis Racket"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DPN7QZ9R?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Titleist Pro V1 Golf Balls 12-Pack"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08QJC5YPX?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Spalding NBA Outdoor Basketball Size 7"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09TG9PQ8M?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Yonex Arcsaber 11 Pro Badminton Racket"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B074HDF916?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Rawlings Select Pro Lite Baseball Glove"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B087ZKD936?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Schwinn IC4 Indoor Cycling Bike"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01499GH36?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Precor EFX 221 Elliptical Fitness Crosstrainer"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0FKTTWRZW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "ProForm 9000 Smart Treadmill"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0B7CHY313?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Protective Industries PS22 Youth Hockey Shin Guards"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09P21MBQM?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Garmin DriveSmart 76 GPS Navigator"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DSKXJV3H?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Vantrue E1 Lite Dash Cam Front"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0G8GQQ3TL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Kasa Smart EP25 Smart Plug Car Charger"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BPH6S4DN?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Anker 313 Car Charger 24W Dual USB"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07JFRFJG6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "OBD Eleven Pro OBD2 Bluetooth Scanner"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B01N1UX8RW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Renpho Digital Body Fat Scale"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C3JNJPZ7?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Withings Body+ Smart Scale"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0BKLZGCRZ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Beurer Massage Chair Pad"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B09XGPRD3W?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Carex Day-Light Classic Plus Therapy Lamp"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DLHL7KXB?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Away The Bigger Carry-On Suitcase"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B000SKZM9G?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Lewis N Clark Comfort Travel Pillow"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DJRP7SKD?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Samsung Galaxy Watch Ultra"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0C7W12RN2?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Meta Quest 3 Mixed Reality Headset"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B08JHHYPZL?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Makita XFD131 18V LXT Drill Driver Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DYDLJB2F?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Milwaukee M18 FUEL Drill Combo Kit"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B004323NNC?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Bosch 12-Inch Dual-Bevel Glide Miter Saw GCM12SD"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00M66B2CQ?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DeWalt 20V Max Circular Saw Kit DCS391L1"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B0DNYGV49T?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DeWalt DWE7491RS 10-inch Table Saw"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B098V9LJQ6?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DeWalt DWMT75049 Mechanics Tool Kit 192-Piece"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B079MJ6MLV?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Leatherman Wave Plus Multi-Tool"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B00BF4VUKO?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "DEWALT DWST08201 TSTAK Wall Control Panel"
+    },
+    {
+      "url": "https://www.amazon.com/dp/B07GY8D3KW?tag=hotproduct033-20",
+      "status": "error",
+      "detail": "",
+      "broken": true,
+      "name": "Native Instruments Komplete Kontrol A49 MIDI Keyboard"
     }
   ],
   "timeouts": []

@@ -87,10 +87,43 @@ export default function HomePage() {
         <div id="featured-rotation"><ProductGrid products={featured} /></div>
       </section>
 
-      {/* Categories */}
+      {/* Best Categories (Money Pages) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 border-t border-zinc-800">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white">Browse by Category</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-orange-500">★</span>
+            <span className="text-orange-400 text-xs font-bold uppercase tracking-widest">Expert Roundups</span>
+          </div>
+          <h2 className="text-2xl font-bold text-white">Best [Category] Guides</h2>
+          <p className="text-zinc-500 text-sm mt-1">Deep dives into our top picks with verified reviews</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {categories.slice(0, 6).map((cat) => (
+            <Link
+              key={`best-${cat.slug}`}
+              href={`/best/${cat.slug}`}
+              className="group block bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-orange-500/40 hover:shadow-lg hover:shadow-orange-500/5 transition-all"
+            >
+              <div className="flex items-start gap-3 mb-3">
+                <span className="text-2xl">{getCategoryIcon(cat.slug)}</span>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-white group-hover:text-orange-400 transition-colors">
+                    Best {cat.name}
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">{cat.count} products reviewed</p>
+                </div>
+              </div>
+              <p className="text-sm text-zinc-400 mb-4">Expert roundup with detailed reviews and comparisons.</p>
+              <span className="text-orange-400 text-sm font-medium">Read guide →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Browse by Category */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white">Browse All Categories</h2>
           <p className="text-zinc-500 text-sm mt-1">Find exactly what you&apos;re looking for</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1776085459217,
+  "lastScanned": 1776392069532,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -46,6 +46,7 @@
     "isMonorepo": false,
     "workspaces": [],
     "mainDirectories": [
+      "docs",
       "scripts"
     ],
     "gitBranches": null
@@ -56,46 +57,56 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1776085458963,
+      "lastAccessed": 1776392069247,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "post_daily.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
       ]
     },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1776392069275,
+      "keyFiles": [
+        "image-generation-cost-analysis.md"
+      ]
+    },
     "generated_images": {
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1776085459004,
+      "lastAccessed": 1776392069286,
       "keyFiles": []
     },
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 7,
-      "lastAccessed": 1776085459023,
+      "fileCount": 11,
+      "lastAccessed": 1776392069305,
       "keyFiles": [
         "__init__.py",
+        "affiliate_tools.py",
         "banner_compose.py",
         "bot.py",
-        "caption.py",
-        "image_gen.py"
+        "caption.py"
       ]
     },
     "marketing": {
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1776085459040,
+      "lastAccessed": 1776392069318,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1776085459059,
+      "fileCount": 2,
+      "lastAccessed": 1776392069326,
       "keyFiles": [
+        "content_calendar.json",
         "post_log.csv"
       ]
     },
@@ -103,7 +114,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1776085459076,
+      "lastAccessed": 1776392069339,
       "keyFiles": [
         "check_duplicates.py",
         "duplicates_found.csv",
@@ -114,15 +125,17 @@
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 0,
-      "lastAccessed": 1776085459087,
-      "keyFiles": []
+      "fileCount": 1,
+      "lastAccessed": 1776392069352,
+      "keyFiles": [
+        "bootstrap_flux_venv.sh"
+      ]
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1776085459102,
+      "lastAccessed": 1776392069365,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -131,11 +144,20 @@
         "package-lock.json"
       ]
     },
+    "venv": {
+      "path": "venv",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776392069378,
+      "keyFiles": [
+        "pyvenv.cfg"
+      ]
+    },
     "site/app": {
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1776085459188,
+      "lastAccessed": 1776392069470,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -146,7 +168,25 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1776085459217,
+      "lastAccessed": 1776392069498,
+      "keyFiles": []
+    },
+    "venv/bin": {
+      "path": "venv/bin",
+      "purpose": "Executable scripts",
+      "fileCount": 14,
+      "lastAccessed": 1776392069522,
+      "keyFiles": [
+        "Activate.ps1",
+        "activate",
+        "activate.csh"
+      ]
+    },
+    "venv/lib": {
+      "path": "venv/lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1776392069532,
       "keyFiles": []
     }
   },
@@ -176,6 +216,12 @@
       "type": "file"
     },
     {
+      "path": "site/app/page.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1776467886878,
+      "type": "file"
+    },
+    {
       "path": ".env",
       "accessCount": 6,
       "lastAccessed": 1776006351916,
@@ -188,15 +234,21 @@
       "type": "file"
     },
     {
-      "path": "site/app/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1775995838204,
-      "type": "file"
-    },
-    {
       "path": "instagram/poster.py",
       "accessCount": 5,
       "lastAccessed": 1776087969221,
+      "type": "file"
+    },
+    {
+      "path": "products/top-1000.csv",
+      "accessCount": 5,
+      "lastAccessed": 1776392142323,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/products.ts",
+      "accessCount": 5,
+      "lastAccessed": 1776467575121,
       "type": "file"
     },
     {
@@ -206,21 +258,9 @@
       "type": "file"
     },
     {
-      "path": "products/top-1000.csv",
-      "accessCount": 4,
-      "lastAccessed": 1775786359070,
-      "type": "file"
-    },
-    {
       "path": "site/next.config.ts",
       "accessCount": 4,
       "lastAccessed": 1775995852293,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 4,
-      "lastAccessed": 1775995853793,
       "type": "file"
     },
     {
@@ -296,6 +336,12 @@
       "type": "file"
     },
     {
+      "path": "link-report.json",
+      "accessCount": 2,
+      "lastAccessed": 1776392138158,
+      "type": "file"
+    },
+    {
       "path": "site",
       "accessCount": 1,
       "lastAccessed": 1775477725344,
@@ -341,12 +387,6 @@
       "path": "site/scripts/rotate-homepage.js",
       "accessCount": 1,
       "lastAccessed": 1775478594034,
-      "type": "file"
-    },
-    {
-      "path": "link-report.json",
-      "accessCount": 1,
-      "lastAccessed": 1775511938684,
       "type": "file"
     },
     {
