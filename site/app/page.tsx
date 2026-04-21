@@ -1,8 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllProducts, getAllCategories, getFeaturedProducts, getSaleProducts } from "./lib/products";
 import ProductGrid from "./components/ProductGrid";
 import DealCard from "./components/DealCard";
 import { getCategoryIcon } from "./components/CategoryIcon";
+import { SITE_NAME, SITE_URL } from "./lib/constants";
+
+export const metadata: Metadata = {
+  title: "HotProducts — Top-Rated Amazon Picks Across 40+ Categories",
+  description:
+    "HotProducts curates the best-selling, top-rated products on Amazon. Expert roundups and buying guides across electronics, smart home, fitness, kitchen, photography, and more — updated weekly.",
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: "HotProducts — Top-Rated Amazon Picks Across 40+ Categories",
+    description:
+      "Expert roundups and buying guides for the best-selling products on Amazon. Verified reviews and real prices across 40+ categories.",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    type: "website",
+  },
+};
 
 export default function HomePage() {
   const featured = getFeaturedProducts(8);
@@ -10,8 +27,39 @@ export default function HomePage() {
   const categories = getAllCategories();
   const allProducts = getAllProducts();
 
+  // Organization + WebSite schema help Google understand brand queries and
+  // enable sitelinks search box. Useful for brand queries like "hotproducts".
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/app-icon.png`,
+    sameAs: [
+      "https://www.instagram.com/hotproductsdot.official",
+      "https://www.tiktok.com/@hotproductsdot.of",
+    ],
+  };
+
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/products?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
       {/* Hero */}
       <section className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center">

@@ -1,5 +1,19 @@
 import Link from "next/link";
 
+// Top category guides — the internal links that push PageRank into our /best/
+// money pages. Kept small to avoid nav bloat; these are the highest-intent
+// commercial categories. Order matters (first six get more weight).
+const TOP_GUIDES: { slug: string; label: string }[] = [
+  { slug: "laptops", label: "Best Laptops" },
+  { slug: "headphones", label: "Best Headphones" },
+  { slug: "smart-home", label: "Best Smart Home" },
+  { slug: "kitchen", label: "Best Kitchen" },
+  { slug: "fitness", label: "Best Fitness" },
+  { slug: "photography", label: "Best Photography" },
+  { slug: "monitors", label: "Best Monitors" },
+  { slug: "robot-vacuums", label: "Best Robot Vacuums" },
+];
+
 export default function Footer() {
   return (
     <footer className="border-t border-zinc-800 mt-20 py-10 text-sm text-zinc-500">
@@ -13,12 +27,24 @@ export default function Footer() {
               Curated Amazon product recommendations. We research so you don&apos;t have to.
             </p>
           </div>
-          <nav className="flex gap-12 text-xs">
+          <nav className="flex gap-12 text-xs flex-wrap">
             <div className="flex flex-col gap-2">
               <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">Browse</span>
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <Link href="/products" className="hover:text-white transition-colors">All Products</Link>
               <Link href="/guides" className="hover:text-white transition-colors">Buying Guides</Link>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">Top Guides</span>
+              {TOP_GUIDES.map((g) => (
+                <Link
+                  key={g.slug}
+                  href={`/best/${g.slug}`}
+                  className="hover:text-white transition-colors"
+                >
+                  {g.label}
+                </Link>
+              ))}
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">Legal</span>

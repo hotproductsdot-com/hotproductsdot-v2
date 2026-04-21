@@ -19,7 +19,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const p = getProductBySlug(slug);
-  if (!p) return { title: "Product Not Found" };
+  if (\!p) return { title: "Product Not Found" };
   const canonical = `${SITE_URL}/products/${p.slug}`;
   return {
     title: p.name,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function getWhyBuy(p: ReturnType<typeof getProductBySlug>): string[] {
-  if (!p) return [];
+  if (\!p) return [];
   const points: string[] = [];
   if (p.rating >= 4.7) points.push(`Exceptional ${p.rating}-star rating from ${p.reviewCount.toLocaleString()} verified buyers`);
   else points.push(`Strong ${p.rating}-star average across ${p.reviewCount.toLocaleString()} reviews`);
@@ -51,10 +51,10 @@ function getWhyBuy(p: ReturnType<typeof getProductBySlug>): string[] {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (!product) notFound();
+  if (\!product) notFound();
 
   const related = getProductsByCategory(product.categorySlug)
-    .filter((p) => p.slug !== product.slug)
+    .filter((p) => p.slug \!== product.slug)
     .slice(0, 4);
 
   const whyBuy = getWhyBuy(product);
@@ -183,6 +183,29 @@ export default async function ProductDetailPage({ params }: Props) {
           </p>
         </div>
       </div>
+
+      {/* Editor's roundup — silo back-link to the /best/ money page.
+          Pushes authority from product detail → commercial roundup per our
+          SITE_STRUCTURE.md Home → Best → Category → Product flow. */}
+      <section className="border-t border-zinc-800 pt-10 mb-12">
+        <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border border-orange-500/30 rounded-xl p-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="text-orange-400 text-xs font-bold uppercase tracking-widest mb-1">Editor&apos;s Roundup</div>
+            <h3 className="text-lg font-bold text-white">
+              See how this {product.category.toLowerCase()} stacks up against the best
+            </h3>
+            <p className="text-sm text-zinc-400 mt-1">
+              Compare the top picks side-by-side in our full {product.category.toLowerCase()} roundup.
+            </p>
+          </div>
+          <Link
+            href={`/best/${product.categorySlug}`}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors whitespace-nowrap"
+          >
+            Read: Best {product.category} →
+          </Link>
+        </div>
+      </section>
 
       {/* Related */}
       {related.length > 0 && (

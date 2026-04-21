@@ -1,12 +1,59 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllCategories, getProductsByCategory } from "../../lib/products";
+import { getAllCategories, getProductsByCategory, type Product } from "../../lib/products";
 import { SITE_URL } from "../../lib/constants";
 import { getCategoryIcon } from "../../components/CategoryIcon";
 import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
 
 interface Props { params: Promise<{ slug: string }> }
+
+// Per-product review copy. Replaces the old duplicated template string with
+// a blurb differentiated by each product's actual stats (rating, reviews,
+// BSR rank, price tier, badge). Keeps the page from looking templated to
+// Google's Helpful Content system.
+function getProductBlurb(p: Product, catName: string): string {
+  const cat = catName.toLowerCase();
+  const parts: string[] = [];
+
+  if (p.rating >= 4.7) {
+    parts.push(
+      `With a ${p.rating}-star average across ${p.reviewCount.toLocaleString()} verified buyers, this is one of the most consistently-reviewed ${cat} options on Amazon.`
+    );
+  } else if (p.rating >= 4.5) {
+    parts.push(
+      `Rated ${p.rating} stars by ${p.reviewCount.toLocaleString()} reviewers — strong enough to stand out in a crowded ${cat} field.`
+    );
+  } else {
+    parts.push(
+      `Backed by ${p.reviewCount.toLocaleString()} Amazon reviews averaging ${p.rating} stars.`
+    );
+  }
+
+  if (p.bsrRank > 0 && p.bsrRank <= 10) {
+    parts.push(`Currently sits at #${p.bsrRank} on Amazon's bestseller list in its subcategory.`);
+  } else if (p.bsrRank > 0 && p.bsrRank <= 100) {
+    parts.push(`Ranks inside Amazon's top 100 bestsellers in its subcategory (${p.bsr}).`);
+  }
+
+  if (p.priceMin > 0 && p.priceMin < 50) {
+    parts.push(`At ${p.priceRange}, it's also one of the more accessible picks here — a fair place to start if you're new to ${cat}.`);
+  } else if (p.priceMin >= 50 && p.priceMin < 200) {
+    parts.push(`Priced at ${p.priceRange}, it lands squarely in the mainstream ${cat} tier — more capable than entry-level options without jumping to premium pricing.`);
+  } else if (p.priceMin >= 200) {
+    parts.push(`At ${p.priceRange} it's a premium pick, justified if you want the best build quality and features in ${cat}.`);
+  }
+
+  if (p.badge === "hot") {
+    parts.push(`It's one of the fastest-moving items in our ${cat} tracking this week.`);
+  } else if (p.badge === "best-seller") {
+    parts.push(`A long-standing Amazon Best Seller — proven track record, not a flash-in-the-pan.`);
+  } else if (p.badge === "top-rated") {
+    parts.push(`Top-rated across thousands of reviews — the kind of ${cat} pick you don't need to second-guess.`);
+  }
+
+  return parts.join(" ");
+}
 
 export function generateStaticParams() {
   return getAllCategories().map((c) => ({ slug: c.slug }));
@@ -16,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const cats = getAllCategories();
   const cat = cats.find((c) => c.slug === slug);
-  if (!cat) return { title: "Category Not Found" };
+  if (\!cat) return { title: "Category Not Found" };
   const canonical = `${SITE_URL}/best/${slug}`;
   const title = `Best ${cat.name} for 2026 — Expert Picks & Reviews`;
   const description = `Top-rated ${cat.name} on Amazon. We reviewed the bestsellers so you don't have to. Unbiased, verified reviews with real prices.`;
@@ -33,12 +80,93 @@ export default async function BestCategoryPage({ params }: Props) {
   const products = getProductsByCategory(slug);
   if (products.length === 0) notFound();
 
-  const catName = products[0]!.category;
+  const catName = products[0]\!.category;
   const topProducts = products.slice(0, 5);
-  const topPick = topProducts[0]!;
+  const topPick = topProducts[0]\!;
+  const canonical = `${SITE_URL}/best/${slug}`;
+
+  // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: `Best ${catName}`, item: canonical },
+    ],
+  };
+
+  // ItemList schema — rich-result eligible. Each listed product becomes a
+  // Product entry with AggregateRating + Offer so the full roundup is
+  // machine-readable.
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Best ${catName} for 2026`,
+    url: canonical,
+    numberOfItems: topProducts.length,
+    itemListElement: topProducts.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.name,
+        url: `${SITE_URL}/products/${p.slug}`,
+        image: p.imageUrl || undefined,
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: p.rating,
+          reviewCount: p.reviewCount,
+        },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          ...(p.priceMin > 0 ? { price: p.priceMin } : {}),
+          availability: "https://schema.org/InStock",
+          url: p.amazonUrl,
+          seller: { "@type": "Organization", name: "Amazon" },
+        },
+      },
+    })),
+  };
+
+  // FAQPage schema — mirrors the on-page FAQ. Eligible for FAQ rich snippets.
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What makes these products stand out?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We prioritize bestsellers with 4.5+ ratings, strong sales velocity, and high affiliate potential. All products are verified on Amazon with real customer reviews.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: `How often is this ${catName.toLowerCase()} guide updated?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Quarterly. We refresh prices, check for new bestsellers, and update availability. Check back seasonally for our latest picks.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Are these affiliate links?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. We earn a small commission when you purchase through our links at no extra cost to you. This helps us maintain the site and keep these guides free.",
+        },
+      },
+    ],
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-zinc-500 mb-8">
         <Link href="/" className="hover:text-zinc-300">Home</Link>
@@ -151,7 +279,7 @@ export default async function BestCategoryPage({ params }: Props) {
                     {product.badge === "hot" ? "🔥 Hot Pick" : product.badge === "best-seller" ? "🏅 Best Seller" : "⭐ Top Rated"}
                   </span>
                 )}
-                Top-performing {catName.toLowerCase()} with strong ratings and excellent customer feedback. Great choice for most use cases.
+                {getProductBlurb(product, catName)}
               </p>
               <TrackedAffiliateLink
                 href={product.amazonUrl}
