@@ -19,7 +19,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const p = getProductBySlug(slug);
-  if (\!p) return { title: "Product Not Found" };
+  if (!p) return { title: "Product Not Found" };
   const canonical = `${SITE_URL}/products/${p.slug}`;
   return {
     title: p.name,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function getWhyBuy(p: ReturnType<typeof getProductBySlug>): string[] {
-  if (\!p) return [];
+  if (!p) return [];
   const points: string[] = [];
   if (p.rating >= 4.7) points.push(`Exceptional ${p.rating}-star rating from ${p.reviewCount.toLocaleString()} verified buyers`);
   else points.push(`Strong ${p.rating}-star average across ${p.reviewCount.toLocaleString()} reviews`);
@@ -51,10 +51,10 @@ function getWhyBuy(p: ReturnType<typeof getProductBySlug>): string[] {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (\!product) notFound();
+  if (!product) notFound();
 
   const related = getProductsByCategory(product.categorySlug)
-    .filter((p) => p.slug \!== product.slug)
+    .filter((p) => p.slug !== product.slug)
     .slice(0, 4);
 
   const whyBuy = getWhyBuy(product);

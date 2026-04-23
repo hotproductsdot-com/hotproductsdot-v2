@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const cats = getAllCategories();
   const cat = cats.find((c) => c.slug === slug);
-  if (\!cat) return { title: "Category Not Found" };
+  if (!cat) return { title: "Category Not Found" };
   const canonical = `${SITE_URL}/best/${slug}`;
   const title = `Best ${cat.name} for 2026 — Expert Picks & Reviews`;
   const description = `Top-rated ${cat.name} on Amazon. We reviewed the bestsellers so you don't have to. Unbiased, verified reviews with real prices.`;
@@ -80,9 +80,9 @@ export default async function BestCategoryPage({ params }: Props) {
   const products = getProductsByCategory(slug);
   if (products.length === 0) notFound();
 
-  const catName = products[0]\!.category;
+  const catName = products[0]!.category;
   const topProducts = products.slice(0, 5);
-  const topPick = topProducts[0]\!;
+  const topPick = topProducts[0]!;
   const canonical = `${SITE_URL}/best/${slug}`;
 
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
