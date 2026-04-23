@@ -568,6 +568,32 @@ def instagram_caption(product: dict) -> str:
     return instagram_body(product) + "\n\n" + instagram_tags(product)
 
 
+# ── First-comment templates ──────────────────────────────────────────────────
+# Posted as the first comment by @hotproductsdot.official right after the
+# main post publishes. Drives (a) bio-link taps via a second CTA and
+# (b) replies via an open question — both are algorithmic engagement signals.
+INSTAGRAM_FIRST_COMMENT_TEMPLATES = (
+    "🔗 Full review + best price link in bio!\n\nWould you grab this {noun} or is there something better you'd go with instead? 👀",
+    "🛒 Amazon link + our full review: link in bio\n\nBe honest — {price} for this {noun}: yay or nay? 🤔",
+    "🔥 We put this {noun} through the wringer — full breakdown on the site (link in bio)\n\nWhat's the last {noun} you actually loved? Drop it below 👇",
+    "🔗 Tap the bio link for the Amazon deal + our full review\n\nTag someone who NEEDS this in their life 🏷️",
+    "💬 Full review + current Amazon price: link in bio\n\nFrom 1–10, how hyped are you about this one? 👇",
+)
+
+
+def instagram_first_comment(product: dict) -> str:
+    """First auto-comment text. Rotated deterministically per product+date."""
+    seed = f"comment|{product.get('slug', '')}|{date.today().isoformat()}"
+    idx = abs(hash(seed)) % len(INSTAGRAM_FIRST_COMMENT_TEMPLATES)
+    template = INSTAGRAM_FIRST_COMMENT_TEMPLATES[idx]
+    noun = CATEGORY_NOUN.get(
+        product.get("category", "").lower().strip(),
+        f"{product.get('category', 'product').lower()} pick",
+    )
+    price = _fmt_price(product["price"]) if product.get("price") not in ("", "N/A", None) else "this price"
+    return template.format(noun=noun, price=price)
+
+
 def tiktok_caption(product: dict, *, ai_hook: str | None = None, ai_cta: str | None = None) -> str:
     """TikTok caption. Optionally inject AI hook and CTA."""
     price   = product["price"] if product["price"] not in ("", "N/A") else "Check price"
@@ -745,7 +771,27 @@ def post_instagram(
     if "error" in d2:
         return {"ok": False, "error": d2["error"].get("message", str(d2["error"]))}
 
-    return {"ok": True, "post_id": d2.get("id", ""), "platform": "instagram"}
+    media_id = d2.get("id", "")
+
+    # Step 3 — auto-reply first comment to drive engagement + surface a second CTA.
+    # Comment failure is non-fatal: the post is already live, so we log and move on.
+    first_comment = instagram_first_comment(product)
+    if first_comment:
+        try:
+            r3 = requests.post(
+                f"{api_base}/{media_id}/comments",
+                data={"message": first_comment, "access_token": token},
+                timeout=30,
+            )
+            d3 = r3.json()
+            if "error" in d3:
+                logger.warning("First comment failed: %s", d3["error"].get("message", d3["error"]))
+            else:
+                logger.info("First comment posted id=%s", d3.get("id", ""))
+        except requests.RequestException as exc:
+            logger.warning("First comment request error: %s", exc)
+
+    return {"ok": True, "post_id": media_id, "platform": "instagram"}
 
 
 # ─── Draft preview ───────────────────────────────────────────────────────────
