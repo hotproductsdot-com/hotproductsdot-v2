@@ -8,37 +8,24 @@ on:
 
 jobs:
   rotate:
-    name: 🗓️ Inject today's featured picks
+    name: 🗓️ Trigger Hostinger redeploy for daily rotation
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: site/package-lock.json
-
-      - name: 📥 Install dependencies
-        run: cd site && npm ci
+          fetch-depth: 0
 
       - name: 🗓️ Featured rotation date (UTC)
         id: cal
         run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
-      - name: 🛠️ Generate products.json
-        run: cd site && node prebuild.js
-
-      - name: 🔄 Rotate featured products
-        run: cd site && node scripts/rotate-homepage.js
-        env:
-          FEATURED_DAY: ${{ steps.cal.outputs.day }}
-
-      - name: 📤 Upload index.html via FTP
+      - name: 🚀 Push empty commit to trigger Hostinger auto-deploy
         run: |
-          curl -s --ssl -T site/out/index.html \
-            "ftp://${{ secrets.FTP_SERVER }}/domains/hotproductsdot.com/public_html/index.html" \
-            --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}"
+          git config user.email "action@github.com"
+          git config user.name  "GitHub Action"
+          git commit --allow-empty -m "chore: daily rotation ${{ steps.cal.outputs.day }} [skip ci]"
+          git push origin HEAD:main

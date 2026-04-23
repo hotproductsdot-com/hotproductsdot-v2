@@ -9,6 +9,8 @@ jobs:
   post:
     name: Post today's product
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repo
