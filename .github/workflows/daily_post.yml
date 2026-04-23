@@ -36,14 +36,17 @@ jobs:
           MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}
         run: python post_daily.py --platform instagram --verbose
 
-      - name: Commit generated assets
+      - name: Commit post log
         if: success()
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add site/public/instagram-feed/ generated_images/ marketing-campaigns/post_log.csv
-          git diff --quiet && git diff --staged --quiet || (
-            git commit -m "chore: add instagram feed images and post log [skip ci]" &&
+          # Only the post log needs to be committed — it tracks which products
+          # have been posted so the bot doesn't repeat. Banner JPEGs are now
+          # uploaded to Cloudinary, not git, and generated_images/ is local cache.
+          git add marketing-campaigns/post_log.csv
+          git diff --staged --quiet || (
+            git commit -m "chore: update post log [skip ci]" &&
             git pull --rebase origin main &&
             git push
           )

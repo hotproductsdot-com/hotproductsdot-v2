@@ -1150,9 +1150,11 @@ def main() -> None:
         print("   [!] CLOUDINARY_URL not set — Instagram post will be skipped")
     print()
 
-    feed_mirror_url: str | None = None
-    if args.platform in ("instagram", "all") and not args.dry_run:
-        feed_mirror_url, _ = prepare_instagram_site_feed_jpeg(product, banner_path)
+    # Note: site/public/instagram-feed/*.jpg used to be a fallback host for IG.
+    # Now that Cloudinary handles all hosting, that mirror is dead code — and
+    # generated_images/ is just a local debug cache. Neither needs to be written
+    # or committed; banner_path on disk under generated_images/ is the only
+    # artifact, and it's gitignored.
 
     results: dict[str, dict] = {}
 
