@@ -260,6 +260,40 @@ def _add_product(canvas: Image.Image, product_img: Image.Image) -> Image.Image:
     return canvas
 
 
+def _pick_badge(product: dict) -> str:
+    """Derive a social-proof badge from product fields.
+
+    Ordered by strength of claim — stronger signal wins, so 'VIRAL' beats
+    'EDITOR'S PICK' when both apply.
+    """
+    try:
+        review_count = int(str(product.get("review_count") or product.get("reviews") or "0").replace(",", ""))
+    except (ValueError, TypeError):
+        review_count = 0
+    try:
+        rating = float(product.get("rating") or 0)
+    except (ValueError, TypeError):
+        rating = 0.0
+    try:
+        bsr = int(product.get("bsr") or 0)
+    except (ValueError, TypeError):
+        bsr = 0
+    try:
+        potential = int(product.get("potential") or 0)
+    except (ValueError, TypeError):
+        potential = 0
+
+    if review_count >= 10000:
+        return "VIRAL"
+    if 0 < bsr <= 10:
+        return "AMAZON #1"
+    if rating >= 4.8 and review_count >= 1000:
+        return "EDITOR'S PICK"
+    if potential >= 9:
+        return "TOP PICK"
+    return "HOT DEAL"
+
+
 def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     draw = ImageDraw.Draw(canvas)
 
@@ -272,7 +306,8 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     words    = name.split()
     headline = " ".join(words[:6]) + ("..." if len(words) > 6 else "")
 
-    f_headline = _load_font(70, bold=True)
+    # Headline reduced from 70 → 56 to give the product image more breathing room.
+    f_headline = _load_font(56, bold=True)
     f_sub      = _load_font(28, bold=False)
     f_price    = _load_font(40, bold=True)
     f_pill     = _load_font(23, bold=True)
@@ -282,8 +317,8 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     max_w  = CANVAS - margin * 2
     y      = 48
 
-    # ── HOT DEAL pill ─────────────────────────────────────────────────────────
-    tag_text = "HOT DEAL"
+    # ── Social-proof badge pill (VIRAL / AMAZON #1 / EDITOR'S PICK / TOP PICK / HOT DEAL) ──
+    tag_text = _pick_badge(product)
     tb  = draw.textbbox((0, 0), tag_text, font=tag_font)
     tw  = tb[2] - tb[0]
     th  = tb[3] - tb[1]
