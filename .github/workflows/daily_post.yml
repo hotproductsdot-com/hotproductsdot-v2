@@ -30,6 +30,7 @@ jobs:
           IG_ACCESS_TOKEN:     ${{ secrets.IG_ACCESS_TOKEN }}
           TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
           IMGBB_API_KEY:       ${{ secrets.IMGBB_API_KEY }}
+          CLOUDINARY_URL:      ${{ secrets.CLOUDINARY_URL }}
           GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
           MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}

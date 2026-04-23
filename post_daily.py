@@ -951,8 +951,10 @@ def main() -> None:
     # Requires IMGBB_API_KEY in .env to upload the banner to a public URL.
     # Falls back to the generated/site image if no upload key is configured.
     imgbb_key = os.environ.get("IMGBB_API_KEY", "")
-    if imgbb_key:
-        # Compose from generated/site image whenever ImgBB is configured (GEMINI_API_KEY optional).
+    cloudinary_url = os.environ.get("CLOUDINARY_URL", "")
+    # Cloudinary is preferred — Meta's Graph API reliably accepts res.cloudinary.com.
+    # ImgBB is kept as fallback because Meta often rejects i.ibb.co.
+    if cloudinary_url or imgbb_key:
         source = chosen_image_url or product_image_url(product)
         logger.debug("Banner compose source URL=%s", source)
         banner_save_dir = (
@@ -966,24 +968,36 @@ def main() -> None:
         try:
             banner_compose.compose_banner(product, source, banner_path)
             print(f"   Banner saved → {banner_path}")
-            print("   Uploading to imgbb...")
-            public_url = banner_compose.upload_to_imgbb(
-                banner_path,
-                imgbb_key,
-                name=f"{product['slug']}-hotproducts-banner",
-            )
+            public_url: str | None = None
+            if cloudinary_url:
+                print("   Uploading to Cloudinary...")
+                public_url = banner_compose.upload_to_cloudinary(
+                    banner_path,
+                    cloudinary_url,
+                    public_id=f"hotproducts/{product['slug']}-banner",
+                )
+                if public_url:
+                    logger.info("Cloudinary upload OK public_url=%s", public_url)
+            if not public_url and imgbb_key:
+                print("   Uploading to ImgBB (fallback)...")
+                public_url = banner_compose.upload_to_imgbb(
+                    banner_path,
+                    imgbb_key,
+                    name=f"{product['slug']}-hotproducts-banner",
+                )
+                if public_url:
+                    logger.info("ImgBB upload OK public_url=%s", public_url)
             if public_url:
                 chosen_image_url = public_url
-                logger.info("ImgBB upload OK public_url=%s", public_url)
                 print(f"   Banner URL: {chosen_image_url}")
             else:
-                logger.warning("ImgBB upload returned no URL")
+                logger.warning("Banner upload returned no URL")
                 print("   [!] Upload failed — using original image URL")
         except Exception as exc:
             logger.exception("Banner compose failed: %s", exc)
             print(f"   [!] Banner compose failed: {exc} — using original image URL")
-    elif not imgbb_key:
-        print("   (set IMGBB_API_KEY in .env to enable branded banner compositing)")
+    else:
+        print("   (set CLOUDINARY_URL or IMGBB_API_KEY in .env to enable branded banner compositing)")
     print()
 
     feed_mirror_url: str | None = None
