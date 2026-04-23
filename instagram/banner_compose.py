@@ -428,6 +428,10 @@ def _parse_cloudinary_url(url: str) -> tuple[str, str, str] | None:
     Strips optional surrounding quotes/whitespace which secret managers sometimes add.
     """
     cleaned = url.strip().strip('"').strip("'")
+    # Cloudinary dashboard often shows the full export line (CLOUDINARY_URL=cloudinary://...).
+    # Strip that prefix if a user pasted the whole thing into the secret value.
+    if cleaned.upper().startswith("CLOUDINARY_URL="):
+        cleaned = cleaned.split("=", 1)[1].strip().strip('"').strip("'")
     m = re.match(r"^cloudinary://([^:]+):([^@]+)@([^/?#\s]+)", cleaned)
     if not m:
         return None
