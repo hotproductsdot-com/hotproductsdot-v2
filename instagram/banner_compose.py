@@ -423,8 +423,12 @@ def compose_banner(
 
 
 def _parse_cloudinary_url(url: str) -> tuple[str, str, str] | None:
-    """Parse cloudinary://api_key:api_secret@cloud_name → (cloud_name, api_key, api_secret)."""
-    m = re.match(r"^cloudinary://([^:]+):([^@]+)@(.+)$", url.strip())
+    """Parse cloudinary://api_key:api_secret@cloud_name → (cloud_name, api_key, api_secret).
+
+    Strips optional surrounding quotes/whitespace which secret managers sometimes add.
+    """
+    cleaned = url.strip().strip('"').strip("'")
+    m = re.match(r"^cloudinary://([^:]+):([^@]+)@([^/?#\s]+)", cleaned)
     if not m:
         return None
     api_key, api_secret, cloud_name = m.group(1), m.group(2), m.group(3)
@@ -439,9 +443,13 @@ def upload_to_cloudinary(local_path: str, cloudinary_url: str, *, public_id: str
     import hashlib
     import time
 
+    if not cloudinary_url:
+        print("  [cloudinary upload failed: CLOUDINARY_URL is empty]")
+        return None
     parsed = _parse_cloudinary_url(cloudinary_url)
     if not parsed:
-        print("  [cloudinary upload failed: CLOUDINARY_URL malformed]")
+        prefix = cloudinary_url.strip()[:20] if cloudinary_url else "<empty>"
+        print(f"  [cloudinary upload failed: CLOUDINARY_URL malformed (got prefix '{prefix}…', expected 'cloudinary://KEY:SECRET@CLOUD')]")
         return None
     cloud_name, api_key, api_secret = parsed
 
@@ -463,10 +471,16 @@ def upload_to_cloudinary(local_path: str, cloudinary_url: str, *, public_id: str
                 files={"file": f},
                 timeout=60,
             )
-        resp.raise_for_status()
-        return resp.json().get("secure_url")
+        if resp.status_code >= 400:
+            print(f"  [cloudinary upload failed: HTTP {resp.status_code} body={resp.text[:300]}]")
+            return None
+        payload = resp.json()
+        secure_url = payload.get("secure_url")
+        if not secure_url:
+            print(f"  [cloudinary upload returned no secure_url; payload keys={list(payload.keys())}]")
+        return secure_url
     except Exception as exc:
-        print(f"  [cloudinary upload failed: {exc}]")
+        print(f"  [cloudinary upload failed ({type(exc).__name__}): {exc}]")
         return None
 
 
