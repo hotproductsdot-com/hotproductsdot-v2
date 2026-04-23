@@ -415,40 +415,123 @@ def _fmt_price(raw: str) -> str:
         return raw_s if raw_s.startswith("$") else raw_s
 
 
+# ── Hook templates ───────────────────────────────────────────────────────────
+# Used when no AI hook is available. First line of caption — IG truncates
+# the feed preview around ~125 chars, so keep these short and punchy.
+INSTAGRAM_HOOK_TEMPLATES = (
+    # Curiosity / contrarian
+    "Stop scrolling. This {category_lower} just made our shortlist 👀",
+    "Why is nobody talking about this {category_lower}? 🤔",
+    "Wasn't expecting THIS from a {category_lower} 😳",
+    "Hot take: this might be the best {category_lower} on Amazon right now 🔥",
+    # Social proof
+    "{review_count_short}+ reviewers can't be wrong about this one 🔥",
+    "{rating}★ across {review_count_short} reviews. This {category_lower} hits different.",
+    "When {review_count_short} buyers all say the same thing, you listen 👂",
+    # FOMO / scarcity
+    "Trending hard right now and we finally get why ⬇️",
+    "Heads up: this keeps selling out 🚨",
+    # Problem-solution
+    "If you've been hunting for the right {category_lower}, this is it ⤵️",
+    "This is the {category_lower} you didn't know you needed 🎯",
+)
+
+# ── Hashtag strategy ─────────────────────────────────────────────────────────
+# Mix of niche (high-intent, lower competition) + mid-tier + brand.
+# IG's sweet spot is 8–12 tags; we ship 10.
+NICHE_HASHTAGS_BY_CATEGORY = {
+    "photography":  ["#cameragear",  "#photographyequipment", "#photogear"],
+    "camera":       ["#cameragear",  "#photographyequipment", "#photogear"],
+    "audio":        ["#audiogear",   "#audiophile",            "#headphones"],
+    "headphones":   ["#audiogear",   "#audiophile",            "#headphones"],
+    "speakers":     ["#audiogear",   "#hifi",                  "#speakerlovers"],
+    "computers":    ["#pcsetup",     "#techgear",              "#desktopsetup"],
+    "gaming":       ["#gamingsetup", "#pcgaming",              "#gamergear"],
+    "smart home":   ["#smarthome",   "#smarthomedevices",      "#hometech"],
+    "kitchen":      ["#kitchengadgets", "#kitchentools",       "#kitchenmusthaves"],
+    "appliances":   ["#kitchengadgets", "#smallappliances",    "#kitchenmusthaves"],
+    "fitness":      ["#fitnessgear", "#homegym",               "#workoutgear"],
+    "health":       ["#wellnessfinds","#healthgadgets",        "#selfcaretools"],
+    "beauty":       ["#beautyfinds", "#skincareroutine",       "#beautygadgets"],
+    "home":         ["#homefinds",   "#homemusthaves",         "#homedecor"],
+    "outdoor":      ["#outdoorgear", "#campingessentials",     "#adventuregear"],
+    "pet":          ["#petproducts", "#petlovers",             "#petsofinstagram"],
+    "tools":        ["#diytools",    "#workshopgear",          "#handytools"],
+    "automotive":   ["#cargear",     "#caraccessories",        "#autodetailing"],
+    "office":       ["#officesetup", "#deskgoals",             "#workfromhomesetup"],
+    "toys":         ["#toysforkids", "#kidsmusthaves",         "#kidstoys"],
+    "baby":         ["#babymusthaves","#newmom",               "#parentingtips"],
+}
+MID_TIER_HASHTAGS = (
+    "#amazonfinds", "#amazonmusthaves", "#productreview",
+    "#dealoftheday", "#bestofamazon",
+)
+BRAND_HASHTAGS = ("#hotproducts", "#hotproductsdaily")
+
+
+def _short_review_count(raw: str) -> str:
+    """Compact display: 1234 → '1.2k', 800 → '800'."""
+    try:
+        n = int(str(raw).replace(",", "").strip())
+    except (ValueError, AttributeError):
+        return str(raw or "many")
+    if n >= 1000:
+        return f"{n / 1000:.1f}k".replace(".0k", "k")
+    return str(n)
+
+
+def _pick_hook_template(product: dict) -> str:
+    """Deterministic per-day-per-product so the same product on the same day reads identically."""
+    seed = f"{product.get('slug', '')}|{date.today().isoformat()}"
+    idx = abs(hash(seed)) % len(INSTAGRAM_HOOK_TEMPLATES)
+    return INSTAGRAM_HOOK_TEMPLATES[idx]
+
+
+def _render_hook(product: dict) -> str:
+    template = _pick_hook_template(product)
+    category = product.get("category", "product")
+    return template.format(
+        category=category,
+        category_lower=category.lower(),
+        rating=product.get("rating", ""),
+        review_count_short=_short_review_count(product.get("reviews", "")),
+        name=product.get("name", ""),
+    )
+
+
 def instagram_body(product: dict, *, ai_hook: str | None = None, ai_cta: str | None = None) -> str:
-    """Post body without hashtags. Optionally inject AI hook and CTA."""
+    """IG caption body. Hook-driven first line + social proof + bio CTA + optional AI CTA.
+
+    IG caption URLs are NOT clickable, so we drive traffic to bio link instead.
+    """
     stars   = format_stars(product["rating"])
     price   = _fmt_price(product["price"]) if product["price"] not in ("", "N/A") else "Check price"
-    reviews = product["reviews"]
-    try:
-        review_str = f"{int(reviews.replace(',', '')):,}"
-    except (ValueError, AttributeError):
-        review_str = reviews or "many"
+    review_str = _short_review_count(product["reviews"])
+
+    hook = (ai_hook or _render_hook(product)).strip()
 
     lines = [
-        ai_hook or f"🔥 {product['name']}",  # use AI hook if provided
+        hook,
         "",
-        f"{stars} {product['rating']}/5 · {review_str} verified reviews",
+        f"{stars} {product['rating']}/5 · {review_str} reviews",
         f"💰 {price}",
         "",
-        f"👉 Full details + link → {product_page_url(product)}",
+        ai_cta.strip() if ai_cta else "Save this one for when you finally pull the trigger 💾",
+        "",
+        "🔗 Tap the link in our bio for the full review + best price",
     ]
-
-    if ai_cta:
-        lines.append("")
-        lines.append(ai_cta)
-
     return "\n".join(lines)
 
 
 def instagram_tags(product: dict) -> str:
-    """Hashtag block only."""
-    cat_slug = re.sub(r"[^a-z0-9]", "", product["category"].lower())
-    cat_tag = "#" + (cat_slug or "products")
-    return (
-        f"#hotproducts #amazonfinds #bestproducts {cat_tag} "
-        "#dealoftheday #productreview #amazondeals #mustbuy #shopping"
-    )
+    """Hashtag block: 3 niche + 5 mid-tier + 2 brand = 10 tags (IG sweet spot)."""
+    category_key = product.get("category", "").lower().strip()
+    niche = NICHE_HASHTAGS_BY_CATEGORY.get(category_key)
+    if not niche:
+        # Fallback: build a tag from category slug.
+        slug = re.sub(r"[^a-z0-9]", "", category_key) or "products"
+        niche = [f"#{slug}", "#amazonproducts", "#trendingnow"]
+    return " ".join((*niche, *MID_TIER_HASHTAGS, *BRAND_HASHTAGS))
 
 
 def instagram_caption(product: dict) -> str:
