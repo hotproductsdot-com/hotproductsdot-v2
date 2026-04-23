@@ -125,21 +125,23 @@ def _score_product(p: dict) -> float:
     Composite score weighting:
       - Rating         (0–5)
       - Review count   (log scale — diminishing returns)
-      - Price          (higher price = higher affiliate commission)
+      - Price          (log scale — high-end items still win, but a $50 product
+                        isn't 50× behind a $2500 one. Prevents the rotation pool
+                        from being dominated by cameras and gaming PCs.)
       - BSR            (lower rank = more recent sales; inverted so lower is better)
 
     All factors are multiplied so any zero collapses the score.
     """
     rating       = p["rating"]                          # 0–5
     review_count = max(p["review_count"], 1)            # guard log(0)
-    price        = p["price_num"]                       # raw float
+    price        = max(p["price_num"], 1.0)             # guard log(0)
     bsr          = p["bsr"]                             # int or None
 
     # BSR factor: map rank → 0–1 where rank=1 → 1.0, rank=10000 → ~0.0
     # Using 1 / log(bsr + 1) keeps high-BSR products from dominating.
     bsr_factor = 1.0 / math.log(bsr + 2) if bsr is not None else 0.5  # neutral if missing
 
-    return rating * math.log(review_count) * price * bsr_factor
+    return rating * math.log(review_count) * math.log(price + 1) * bsr_factor
 
 
 def load_top_products(n: int | None = None) -> list[dict]:
@@ -224,12 +226,32 @@ def filter_by_category(products: list[dict], category: str) -> list[dict]:
     return [p for p in products if p["category"].lower() == category.lower()]
 
 
+CATEGORY_COOLDOWN = 3  # don't reuse a category that appeared in the last N successful posts
+
+
+def _recent_categories(products: list[dict], n: int = CATEGORY_COOLDOWN) -> set[str]:
+    """Return the categories of the last n successfully posted products."""
+    if not LOG_PATH.exists():
+        return set()
+    name_to_cat = {p["name"]: p["category"] for p in products}
+    try:
+        with open(LOG_PATH, newline="", encoding="utf-8") as f:
+            ok_rows = [r for r in csv.reader(f) if len(r) >= 4 and r[3] == "ok"]
+        return {name_to_cat[r[2]] for r in ok_rows[-n:] if r[2] in name_to_cat}
+    except Exception:
+        return set()
+
+
 def pick_next_product(products: list[dict], force: bool = False) -> dict:
     """
-    Pick the next unposted product from the pool (highest score first).
+    Pick the next unposted product from the pool with category diversity.
 
-    Skips products already logged as successfully posted unless --force is used.
-    Falls back to day-of-year rotation if the entire pool has been posted.
+    Order of preference:
+      1. Top-scoring unposted product whose category has NOT appeared in
+         the last CATEGORY_COOLDOWN successful posts (prevents "5 cameras
+         in a row" when cameras dominate the score).
+      2. Top-scoring unposted product (cooldown unsatisfiable).
+      3. Day-of-year rotation through the full pool (everything posted).
     """
     if force:
         day = date.today().timetuple().tm_yday
@@ -246,6 +268,13 @@ def pick_next_product(products: list[dict], force: bool = False) -> dict:
     skipped = len(products) - len(unposted)
     if skipped:
         print(f"   (skipping {skipped} previously posted product(s))")
+
+    recent_cats = _recent_categories(products)
+    diverse = [p for p in unposted if p["category"] not in recent_cats]
+    if diverse:
+        if recent_cats:
+            print(f"   (avoiding recent categories: {', '.join(sorted(recent_cats))})")
+        return diverse[0]
     return unposted[0]
 
 
