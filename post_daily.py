@@ -420,21 +420,47 @@ def _fmt_price(raw: str) -> str:
 # the feed preview around ~125 chars, so keep these short and punchy.
 INSTAGRAM_HOOK_TEMPLATES = (
     # Curiosity / contrarian
-    "Stop scrolling. This {category_lower} just made our shortlist 👀",
-    "Why is nobody talking about this {category_lower}? 🤔",
-    "Wasn't expecting THIS from a {category_lower} 😳",
-    "Hot take: this might be the best {category_lower} on Amazon right now 🔥",
+    "Stop scrolling. This {noun} just made our shortlist 👀",
+    "Why is nobody talking about this {noun}? 🤔",
+    "Wasn't expecting THIS from {a_noun} 😳",
+    "Hot take: this might be the best {noun} on Amazon right now 🔥",
     # Social proof
     "{review_count_short}+ reviewers can't be wrong about this one 🔥",
-    "{rating}★ across {review_count_short} reviews. This {category_lower} hits different.",
+    "{rating}★ across {review_count_short} reviews. This {noun} hits different.",
     "When {review_count_short} buyers all say the same thing, you listen 👂",
     # FOMO / scarcity
     "Trending hard right now and we finally get why ⬇️",
     "Heads up: this keeps selling out 🚨",
     # Problem-solution
-    "If you've been hunting for the right {category_lower}, this is it ⤵️",
-    "This is the {category_lower} you didn't know you needed 🎯",
+    "If you've been hunting for the right {noun}, this is it ⤵️",
+    "This is the {noun} you didn't know you needed 🎯",
 )
+
+# Singular noun phrases that read naturally inside the hook templates.
+# "the right ___", "this ___ hits different", "Wasn't expecting THIS from a ___"
+CATEGORY_NOUN = {
+    "photography":  "camera pick",
+    "camera":       "camera pick",
+    "audio":        "audio pick",
+    "headphones":   "pair of headphones",
+    "speakers":     "speaker setup",
+    "computers":    "tech pick",
+    "gaming":       "gaming setup",
+    "smart home":   "smart home device",
+    "kitchen":      "kitchen tool",
+    "appliances":   "appliance",
+    "fitness":      "workout pick",
+    "health":       "wellness pick",
+    "beauty":       "beauty pick",
+    "home":         "home find",
+    "outdoor":      "outdoor pick",
+    "pet":          "pet must-have",
+    "tools":        "tool",
+    "automotive":   "car upgrade",
+    "office":       "desk upgrade",
+    "toys":         "toy",
+    "baby":         "baby essential",
+}
 
 # ── Hashtag strategy ─────────────────────────────────────────────────────────
 # Mix of niche (high-intent, lower competition) + mid-tier + brand.
@@ -490,9 +516,13 @@ def _pick_hook_template(product: dict) -> str:
 def _render_hook(product: dict) -> str:
     template = _pick_hook_template(product)
     category = product.get("category", "product")
+    noun = CATEGORY_NOUN.get(category.lower().strip(), f"{category.lower()} pick")
+    article = "an" if noun[:1].lower() in "aeiou" else "a"
     return template.format(
         category=category,
         category_lower=category.lower(),
+        noun=noun,
+        a_noun=f"{article} {noun}",
         rating=product.get("rating", ""),
         review_count_short=_short_review_count(product.get("reviews", "")),
         name=product.get("name", ""),
