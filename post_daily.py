@@ -950,11 +950,11 @@ def main() -> None:
     # Composes the product image into the branded 1080×1080 banner format.
     # Requires IMGBB_API_KEY in .env to upload the banner to a public URL.
     # Falls back to the generated/site image if no upload key is configured.
-    imgbb_key = os.environ.get("IMGBB_API_KEY", "")
     cloudinary_url = os.environ.get("CLOUDINARY_URL", "")
-    # Cloudinary is preferred — Meta's Graph API reliably accepts res.cloudinary.com.
-    # ImgBB is kept as fallback because Meta often rejects i.ibb.co.
-    if cloudinary_url or imgbb_key:
+    # Cloudinary only — Meta's Graph API reliably accepts res.cloudinary.com.
+    # No ImgBB fallback: Meta routinely rejects i.ibb.co URLs, so a fallback would
+    # produce silent post failures. Fail loud if Cloudinary isn't configured/working.
+    if cloudinary_url:
         source = chosen_image_url or product_image_url(product)
         logger.debug("Banner compose source URL=%s", source)
         banner_save_dir = (
@@ -968,36 +968,27 @@ def main() -> None:
         try:
             banner_compose.compose_banner(product, source, banner_path)
             print(f"   Banner saved → {banner_path}")
-            public_url: str | None = None
-            if cloudinary_url:
-                print("   Uploading to Cloudinary...")
-                public_url = banner_compose.upload_to_cloudinary(
-                    banner_path,
-                    cloudinary_url,
-                    public_id=f"hotproducts/{product['slug']}-banner",
-                )
-                if public_url:
-                    logger.info("Cloudinary upload OK public_url=%s", public_url)
-            if not public_url and imgbb_key:
-                print("   Uploading to ImgBB (fallback)...")
-                public_url = banner_compose.upload_to_imgbb(
-                    banner_path,
-                    imgbb_key,
-                    name=f"{product['slug']}-hotproducts-banner",
-                )
-                if public_url:
-                    logger.info("ImgBB upload OK public_url=%s", public_url)
+            print("   Uploading to Cloudinary...")
+            public_url = banner_compose.upload_to_cloudinary(
+                banner_path,
+                cloudinary_url,
+                public_id=f"hotproducts/{product['slug']}-banner",
+            )
             if public_url:
                 chosen_image_url = public_url
+                logger.info("Cloudinary upload OK public_url=%s", public_url)
                 print(f"   Banner URL: {chosen_image_url}")
             else:
-                logger.warning("Banner upload returned no URL")
-                print("   [!] Upload failed — using original image URL")
+                chosen_image_url = None
+                logger.warning("Cloudinary upload returned no URL")
+                print("   [!] Cloudinary upload failed — Instagram post will be skipped")
         except Exception as exc:
+            chosen_image_url = None
             logger.exception("Banner compose failed: %s", exc)
-            print(f"   [!] Banner compose failed: {exc} — using original image URL")
+            print(f"   [!] Banner compose failed: {exc} — Instagram post will be skipped")
     else:
-        print("   (set CLOUDINARY_URL or IMGBB_API_KEY in .env to enable branded banner compositing)")
+        chosen_image_url = None
+        print("   [!] CLOUDINARY_URL not set — Instagram post will be skipped")
     print()
 
     feed_mirror_url: str | None = None
@@ -1035,31 +1026,25 @@ def main() -> None:
             banner_public = chosen_image_url,
         )
         if ask_approval("instagram", args.dry_run):
-            gh = instagram_raw_github_feed_url(product["slug"])
-            if gh and not (os.environ.get("INSTAGRAM_RAW_GITHUB_BASE") or "").strip():
-                print(f"   GitHub raw image (after push): {gh}")
-
-            # Site + GitHub before ImgBB: Meta’s fetcher often rejects i.ibb.co even when our probe passes.
-            ig_urls: list[str] = []
-            if feed_mirror_url:
-                ig_urls.append(feed_mirror_url)
-            if gh:
-                ig_urls.append(gh)
-            if chosen_image_url:
-                ig_urls.append(chosen_image_url)
-            if not ig_urls:
-                ig_urls.append(product_image_url(product))
-
-            logger.info("Posting Instagram try_urls=%s", ig_urls)
-            print(">> Posting to Instagram...")
-            result = post_instagram(product, dry_run=False, image_urls=ig_urls)
-            results["instagram"] = result
-            if result["ok"]:
-                logger.info("Instagram OK post_id=%s", result.get("post_id", ""))
-                print(f"  OK  post_id: {result.get('post_id', '')}")
+            # Cloudinary only — Meta reliably accepts res.cloudinary.com.
+            # No fallbacks: a missing Cloudinary URL means the upload step failed and we
+            # want a loud failure rather than fallback to a host Meta will reject.
+            if not chosen_image_url:
+                err = "No image URL — Cloudinary upload must succeed (set CLOUDINARY_URL)."
+                print(f"  FAIL {err}")
+                result = {"ok": False, "error": err}
             else:
-                logger.error("Instagram failed: %s", result.get("error"))
-                print(f"  FAIL {result['error']}")
+                ig_urls = [chosen_image_url]
+                logger.info("Posting Instagram try_urls=%s", ig_urls)
+                print(">> Posting to Instagram...")
+                result = post_instagram(product, dry_run=False, image_urls=ig_urls)
+                if result["ok"]:
+                    logger.info("Instagram OK post_id=%s", result.get("post_id", ""))
+                    print(f"  OK  post_id: {result.get('post_id', '')}")
+                else:
+                    logger.error("Instagram failed: %s", result.get("error"))
+                    print(f"  FAIL {result['error']}")
+            results["instagram"] = result
             log_result(product, "instagram", result)
         else:
             logger.info("Instagram post skipped (not approved)")
