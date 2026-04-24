@@ -33,4 +33,26 @@ __pycache__/
 # OMC runtime files (session state, not source)
 .omc/sessions/
 .omc/state/
+.omc/project-memory.json
 site/.omc/
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Generated media (output artifacts, not source)
+generated_images/
+generated_videos/
+
+# Local-only project subdirs
+paperclip-company/
+
+# CSV backups (timestamped copies, not source)
+products/top-1000.backup.*.csv
+
+# Windows batch helpers (local-only)
+push-seo-fixes.bat
+
+# Link report artifact
+link-report.json

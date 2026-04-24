@@ -206,6 +206,34 @@ def _is_dark_background(img: Image.Image, threshold: int = 100) -> bool:
     return avg < threshold
 
 
+def _is_dark_product_center(img: Image.Image, threshold: int = 85) -> bool:
+    """Detect dark products (black cameras, lenses) that risk vanishing into the dark canvas.
+
+    Samples the centre 50% of the image (where the product sits) rather than the corners.
+    When this is dark, we need a spotlight behind the product to preserve silhouette contrast.
+    """
+    small = img.convert("RGB").resize((64, 64), Image.LANCZOS)
+    px = list(small.getdata())
+    centre = [px[y * 64 + x] for y in range(16, 48) for x in range(16, 48)]
+    avg = sum(sum(p) / 3 for p in centre) / len(centre)
+    return avg < threshold
+
+
+def _add_stage_spotlight(canvas: Image.Image, cx: int, cy: int, w: int, h: int) -> Image.Image:
+    """Paint a soft neutral halo behind a dark product so its silhouette stays visible.
+
+    Over-sized relative to the product and heavily blurred so it reads as diffuse ambient
+    backlight, not a ring-light shape. Only used for dark-on-dark products.
+    """
+    halo = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    hd = ImageDraw.Draw(halo)
+    rx = int(w * 1.05)
+    ry = int(h * 0.90)
+    hd.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=(200, 195, 185, 120))
+    halo = halo.filter(ImageFilter.GaussianBlur(radius=160))
+    return Image.alpha_composite(canvas, halo)
+
+
 def _remove_white_bg(img: Image.Image, threshold: int = 228) -> Image.Image:
     """Replace near-white pixels with transparency."""
     rgba = img.convert("RGBA")
@@ -236,8 +264,9 @@ def _apply_ellipse_blend(img: Image.Image, feather: float = 0.12) -> Image.Image
 
 def _add_product(canvas: Image.Image, product_img: Image.Image) -> Image.Image:
     """Composite product into lower portion of canvas."""
-    dark_bg = _is_dark_background(product_img)
-    prod    = _apply_ellipse_blend(product_img) if dark_bg else _remove_white_bg(product_img)
+    dark_bg      = _is_dark_background(product_img)
+    dark_product = dark_bg and _is_dark_product_center(product_img)
+    prod         = _apply_ellipse_blend(product_img) if dark_bg else _remove_white_bg(product_img)
 
     max_w = int(CANVAS * 0.72)
     max_h = int(CANVAS * 0.60)
@@ -245,6 +274,17 @@ def _add_product(canvas: Image.Image, product_img: Image.Image) -> Image.Image:
 
     cx = (CANVAS - prod.width) // 2
     cy = int(CANVAS * 0.365)
+
+    # Stage spotlight — only for dark-on-dark products (black cameras/lenses on charcoal
+    # backdrop). Painted BEFORE shadow/product so the product reads as backlit, not washed out.
+    if dark_product:
+        canvas = _add_stage_spotlight(
+            canvas,
+            cx + prod.width // 2,
+            cy + prod.height // 2,
+            prod.width,
+            prod.height,
+        )
 
     # Drop shadow
     shadow = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))

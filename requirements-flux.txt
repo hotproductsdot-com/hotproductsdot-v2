@@ -1,0 +1,28 @@
+# FLUX image generation requirements for local GPU inference
+# Install with: pip install -r requirements-flux.txt
+
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+
+# Diffusers and transformers for image generation
+diffusers>=0.27.0
+transformers>=4.35.0
+
+# Quantization and optimization
+bitsandbytes>=0.41.0
+accelerate>=0.25.0
+
+# Image handling
+Pillow>=10.0.0
+safetensors>=0.4.0
+
+# Optional: For faster inference
+xformers>=0.0.22  # Memory-efficient attention
+triton>=2.1.0     # GPU optimization
+
+# Existing dependencies (should already be installed)
+requests>=2.31.0
+python-dotenv>=1.0.0
+anthropic>=0.15.0

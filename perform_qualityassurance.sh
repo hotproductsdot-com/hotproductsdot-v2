@@ -64,31 +64,16 @@ else
 fi
 
 # ==============================================================================
-# STEP 2: Price validation (dry-run — reports mismatches, does not update CSV)
+# STEP 2: Price validation (manual — Oxylabs API costs per call, not run in QA)
 # ==============================================================================
-step 2 "Price Validation (dry-run)"
-echo -e "${YELLOW}  Note: Full price validation is slow (live Amazon scraping).${RESET}"
-echo -e "${YELLOW}  Using --dry-run to report mismatches without updating CSV.${RESET}"
-echo -e "${YELLOW}  Run 'node validate-prices-parallel.js' separately to apply fixes.${RESET}"
-echo ""
-
-cd "$SCRIPT_DIR"
-PRICE_OUTPUT=$(node validate-prices-parallel.js --dry-run --workers=2 2>&1) || true
-
-PRICE_WARNINGS=$(echo "$PRICE_OUTPUT" | grep -c "⚠" || true)
-PRICE_CAPTCHA=$(echo "$PRICE_OUTPUT" | grep -c "CAPTCHA" || true)
-
-echo "$PRICE_OUTPUT" | tail -20
-
-if [ "$PRICE_CAPTCHA" -gt 0 ]; then
-  warn "CAPTCHA hits during price check ($PRICE_CAPTCHA) — results may be incomplete"
-fi
-
-if [ "$PRICE_WARNINGS" -gt 0 ]; then
-  warn "$PRICE_WARNINGS price mismatch(es) detected — run 'node validate-prices-parallel.js' to fix"
-else
-  pass "No price mismatches detected"
-fi
+step 2 "Price Validation (skipped — run manually)"
+echo -e "${YELLOW}  Price/rating/review validation is handled by ./oxylabs-amazon-product.sh${RESET}"
+echo -e "${YELLOW}  (Oxylabs Amazon Product API — structured JSON, CAPTCHA-free).${RESET}"
+echo -e "${YELLOW}  Not run from QA because each API call has a cost.${RESET}"
+echo -e "${YELLOW}  Run manually before launches or on cron:${RESET}"
+echo -e "${YELLOW}    ./oxylabs-amazon-product.sh --limit 20     # sample check${RESET}"
+echo -e "${YELLOW}    ./oxylabs-amazon-product.sh                # full catalog refresh${RESET}"
+pass "Price validation step is manual (see ./oxylabs-amazon-product.sh)"
 
 # ==============================================================================
 # STEP 3: Image check
