@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1776625551187,
+  "lastScanned": 1777129854583,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -56,11 +56,13 @@
     "__pycache__": {
       "path": "__pycache__",
       "purpose": null,
-      "fileCount": 3,
-      "lastAccessed": 1776625550867,
+      "fileCount": 6,
+      "lastAccessed": 1777129854403,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "post_daily.cpython-312.pyc",
+        "test_tiktok_refresh.cpython-312-pytest-9.0.3.pyc",
+        "test_tiktok_refresh.cpython-312.pyc",
         "tiktok_api.cpython-312.pyc"
       ]
     },
@@ -68,7 +70,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1776625550880,
+      "lastAccessed": 1777129854414,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
@@ -77,14 +79,21 @@
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1776625550894,
+      "lastAccessed": 1777129854424,
+      "keyFiles": []
+    },
+    "generated_videos": {
+      "path": "generated_videos",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1777129854432,
       "keyFiles": []
     },
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 11,
-      "lastAccessed": 1776625550911,
+      "fileCount": 12,
+      "lastAccessed": 1777129854440,
       "keyFiles": [
         "__init__.py",
         "affiliate_tools.py",
@@ -97,14 +106,14 @@
       "path": "marketing",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1776625550933,
+      "lastAccessed": 1777129854447,
       "keyFiles": []
     },
     "marketing-campaigns": {
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1776625550951,
+      "lastAccessed": 1777129854460,
       "keyFiles": [
         "content_calendar.json",
         "post_log.csv"
@@ -114,38 +123,53 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1776625550969,
+      "lastAccessed": 1777129854468,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
       ]
     },
+    "pinterest-setup": {
+      "path": "pinterest-setup",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1777129854476,
+      "keyFiles": [
+        "BOARDS.csv",
+        "CONTENT_CALENDAR.md",
+        "PINTEREST_PLAYBOOK.md",
+        "PIN_DESCRIPTIONS.md",
+        "README.md"
+      ]
+    },
     "products": {
       "path": "products",
       "purpose": null,
-      "fileCount": 4,
-      "lastAccessed": 1776625550979,
+      "fileCount": 9,
+      "lastAccessed": 1777129854483,
       "keyFiles": [
+        "broken-links.csv",
         "check_duplicates.py",
         "duplicates_found.csv",
-        "top-1000.csv",
-        "verify_products.py"
+        "products4review.csv",
+        "top-1000.backup.2026-04-22.csv"
       ]
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 1,
-      "lastAccessed": 1776625551000,
+      "fileCount": 2,
+      "lastAccessed": 1777129854490,
       "keyFiles": [
-        "bootstrap_flux_venv.sh"
+        "bootstrap_flux_venv.sh",
+        "repost_fix_dark_banners.py"
       ]
     },
     "site": {
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1776625551013,
+      "lastAccessed": 1777129854497,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -158,7 +182,7 @@
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1776625551023,
+      "lastAccessed": 1777129854502,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -167,7 +191,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1776625551127,
+      "lastAccessed": 1777129854551,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -178,14 +202,14 @@
       "path": "site/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1776625551153,
+      "lastAccessed": 1777129854564,
       "keyFiles": []
     },
     "venv/bin": {
       "path": "venv/bin",
       "purpose": "Executable scripts",
-      "fileCount": 14,
-      "lastAccessed": 1776625551175,
+      "fileCount": 23,
+      "lastAccessed": 1777129854576,
       "keyFiles": [
         "Activate.ps1",
         "activate",
@@ -196,309 +220,195 @@
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1776625551187,
+      "lastAccessed": 1777129854583,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "post_daily.py",
-      "accessCount": 56,
-      "lastAccessed": 1776133876989,
+      "accessCount": 32,
+      "lastAccessed": 1777064164166,
       "type": "file"
     },
     {
-      "path": "",
-      "accessCount": 25,
-      "lastAccessed": 1776127462946,
-      "type": "directory"
+      "path": "instagram/banner_compose.py",
+      "accessCount": 21,
+      "lastAccessed": 1777067640633,
+      "type": "file"
     },
     {
       "path": "README.md",
-      "accessCount": 13,
-      "lastAccessed": 1775949659865,
+      "accessCount": 19,
+      "lastAccessed": 1776981642767,
       "type": "file"
     },
     {
-      "path": "app-icon.png",
-      "accessCount": 9,
-      "lastAccessed": 1775917025448,
+      "path": "oxylabs-amazon-product.sh",
+      "accessCount": 17,
+      "lastAccessed": 1776915072729,
       "type": "file"
     },
     {
-      "path": "site/app/page.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1776467886878,
+      "path": "RUNBOOK.md",
+      "accessCount": 3,
+      "lastAccessed": 1776983633752,
       "type": "file"
     },
     {
-      "path": ".env",
-      "accessCount": 6,
-      "lastAccessed": 1776006351916,
+      "path": "tiktok_api.py",
+      "accessCount": 3,
+      "lastAccessed": 1776990418839,
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 5,
-      "lastAccessed": 1775995808457,
+      "path": "tiktok_video_pipeline.py",
+      "accessCount": 3,
+      "lastAccessed": 1776992616084,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 3,
+      "lastAccessed": 1777067893543,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/reposts/canon-eos-r5-camera-banner.jpg",
+      "accessCount": 3,
+      "lastAccessed": 1777067996819,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/reposts/nikon-z9-ii-banner.jpg",
+      "accessCount": 3,
+      "lastAccessed": 1777068033329,
+      "type": "file"
+    },
+    {
+      "path": "perform_qualityassurance.sh",
+      "accessCount": 2,
+      "lastAccessed": 1776914456824,
+      "type": "file"
+    },
+    {
+      "path": "paperclip-company/hotproducts/COMPANY.md",
+      "accessCount": 2,
+      "lastAccessed": 1776981645402,
+      "type": "file"
+    },
+    {
+      "path": "paperclip-company/hotproducts/README.md",
+      "accessCount": 2,
+      "lastAccessed": 1776981646986,
+      "type": "file"
+    },
+    {
+      "path": "paperclip-company/hotproducts/agents/social-manager/AGENTS.md",
+      "accessCount": 2,
+      "lastAccessed": 1776981649655,
+      "type": "file"
+    },
+    {
+      "path": ".env.example",
+      "accessCount": 2,
+      "lastAccessed": 1776982922650,
       "type": "file"
     },
     {
       "path": "instagram/poster.py",
-      "accessCount": 5,
-      "lastAccessed": 1776087969221,
-      "type": "file"
-    },
-    {
-      "path": "products/top-1000.csv",
-      "accessCount": 5,
-      "lastAccessed": 1776392142323,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 5,
-      "lastAccessed": 1776467575121,
-      "type": "file"
-    },
-    {
-      "path": "check-links.js",
-      "accessCount": 4,
-      "lastAccessed": 1775511972228,
-      "type": "file"
-    },
-    {
-      "path": "site/next.config.ts",
-      "accessCount": 4,
-      "lastAccessed": 1775995852293,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/ProductCard.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1775996014143,
-      "type": "file"
-    },
-    {
-      "path": "instagram/caption.py",
-      "accessCount": 4,
-      "lastAccessed": 1776003356953,
-      "type": "file"
-    },
-    {
-      "path": "instagram/scraper.py",
-      "accessCount": 3,
-      "lastAccessed": 1775778455957,
-      "type": "file"
-    },
-    {
-      "path": "add_new_products.py",
-      "accessCount": 3,
-      "lastAccessed": 1775910654851,
-      "type": "file"
-    },
-    {
-      "path": "site/app/layout.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1775996016497,
-      "type": "file"
-    },
-    {
-      "path": "instagram/bot.py",
       "accessCount": 2,
-      "lastAccessed": 1775790553190,
+      "lastAccessed": 1777064176433,
       "type": "file"
     },
     {
-      "path": "update_top_1000.py",
+      "path": "scripts/repost_fix_dark_banners.py",
       "accessCount": 2,
-      "lastAccessed": 1775910623795,
-      "type": "file"
-    },
-    {
-      "path": "fetch_amazon_products.py",
-      "accessCount": 2,
-      "lastAccessed": 1775910624675,
-      "type": "file"
-    },
-    {
-      "path": "scrape_top_affiliates.py",
-      "accessCount": 2,
-      "lastAccessed": 1775910627108,
-      "type": "file"
-    },
-    {
-      "path": "add_product_by_asin.py",
-      "accessCount": 2,
-      "lastAccessed": 1775910654684,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/affiliate.ts",
-      "accessCount": 2,
-      "lastAccessed": 1775995885817,
-      "type": "file"
-    },
-    {
-      "path": "test_instagram_post.py",
-      "accessCount": 2,
-      "lastAccessed": 1776003356682,
-      "type": "file"
-    },
-    {
-      "path": "link-report.json",
-      "accessCount": 2,
-      "lastAccessed": 1776392138158,
-      "type": "file"
-    },
-    {
-      "path": "site",
-      "accessCount": 1,
-      "lastAccessed": 1775477725344,
-      "type": "directory"
-    },
-    {
-      "path": "site/app/components/ProductGrid.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775477908332,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/RatingStars.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775477925302,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/Badge.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775477926538,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/constants.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775477967410,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/ProductImage.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775478017412,
-      "type": "file"
-    },
-    {
-      "path": "site/scripts/extract-rotation-base.js",
-      "accessCount": 1,
-      "lastAccessed": 1775478549674,
+      "lastAccessed": 1777067365815,
       "type": "file"
     },
     {
       "path": "site/scripts/rotate-homepage.js",
       "accessCount": 1,
-      "lastAccessed": 1775478594034,
+      "lastAccessed": 1776898624678,
       "type": "file"
     },
     {
-      "path": "tiktok_strategy.txt",
+      "path": "package.json",
       "accessCount": 1,
-      "lastAccessed": 1775834903800,
-      "type": "file"
-    },
-    {
-      "path": "generate_products.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910625178,
-      "type": "file"
-    },
-    {
-      "path": "products/verify_products.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910626167,
-      "type": "file"
-    },
-    {
-      "path": "products/check_duplicates.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910626444,
-      "type": "file"
-    },
-    {
-      "path": "remove_duplicates.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910654761,
-      "type": "file"
-    },
-    {
-      "path": "fix_amazon_urls.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910654937,
-      "type": "file"
-    },
-    {
-      "path": "tiktok_api.py",
-      "accessCount": 1,
-      "lastAccessed": 1775910655998,
-      "type": "file"
-    },
-    {
-      "path": "site/app/api/instagram/deauthorize/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775916154151,
-      "type": "file"
-    },
-    {
-      "path": "site/app/api/instagram/data-deletion/route.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775916154947,
-      "type": "file"
-    },
-    {
-      "path": ".claude/Untitled.png",
-      "accessCount": 1,
-      "lastAccessed": 1775934180121,
-      "type": "file"
-    },
-    {
-      "path": "post_tiktok.py",
-      "accessCount": 1,
-      "lastAccessed": 1775949627812,
-      "type": "file"
-    },
-    {
-      "path": "project_goals.md",
-      "accessCount": 1,
-      "lastAccessed": 1775995827310,
+      "lastAccessed": 1776902948913,
       "type": "file"
     },
     {
       "path": "site/package.json",
       "accessCount": 1,
-      "lastAccessed": 1775995831952,
+      "lastAccessed": 1776902949088,
       "type": "file"
     },
     {
-      "path": "site/app/lib/analytics.ts",
+      "path": "post_tiktok.py",
       "accessCount": 1,
-      "lastAccessed": 1775995990115,
+      "lastAccessed": 1776981327318,
       "type": "file"
     },
     {
-      "path": "site/app/components/TrackedAffiliateLink.tsx",
+      "path": "test_tiktok_refresh.py",
       "accessCount": 1,
-      "lastAccessed": 1775995996495,
+      "lastAccessed": 1776982946994,
       "type": "file"
     },
     {
-      "path": "site/app/components/PageViewTracker.tsx",
+      "path": "instagram/image_gen_local_flux.py",
       "accessCount": 1,
-      "lastAccessed": 1775995999836,
+      "lastAccessed": 1776990419470,
       "type": "file"
     },
     {
-      "path": "site/app/dashboard/page.tsx",
+      "path": "generate_content_calendar.py",
       "accessCount": 1,
-      "lastAccessed": 1775996061257,
+      "lastAccessed": 1776990430384,
+      "type": "file"
+    },
+    {
+      "path": "instagram/video_frame_compose.py",
+      "accessCount": 1,
+      "lastAccessed": 1776990715809,
+      "type": "file"
+    },
+    {
+      "path": "generated_videos/2026-04-23/preview_frame_0.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1776993164554,
+      "type": "file"
+    },
+    {
+      "path": "generated_videos/2026-04-23/preview_frame_2.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1776993165116,
+      "type": "file"
+    },
+    {
+      "path": "generated_videos/2026-04-23/preview_frame_4.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1776993165420,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/2026-04-23/zeiss-otus-85mm-f-1-4/banner.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1777063336813,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/2026-04-14/canon-eos-r5-camera/variant_2_studio_dark.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1777067372495,
+      "type": "file"
+    },
+    {
+      "path": "requirements-flux.txt",
+      "accessCount": 1,
+      "lastAccessed": 1777067841754,
       "type": "file"
     }
   ],
