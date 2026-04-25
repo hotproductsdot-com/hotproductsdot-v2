@@ -9,6 +9,7 @@ export default function Header() {
           Hot<span className="text-orange-500">Products</span>
         </Link>
         <nav className="flex items-center gap-4 text-sm text-zinc-400">
+          <Link href="/latest" className="hover:text-white transition-colors hidden sm:block">Latest</Link>
           <Link href="/products" className="hover:text-white transition-colors hidden sm:block">All Products</Link>
           <Link href="/guides" className="hover:text-white transition-colors hidden sm:block">Guides</Link>
           <a

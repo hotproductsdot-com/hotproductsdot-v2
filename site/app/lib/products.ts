@@ -20,6 +20,27 @@ export interface Product {
   amazonUrl: string;
   imageUrl: string;
   badge: "hot" | "top-rated" | "best-seller" | null;
+  refreshedDate?: string;
+  refreshedTs?: number;
+}
+
+/** Parse "M/D/YYYY" or "YYYY-MM-DD" → epoch ms; 0 if unparseable. */
+function parseRefreshedDate(raw: string): number {
+  const s = (raw || "").trim();
+  if (!s) return 0;
+  const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (iso) {
+    const [, y, m, d] = iso;
+    const t = Date.UTC(+y, +m - 1, +d);
+    return Number.isFinite(t) ? t : 0;
+  }
+  const us = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (us) {
+    const [, m, d, y] = us;
+    const t = Date.UTC(+y, +m - 1, +d);
+    return Number.isFinite(t) ? t : 0;
+  }
+  return 0;
 }
 
 function slugify(text: string): string {
@@ -187,6 +208,8 @@ export function getAllProducts(): Product[] {
       : `https://www.amazon.com/s?k=${encodeURIComponent(name)}&tag=hotproduct033-20`;
 
     const asin = extractAsin(amazonUrl);
+    const refreshedRaw = (row["Refreshed Date"] || "").trim();
+    const refreshedTs = parseRefreshedDate(refreshedRaw);
 
     products.push({
       name,
@@ -204,6 +227,8 @@ export function getAllProducts(): Product[] {
       amazonUrl,
       imageUrl: getImageUrl(slug, asin),
       badge: assignBadge(affiliatePotential, bsrRank, rating),
+      refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
+      refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
     });
   }
 
@@ -280,6 +305,27 @@ export function getSaleProducts(count = 6): Product[] {
     .filter((p) => p.affiliatePotential >= 8)
     .sort((a, b) => b.affiliatePotential - a.affiliatePotential || a.bsrRank - b.bsrRank)
     .slice(0, count);
+}
+
+/**
+ * "Latest" feed: products with a parseable Refreshed Date, newest first.
+ * Falls back to highest-affiliate-potential picks to fill the requested count
+ * so the page stays full even when only ~10% of rows carry a refresh date.
+ */
+export function getLatestProducts(count = 24): Product[] {
+  const all = getAllProducts();
+  const dated = all
+    .filter((p) => typeof p.refreshedTs === "number" && p.refreshedTs! > 0)
+    .sort((a, b) => (b.refreshedTs ?? 0) - (a.refreshedTs ?? 0));
+
+  if (dated.length >= count) return dated.slice(0, count);
+
+  const usedSlugs = new Set(dated.map((p) => p.slug));
+  const fillers = all
+    .filter((p) => !usedSlugs.has(p.slug))
+    .sort((a, b) => b.affiliatePotential - a.affiliatePotential || a.bsrRank - b.bsrRank);
+
+  return [...dated, ...fillers].slice(0, count);
 }
 
 export function getAllCategories() {

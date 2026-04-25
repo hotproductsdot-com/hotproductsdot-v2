@@ -50,6 +50,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, lastModified: buildDate, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE_URL}/products`, lastModified: buildDate, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/latest`, lastModified: buildDate, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/guides`, lastModified: buildDate, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/disclaimer`, lastModified: buildDate, changeFrequency: "monthly", priority: 0.3 },
     { url: `${SITE_URL}/privacy`, lastModified: buildDate, changeFrequency: "monthly", priority: 0.3 },

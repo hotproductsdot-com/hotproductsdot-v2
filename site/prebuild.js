@@ -59,6 +59,22 @@ function normalizeCategory(raw) {
   return map[lower] ?? (trimmed || 'Electronics');
 }
 
+function parseRefreshedDate(raw) {
+  const s = (raw || '').trim();
+  if (!s) return 0;
+  const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (iso) {
+    const t = Date.UTC(+iso[1], +iso[2] - 1, +iso[3]);
+    return Number.isFinite(t) ? t : 0;
+  }
+  const us = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (us) {
+    const t = Date.UTC(+us[3], +us[1] - 1, +us[2]);
+    return Number.isFinite(t) ? t : 0;
+  }
+  return 0;
+}
+
 function assignBadge(affiliatePotential, bsrRank, rating) {
   if (affiliatePotential >= 9) return 'hot';
   if (bsrRank <= 3) return 'best-seller';
@@ -116,6 +132,8 @@ for (const row of result.data) {
     ? rawUrl
     : `https://www.amazon.com/s?k=${encodeURIComponent(name)}&tag=hotproduct033-20`;
   const asin = extractAsin(amazonUrl);
+  const refreshedRaw = (row['Refreshed Date'] || '').trim();
+  const refreshedTs = parseRefreshedDate(refreshedRaw);
 
   products.push({
     name, slug, category, categorySlug: slugify(category),
@@ -123,6 +141,8 @@ for (const row of result.data) {
     reviewCount, rating, bsr, bsrRank, affiliatePotential, amazonUrl,
     imageUrl: getImageUrl(slug, asin),
     badge: assignBadge(affiliatePotential, bsrRank, rating),
+    refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
+    refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
   });
 }
 
