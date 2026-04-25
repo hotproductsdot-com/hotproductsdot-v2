@@ -307,25 +307,68 @@ export function getSaleProducts(count = 6): Product[] {
     .slice(0, count);
 }
 
+export interface InstagramPostedProduct extends Product {
+  postedAt: string;
+  postedTs: number;
+  mediaId: string;
+}
+
 /**
- * "Latest" feed: products with a parseable Refreshed Date, newest first.
- * Falls back to highest-affiliate-potential picks to fill the requested count
- * so the page stays full even when only ~10% of rows carry a refresh date.
+ * "Latest" feed: products that were successfully posted to Instagram,
+ * newest post first. Reads marketing-campaigns/post_log.csv at build time
+ * (page is statically generated, so file IO happens once per build).
+ *
+ * Dedupes by product slug, keeping the most recent post for each.
+ * Skips entries whose product name no longer matches any row in the catalog.
  */
-export function getLatestProducts(count = 24): Product[] {
+export function getInstagramPostedProducts(count = 50): InstagramPostedProduct[] {
   const all = getAllProducts();
-  const dated = all
-    .filter((p) => typeof p.refreshedTs === "number" && p.refreshedTs! > 0)
-    .sort((a, b) => (b.refreshedTs ?? 0) - (a.refreshedTs ?? 0));
+  const bySlug = new Map(all.map((p) => [p.slug, p]));
+  const byName = new Map(all.map((p) => [p.name, p]));
 
-  if (dated.length >= count) return dated.slice(0, count);
+  const csvPath = path.join(process.cwd(), "..", "marketing-campaigns", "post_log.csv");
+  let csvContent = "";
+  try {
+    csvContent = fs.readFileSync(csvPath, "utf-8");
+  } catch {
+    return [];
+  }
 
-  const usedSlugs = new Set(dated.map((p) => p.slug));
-  const fillers = all
-    .filter((p) => !usedSlugs.has(p.slug))
-    .sort((a, b) => b.affiliatePotential - a.affiliatePotential || a.bsrRank - b.bsrRank);
+  const result = Papa.parse(csvContent, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (h: string) => h.trim(),
+  });
 
-  return [...dated, ...fillers].slice(0, count);
+  const newest = new Map<string, InstagramPostedProduct>();
+  for (const row of result.data as Record<string, string>[]) {
+    if ((row["Platform"] || "").trim() !== "instagram") continue;
+    if ((row["Status"] || "").trim() !== "ok") continue;
+
+    const productName = (row["Product"] || "").trim();
+    if (!productName) continue;
+
+    const product = byName.get(productName) ?? bySlug.get(slugify(productName));
+    if (!product) continue;
+
+    const postedAt = (row["Date"] || "").trim();
+    const postedTs = parseRefreshedDate(postedAt);
+    if (postedTs <= 0) continue;
+
+    const existing = newest.get(product.slug);
+    if (!existing || postedTs > existing.postedTs) {
+      newest.set(product.slug, {
+        ...product,
+        postedAt,
+        postedTs,
+        mediaId: (row["Detail"] || "").trim(),
+      });
+    }
+  }
+
+  return Array.from(newest.values())
+    .sort((a, b) => b.postedTs - a.postedTs)
+    .slice(0, count);
 }
 
 export function getAllCategories() {

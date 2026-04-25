@@ -1,29 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getLatestProducts } from "../lib/products";
+import { getInstagramPostedProducts } from "../lib/products";
 import ProductGrid from "../components/ProductGrid";
 import { SITE_NAME, SITE_URL } from "../lib/constants";
 
 const canonical = `${SITE_URL}/latest`;
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 50;
 
 export const metadata: Metadata = {
-  title: "Latest Picks — Recently Refreshed Amazon Products",
+  title: "Latest Picks — Recently Featured on Instagram",
   description:
-    "The newest products added and refreshed on HotProducts. See what's trending this week across electronics, smart home, fitness, kitchen and more.",
+    "Every product we've recently featured on @hotproductsdot.official, newest first. See what's trending across electronics, smart home, fitness, kitchen and more.",
   alternates: { canonical },
   openGraph: {
-    title: "Latest Picks — Recently Refreshed Amazon Products",
+    title: "Latest Picks — Recently Featured on Instagram",
     description:
-      "The newest products added and refreshed on HotProducts. Trending Amazon picks, updated weekly.",
+      "Every product we've recently featured on Instagram. Trending Amazon picks, updated as we post.",
     url: canonical,
     siteName: SITE_NAME,
     type: "website",
   },
 };
 
-function formatRefreshed(ts: number | undefined): string | null {
-  if (!ts) return null;
+function formatPostedDate(ts: number): string {
   return new Date(ts).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -33,17 +32,17 @@ function formatRefreshed(ts: number | undefined): string | null {
 }
 
 export default function LatestPage() {
-  const latest = getLatestProducts(PAGE_SIZE);
-  const newest = latest[0];
-  const lastUpdated = formatRefreshed(newest?.refreshedTs);
+  const posts = getInstagramPostedProducts(PAGE_SIZE);
+  const newest = posts[0];
+  const lastPosted = newest ? formatPostedDate(newest.postedTs) : null;
 
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Latest Picks",
+    name: "Latest Instagram Picks",
     itemListOrder: "https://schema.org/ItemListOrderDescending",
-    numberOfItems: latest.length,
-    itemListElement: latest.map((p, i) => ({
+    numberOfItems: posts.length,
+    itemListElement: posts.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${SITE_URL}/products/${p.slug}`,
@@ -60,11 +59,28 @@ export default function LatestPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white">Latest Picks</h1>
         <p className="text-zinc-500 mt-2">
-          The newest products we&apos;ve added and refreshed across every category.
-          {lastUpdated ? ` Last refresh: ${lastUpdated}.` : null}
+          Every product we&apos;ve recently featured on{" "}
+          <a
+            href="https://www.instagram.com/hotproductsdot.official"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-orange-500 hover:text-orange-400 transition-colors"
+          >
+            @hotproductsdot.official
+          </a>
+          , newest first.
+          {lastPosted ? ` Last post: ${lastPosted}.` : null}
         </p>
       </div>
-      <ProductGrid products={latest} />
+
+      {posts.length === 0 ? (
+        <div className="text-center py-16 text-zinc-500">
+          No Instagram posts logged yet. Check back soon — new picks drop daily.
+        </div>
+      ) : (
+        <ProductGrid products={posts} />
+      )}
+
       <div className="mt-12 text-center">
         <Link
           href="/products"
