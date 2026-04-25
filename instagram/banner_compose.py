@@ -206,15 +206,55 @@ def _is_dark_background(img: Image.Image, threshold: int = 100) -> bool:
     return avg < threshold
 
 
-def _remove_white_bg(img: Image.Image, threshold: int = 228) -> Image.Image:
-    """Replace near-white pixels with transparency."""
-    rgba = img.convert("RGBA")
-    data = rgba.getdata()
-    rgba.putdata([
-        (r, g, b, 0) if r > threshold and g > threshold and b > threshold else (r, g, b, a)
-        for r, g, b, a in data
-    ])
-    return rgba.filter(ImageFilter.SMOOTH_MORE)
+def _remove_white_bg(
+    img: Image.Image,
+    threshold: int = 228,
+    rembg_model: str | None = None,
+) -> Image.Image:
+    """Cut a product out of a white/light catalog backdrop.
+
+    Two model options:
+      - default (None) → rembg `u2net` + hybrid recovery: keeps non-white
+        pixels rembg drops. Safe for low-contrast products (silver iPads,
+        white earbuds, tan coolers) where isnet erases the body.
+      - "isnet-general-use" → cleaner cut on high-contrast products with
+        small accessories (Canon lens with hood + cap, Instant Pot with
+        accessories around it). Used when caller passes `rembg_model`
+        in the product dict.
+
+    Without rembg, falls back to per-pixel threshold.
+    """
+    rgba_src = img.convert("RGBA")
+
+    try:
+        from rembg import remove, new_session  # type: ignore
+        if rembg_model:
+            session = new_session(rembg_model)
+            rembg_out = remove(rgba_src, session=session)
+            return rembg_out.filter(ImageFilter.SMOOTH)
+        rembg_out = remove(rgba_src)
+    except ImportError:
+        data = rgba_src.getdata()
+        rgba_src.putdata([
+            (r, g, b, 0) if r > threshold and g > threshold and b > threshold else (r, g, b, a)
+            for r, g, b, a in data
+        ])
+        return rgba_src.filter(ImageFilter.SMOOTH_MORE)
+
+    src_pixels = list(rgba_src.getdata())
+    rembg_pixels = list(rembg_out.getdata())
+    merged: list[tuple[int, int, int, int]] = []
+    for (sr, sg, sb, _sa), (rr, rg, rb, ra) in zip(src_pixels, rembg_pixels):
+        if ra > 0:
+            merged.append((rr, rg, rb, ra))
+        elif sr > threshold and sg > threshold and sb > threshold:
+            merged.append((sr, sg, sb, 0))
+        else:
+            merged.append((sr, sg, sb, 255))
+
+    out = Image.new("RGBA", rgba_src.size)
+    out.putdata(merged)
+    return out.filter(ImageFilter.SMOOTH)
 
 
 def _remove_dark_bg(img: Image.Image) -> Image.Image:
@@ -247,10 +287,33 @@ def _remove_dark_bg(img: Image.Image) -> Image.Image:
     return rgba
 
 
-def _add_product(canvas: Image.Image, product_img: Image.Image) -> Image.Image:
+# Per-product rembg model overrides. Keyed by slug (matches what
+# `post_daily.py` and `preview_repost_banners.py` already pass through).
+# Default `None` → u2net + hybrid recovery. Override only when isnet wins.
+REMBG_MODEL_BY_SLUG: dict[str, str] = {
+    # High-contrast products with small accessories that u2net's hybrid
+    # recovery brings back as ghosts. isnet's cleaner saliency keeps the
+    # accessories sharp without leaving the product body bitten.
+    "canon-rf-70-200mm-f-2-8":                          "isnet-general-use",
+    "instant-pot-duo-7-in-1-electric-pressure-cooker":  "isnet-general-use",
+}
+
+
+def _add_product(
+    canvas: Image.Image,
+    product_img: Image.Image,
+    rembg_model: str | None = None,
+) -> Image.Image:
     """Composite product into lower portion of canvas."""
     dark_bg = _is_dark_background(product_img)
-    prod    = _remove_dark_bg(product_img) if dark_bg else _remove_white_bg(product_img)
+    prod    = _remove_dark_bg(product_img) if dark_bg else _remove_white_bg(product_img, rembg_model=rembg_model)
+
+    # Crop to the alpha bounding box so the visible product (not the original
+    # source dimensions, which may have wide transparent margins after cutout)
+    # is what gets centered on the canvas.
+    bbox = prod.getbbox()
+    if bbox:
+        prod = prod.crop(bbox)
 
     max_w = int(CANVAS * 0.72)
     max_h = int(CANVAS * 0.60)
@@ -450,10 +513,12 @@ def compose_banner(
     else:
         prod_img = Image.open(src).convert("RGB")
 
+    rembg_model = product.get("rembg_model") or REMBG_MODEL_BY_SLUG.get(product.get("slug", ""))
+
     canvas = _make_background()
     canvas = _add_orange_glow(canvas)
     canvas = _add_kinetic_curves(canvas)
-    canvas = _add_product(canvas, prod_img)
+    canvas = _add_product(canvas, prod_img, rembg_model=rembg_model)
     canvas = _add_text(canvas, product)
 
     out = Path(output_path)
