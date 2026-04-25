@@ -155,7 +155,7 @@ def load_top_products(n: int | None = None) -> list[dict]:
       - Review count ≥ 100
     """
     products = []
-    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+    with open(CSV_PATH, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
             name = (row.get("Product Name") or "").strip()
             if not name:

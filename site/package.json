@@ -6,26 +6,30 @@
     "dev": "next dev",
     "build": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js webpack",
     "build:fast": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js turbopack",
+    "social:generate": "node scripts/generate-social-images.mjs",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/papaparse": "^5.5.2",
-    "next": "^16.2.1",
+    "next": "^16.2.4",
     "papaparse": "^5.5.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "satori": "^0.26.0"
   },
   "devDependencies": {
+    "@fontsource/inter": "^5.2.8",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint": "^10",
+    "eslint-config-next": "16.2.4",
     "lightningcss": "^1.32.0",
     "serve": "^14.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }

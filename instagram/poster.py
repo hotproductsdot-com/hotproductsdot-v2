@@ -69,6 +69,23 @@ def post_image(image_url, caption):
     return post_id, None
 
 
+def delete_media(media_id):
+    """
+    Delete a published Instagram post by media_id. Returns (ok, error).
+
+    Note: Instagram's Graph API DELETE endpoint for media has had inconsistent
+    support over time. If the call fails with a permission or "not supported"
+    error, the post can still be deleted manually in the Instagram app.
+    """
+    token = os.environ.get("IG_ACCESS_TOKEN", "")
+    if not token:
+        return False, "IG_ACCESS_TOKEN not set in hotproductsdot-v2/.env"
+    _, err = _graph("DELETE", f"/{media_id}", {"access_token": token})
+    if err:
+        return False, err
+    return True, None
+
+
 def check_credentials():
     """Verify credentials are present and token is valid."""
     user_id = os.environ.get("IG_USER_ID", "")

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pinterest Pin Templates — hotproductsdot.com</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --ink: #1a1a1a;
+    --pinterest-red: #e60023;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 40px 20px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 32px; margin-bottom: 8px; }
+  .lede { color: #666; max-width: 700px; margin-bottom: 36px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .pin-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  }
+  .pin-card h3 { padding: 16px 20px 4px; font-size: 18px; }
+  .pin-card .specs { padding: 0 20px 16px; font-size: 13px; color: #666; }
+  .pin-frame {
+    /* Pinterest 2:3 ratio at 333x500 preview (real size: 1000x1500) */
+    aspect-ratio: 2/3;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ============================================================ */
+  /* TEMPLATE 1 — KITCHEN (Listicle / "Best of")                  */
+  /* ============================================================ */
+  .pin-kitchen {
+    background: linear-gradient(180deg, #fff8ee 0%, #ffe9c7 100%);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    color: #2b1d0e;
+  }
+  .pin-kitchen .badge {
+    display: inline-block;
+    background: #c8511c;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    align-self: flex-start;
+    text-transform: uppercase;
+  }
+  .pin-kitchen .headline {
+    font-family: Georgia, serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 18px 0;
+  }
+  .pin-kitchen .headline em { color: #c8511c; font-style: normal; }
+  .pin-kitchen .product-stack {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .pin-kitchen .product-row {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+  }
+  .pin-kitchen .num {
+    background: #c8511c;
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .pin-kitchen .product-name { font-size: 14px; font-weight: 600; }
+  .pin-kitchen .footer {
+    border-top: 2px dashed #c8511c;
+    padding-top: 12px;
+    text-align: center;
+  }
+  .pin-kitchen .url { font-size: 13px; font-weight: 700; color: #2b1d0e; }
+  .pin-kitchen .cta { font-size: 11px; color: #c8511c; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ============================================================ */
+  /* TEMPLATE 2 — BEAUTY (Hero / single product)                  */
+  /* ============================================================ */
+  .pin-beauty {
+    background: #f5e6e8;
+    display: flex;
+    flex-direction: column;
+    color: #2c1820;
+    position: relative;
+  }
+  .pin-beauty .product-area {
+    flex: 1;
+    background: linear-gradient(135deg, #f5e6e8 0%, #e8c5cd 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .pin-beauty .bottle {
+    width: 110px; height: 180px;
+    background: linear-gradient(180deg, #fff 0%, #faf0e6 100%);
+    border-radius: 8px 8px 14px 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.15);
+    position: relative;
+  }
+  .pin-beauty .bottle::before {
+    content: "";
+    position: absolute;
+    top: -22px; left: 50%; transform: translateX(-50%);
+    width: 38px; height: 26px;
+    background: #2c1820;
+    border-radius: 4px;
+  }
+  .pin-beauty .bottle-label {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-family: Georgia, serif;
+    font-size: 11px;
+    font-style: italic;
+    color: #2c1820;
+    text-align: center;
+    width: 80%;
+  }
+  .pin-beauty .price-tag {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: #c4727f;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .pin-beauty .text-block {
+    background: white;
+    padding: 30px 28px;
+    text-align: center;
+  }
+  .pin-beauty .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #c4727f;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .pin-beauty .headline {
+    font-family: Georgia, serif;
+    font-size: 30px;
+    font-style: italic;
+    line-height: 1.15;
+    margin: 12px 0;
+  }
+  .pin-beauty .review {
+    font-size: 13px;
+    color: #6c5760;
+    margin: 8px 0 14px;
+  }
+  .pin-beauty .stars { color: #d4a017; letter-spacing: 2px; }
+  .pin-beauty .cta {
+    display: inline-block;
+    background: #2c1820;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ============================================================ */
+  /* TEMPLATE 3 — TECH (Bold / Tech-forward)                      */
+  /* ============================================================ */
+  .pin-tech {
+    background: #0d0d12;
+    color: white;
+    padding: 32px 26px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .pin-tech::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(99, 102, 241, .4), transparent 70%);
+    pointer-events: none;
+  }
+  .pin-tech::after {
+    content: "";
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(34, 211, 238, .3), transparent 70%);
+    pointer-events: none;
+  }
+  .pin-tech .tag {
+    display: inline-block;
+    border: 1px solid #6366f1;
+    color: #a5b4fc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    align-self: flex-start;
+    text-transform: uppercase;
+    font-weight: 600;
+    z-index: 1;
+  }
+  .pin-tech .headline {
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 18px;
+    z-index: 1;
+    letter-spacing: -1px;
+  }
+  .pin-tech .headline span {
+    background: linear-gradient(135deg, #22d3ee, #6366f1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .pin-tech .product-img {
+    flex: 1;
+    margin: 24px 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+    border: 1px solid #2a2a3e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+  }
+  .pin-tech .product-img .device {
+    width: 70%;
+    height: 60%;
+    background: #0a0a14;
+    border-radius: 6px;
+    border: 2px solid #3a3a4e;
+    position: relative;
+  }
+  .pin-tech .product-img .device::after {
+    content: "";
+    position: absolute;
+    top: 8%; left: 5%; right: 5%; bottom: 8%;
+    background: linear-gradient(135deg, #22d3ee22, #6366f122);
+    border-radius: 3px;
+  }
+  .pin-tech .specs-row {
+    display: flex;
+    gap: 14px;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+  .pin-tech .spec {
+    flex: 1;
+    background: rgba(99,102,241,.08);
+    border: 1px solid rgba(99,102,241,.25);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .pin-tech .spec-num { font-size: 18px; font-weight: 800; color: #22d3ee; }
+  .pin-tech .spec-label { font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .pin-tech .footer {
+    z-index: 1;
+    border-top: 1px solid #2a2a3e;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pin-tech .url { font-size: 12px; font-weight: 700; }
+  .pin-tech .arrow {
+    background: #6366f1;
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  /* ============================================================ */
+  /* TEMPLATE 4 — FITNESS (Energetic / lifestyle)                 */
+  /* ============================================================ */
+  .pin-fitness {
+    background: linear-gradient(160deg, #064e3b 0%, #047857 50%, #10b981 100%);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    position: relative;
+  }
+  .pin-fitness .corner-tag {
+    position: absolute;
+    top: 24px; right: 24px;
+    background: #fbbf24;
+    color: #064e3b;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .pin-fitness .step {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6ee7b7;
+    font-weight: 700;
+  }
+  .pin-fitness .headline {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 14px 0 18px;
+    letter-spacing: -1px;
+  }
+  .pin-fitness .headline u {
+    text-decoration: none;
+    background: linear-gradient(180deg, transparent 60%, #fbbf24 60%);
+  }
+  .pin-fitness .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .pin-fitness .stat {
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .pin-fitness .stat-num { font-size: 22px; font-weight: 800; color: #fbbf24; }
+  .pin-fitness .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: .85; margin-top: 2px; }
+  .pin-fitness .checklist {
+    flex: 1;
+    background: white;
+    color: #064e3b;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .pin-fitness .checklist h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #047857; margin-bottom: 10px; }
+  .pin-fitness .check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 1px solid #d1fae5;
+  }
+  .pin-fitness .check-item:last-child { border-bottom: none; }
+  .pin-fitness .check {
+    color: #10b981; font-weight: 800;
+  }
+  .pin-fitness .footer {
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,.2);
+    padding-top: 12px;
+  }
+  .pin-fitness .url { font-size: 13px; font-weight: 800; }
+  .pin-fitness .save { font-size: 11px; opacity: .85; margin-top: 3px; letter-spacing: 1px; }
+
+  .specs-block {
+    background: #f0f0eb;
+    padding: 14px 20px;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.6;
+  }
+  .specs-block strong { color: #1a1a1a; }
+  code { background: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<h1>Pinterest Pin Templates · hotproductsdot.com</h1>
+<p class="lede">
+  Four reusable pin designs — one per niche. Real Pinterest pins render at <strong>1000×1500 px (2:3 ratio)</strong>;
+  these previews are scaled-down. Recreate in Canva using the listed colors/fonts/layout, or screenshot these
+  and use them as starter art.
+</p>
+
+<div class="grid">
+
+  <!-- ===== KITCHEN ===== -->
+  <div class="pin-card">
+    <h3>1. Home & Kitchen — Listicle</h3>
+    <p class="specs">Best for: "Best of" roundups · drives saves</p>
+    <div class="pin-frame">
+      <div class="pin-kitchen">
+        <span class="badge">Tested 2026</span>
+        <h2 class="headline">7 Air Fryers Worth <em>Every Penny</em></h2>
+        <div class="product-stack">
+          <div class="product-row"><span class="num">1</span><span class="product-name">Ninja Foodi 8-qt Dual Zone</span></div>
+          <div class="product-row"><span class="num">2</span><span class="product-name">COSORI Pro 5.8-qt</span></div>
+          <div class="product-row"><span class="num">3</span><span class="product-name">Instant Vortex Plus 6-qt</span></div>
+          <div class="product-row"><span class="num">4</span><span class="product-name">Breville Smart Oven Air</span></div>
+          <div class="product-row"><span class="num">5</span><span class="product-name">+ 3 budget picks</span></div>
+        </div>
+        <div class="footer">
+          <div class="url">hotproductsdot.com/best/kitchen</div>
+          <div class="cta">Tap to read full guide →</div>
+        </div>
+      </div>
+    </div>
+    <div class="specs-block">
+      <strong>Canva specs:</strong><br>
+      Bg: gradient #fff8ee → #ffe9c7 · Accent: <code>#c8511c</code> · Headline: Georgia 76pt bold ·
+      Body: Inter 28pt · Numbered list with white cards
+    </div>
+  </div>
+
+  <!-- ===== BEAUTY ===== -->
+  <div class="pin-card">
+    <h3>2. Fashion & Beauty — Hero</h3>
+    <p class="specs">Best for: single product spotlight · highest CTR</p>
+    <div class="pin-frame">
+      <div class="pin-beauty">
+        <div class="product-area">
+          <span class="price-tag">$28</span>
+          <div class="bottle">
+            <div class="bottle-label">Retinol<br/>Serum<br/>0.5%</div>
+          </div>
+        </div>
+        <div class="text-block">
+          <div class="eyebrow">EDITOR'S PICK · APRIL 2026</div>
+          <h2 class="headline">The retinol that finally <em>works</em></h2>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            12,847 reviews · 4.7 avg
+          </div>
+          <span class="cta">Shop on Amazon</span>
+        </div>
+      </div>
+    </div>
+    <div class="specs-block">
+      <strong>Canva specs:</strong><br>
+      Bg: #f5e6e8 + cream gradient · Accent: <code>#c4727f</code> · Italic Georgia 60pt headline ·
+      Drop a real product image where the bottle mockup is
+    </div>
+  </div>
+
+  <!-- ===== TECH ===== -->
+  <div class="pin-card">
+    <h3>3. Tech & Gadgets — Modern</h3>
+    <p class="specs">Best for: gaming/smart-home/laptops · high engagement</p>
+    <div class="pin-frame">
+      <div class="pin-tech">
+        <span class="tag">2026 PICK</span>
+        <h2 class="headline">The <span>only laptop</span> creators need</h2>
+        <div class="product-img"><div class="device"></div></div>
+        <div class="specs-row">
+          <div class="spec"><div class="spec-num">M4</div><div class="spec-label">Pro</div></div>
+          <div class="spec"><div class="spec-num">18h</div><div class="spec-label">Battery</div></div>
+          <div class="spec"><div class="spec-num">4K</div><div class="spec-label">Display</div></div>
+        </div>
+        <div class="footer">
+          <div class="url">hotproductsdot.com/best/laptops</div>
+          <div class="arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="specs-block">
+      <strong>Canva specs:</strong><br>
+      Bg: <code>#0d0d12</code> w/ purple+cyan glow · Headline: Inter Black 88pt, gradient on key word ·
+      Stat boxes for specs
+    </div>
+  </div>
+
+  <!-- ===== FITNESS ===== -->
+  <div class="pin-card">
+    <h3>4. Health & Fitness — Lifestyle</h3>
+    <p class="specs">Best for: home gym lists, routines · drives saves</p>
+    <div class="pin-frame">
+      <div class="pin-fitness">
+        <span class="corner-tag">Save This</span>
+        <div class="step">Home Gym Essentials</div>
+        <h2 class="headline">5 Things <u>under $200</u> for a real workout at home</h2>
+        <div class="stats">
+          <div class="stat"><div class="stat-num">5</div><div class="stat-label">Items</div></div>
+          <div class="stat"><div class="stat-num">$200</div><div class="stat-label">Total</div></div>
+        </div>
+        <div class="checklist">
+          <h4>What's Inside</h4>
+          <div class="check-item"><span class="check">✓</span>Adjustable dumbbells</div>
+          <div class="check-item"><span class="check">✓</span>Resistance bands set</div>
+          <div class="check-item"><span class="check">✓</span>Yoga mat (extra thick)</div>
+          <div class="check-item"><span class="check">✓</span>Pull-up door bar</div>
+          <div class="check-item"><span class="check">✓</span>Foam roller</div>
+        </div>
+        <div class="footer">
+          <div class="url">hotproductsdot.com/best/fitness</div>
+          <div class="save">Save · Tap to shop →</div>
+        </div>
+      </div>
+    </div>
+    <div class="specs-block">
+      <strong>Canva specs:</strong><br>
+      Bg: green gradient #064e3b → #10b981 · Accent: <code>#fbbf24</code> · Headline: Inter Black 78pt ·
+      White checklist card; stat tiles glassmorphism
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width: 700px; margin: 60px auto 20px; padding: 24px; background: white; border-radius: 12px; border: 1px solid #e5e5e5;">
+  <h3 style="margin-bottom: 12px;">How to use these</h3>
+  <ol style="padding-left: 20px; line-height: 1.8;">
+    <li>Open this file in any browser to preview the four templates.</li>
+    <li>Right-click each pin → <em>Save image as…</em> to grab the rendered design.</li>
+    <li>Recreate in Canva with the listed specs, swapping in real product photos from <code>site/public/products/</code>.</li>
+    <li>Export at <strong>1000×1500 px</strong> (Pinterest 2:3 ratio).</li>
+    <li>Make 3-5 variations of each template per niche so pins look fresh, not bot-repeated.</li>
+  </ol>
+</div>
+
+</body>
+</html>

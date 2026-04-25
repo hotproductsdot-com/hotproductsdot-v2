@@ -1,0 +1,49 @@
+name: 🎵 Refresh TikTok token
+
+# Refreshes TIKTOK_ACCESS_TOKEN (24 h TTL) and rotates TIKTOK_REFRESH_TOKEN
+# (365 d TTL, rotates each call) via the GitHub Actions secrets API.
+#
+# Setup (one-time — see RUNBOOK § TikTok token refresh):
+#   1. Complete the OAuth bootstrap locally to seed TIKTOK_ACCESS_TOKEN +
+#      TIKTOK_REFRESH_TOKEN + TIKTOK_CLIENT_KEY + TIKTOK_CLIENT_SECRET as repo secrets.
+#   2. Create a fine-grained PAT with 'Secrets: Read and write' on this repo.
+#      The default GITHUB_TOKEN cannot write secrets. Save it as GH_PAT.
+#   3. Enable this workflow (it's disabled by default on new workflows in some repos).
+
+on:
+  schedule:
+    # Every 12 h at 00:00 and 12:00 UTC — 2 h before the daily post at 14:00 UTC.
+    - cron: '0 0,12 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: tiktok-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Rotate TikTok OAuth tokens
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Refresh token and update repo secrets
+        env:
+          TIKTOK_CLIENT_KEY:    ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          GH_REPO:              ${{ github.repository }}
+          GH_TOKEN:             ${{ secrets.GH_PAT }}
+        run: python -m tiktok_api refresh --github

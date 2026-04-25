@@ -28,7 +28,7 @@ hotproductsdot-v2/
 | Area | How it stays accurate | You should still… |
 |------|------------------------|-------------------|
 | **Affiliate links** | `site/app/lib/affiliate.ts` enforces `AFFILIATE_TAG` on outbound Amazon URLs; product CTAs use `buildAffiliateUrl()` | Run `python fix_amazon_urls.py --audit` and fix rows missing `/dp/` ASINs; spot-check links after CSV edits |
-| **Prices** | CSV is the source of truth; copy on pages says prices may change | Run `node validate-prices-parallel.js --dry-run` (or apply) before big launches; rerun after bulk catalog updates |
+| **Prices** | CSV is the source of truth; copy on pages says prices may change | Run `./oxylabs-amazon-product.sh --limit 20` (or without `--limit` for full refresh) before big launches; rerun after bulk catalog updates |
 | **Images** | Local files under `site/public/products/` override Amazon CDN; **cache-busting** `?v=<file-mtime>` is appended on build so **replacing an image file and redeploying** yields a new URL (fixes “old image in every browser”) | After replacing a `.jpg`, run a full site build + deploy so `products.json` / HTML pick up the new query string |
 
 **Stale images after deploy (browsers showing old art):**  
@@ -38,7 +38,7 @@ That happens when the **URL stays identical** and caches reuse the file. The sit
 
 ## QA Pipeline
 
-Run this before every deployment to lint, validate prices, check images, and build.
+Run this before every deployment to lint, check images, and build. Price / rating / review validation is **not** part of QA (each Oxylabs API call has a cost) — run `./oxylabs-amazon-product.sh` manually before launches.
 
 ```bash
 ./perform_qualityassurance.sh
@@ -49,7 +49,7 @@ Run this before every deployment to lint, validate prices, check images, and bui
 | Step | Check | On Failure |
 |------|-------|------------|
 | 1 | ESLint — static code analysis | Hard stop |
-| 2 | Price validation (dry-run) | Warning only |
+| 2 | Price validation | Skipped — run `./oxylabs-amazon-product.sh` manually |
 | 3 | Image check | Hard stop if 10+ missing |
 | 4 | Production build | Hard stop |
 
@@ -82,7 +82,7 @@ Run from the **project root** (`node <script>`):
 > |-------|-----------|-----------------------|
 > | Add products to catalog | `add_new_products.py`, `scrape_top_affiliates.py` | `generate_products.py` (hardcoded data only — one-time fill) |
 > | Remove duplicates | `remove_duplicates.py` (model-aware, Python) | `check-duplicates.js` (quick JS check only) |
-> | Price validation | `validate-prices-parallel.js` | `validate-prices.js` (sequential — debugging only) |
+> | Price / rating / review validation | `oxylabs-amazon-product.sh` (Oxylabs API, structured) | _(HTML scrapers removed — see git history)_ |
 > | Image download | `autofix-images.js` → `download-missing.js` → `download-search.js` | `download-images.js` (full re-download, rarely needed) |
 > | Duplicate library | `products/check_duplicates.py` | (imported by all catalog scripts — not a standalone replacement) |
 
@@ -148,17 +148,19 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 > **Image script ranking (most → least useful for day-to-day):**
 > `autofix-images.js` → `download-missing.js` → `download-search.js` → `fix-mismatched-images.js` → `fix-single.js` → `download-images.js` (full re-download, rarely needed) → `generate-placeholders.js` (last resort)
 
-### Prices
+### Prices / Ratings / Reviews
 
 | Command | Description |
 |---------|-------------|
-| `node validate-prices-parallel.js` | Check product prices in parallel across multiple workers (faster — **prefer this**) |
-| `node validate-prices-parallel.js --dry-run` | Report price mismatches without updating the CSV |
-| `node validate-prices-parallel.js --workers=8` | Set number of parallel workers (default: 4) |
-| `node validate-prices.js` | Check product prices against Amazon (sequential, slower — use only for debugging) |
+| `./oxylabs-amazon-product.sh` | Pull live price / rating / review count for every product via the Oxylabs Amazon Product API and merge into `products/top-1000.csv` |
+| `./oxylabs-amazon-product.sh --limit 50` | Only process the first 50 products (quick sample) |
+| `./oxylabs-amazon-product.sh --offset 500 --limit 100` | Resume / process a slice |
+| `./oxylabs-amazon-product.sh --geo 10001` | Query a specific geo zip (default `90210`) |
+| `./oxylabs-amazon-product.sh --check-links` | Audit every Amazon link for dead (404) / removed / unavailable listings. Writes offenders to `products/broken-links.csv`; skips the price/rating/review merge |
+| `./oxylabs-amazon-product.sh --check-links --limit 100` | Audit only the first 100 links |
 
-> **Note:** Price validation scrapes Amazon live. It is slow and may hit CAPTCHAs. Run overnight or with `--dry-run` for a quick status check.
-> `validate-prices-parallel.js` supersedes `validate-prices.js` for all normal use.
+> **How it works:** requests Oxylabs `amazon_product` realtime API with `parse=true`, so responses are structured JSON (no HTML scraping, no CAPTCHAs). Differences land in `products/products4review.csv`; a dated backup of the CSV is written before any merge.
+> Requires `OXYLABS_USERNAME` / `OXYLABS_PASSWORD` in `.env` (each call has a per-request cost — hence this isn't run from automated QA).
 
 ### Links & Affiliate Tags
 
@@ -227,10 +229,8 @@ pip install -r requirements.txt
 | `python post_daily.py --platform all` | Post to both Instagram and TikTok |
 | `python post_daily.py --platform instagram` | Post to Instagram only |
 | `python post_daily.py --platform tiktok` | Post to TikTok only |
-| `python post_tiktok.py` | Post today's product to TikTok only (standalone — rotates through top-60 by affiliate potential) |
-| `python post_tiktok.py --dry-run` | Preview the TikTok post without publishing |
 
-> **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables. `post_tiktok.py` requires only `TIKTOK_ACCESS_TOKEN`. Both are set as GitHub Actions secrets for CI use.
+> **Note:** `post_daily.py` requires `IG_USER_ID`, `IG_ACCESS_TOKEN`, and `TIKTOK_ACCESS_TOKEN` environment variables, set as GitHub Actions secrets for CI use.
 
 #### `post_daily.py` — Complete Command-Line Reference
 
@@ -411,7 +411,7 @@ The `instagram/` package is used internally by `post_daily.py` for Instagram pos
 
 | Script | Description |
 |--------|-------------|
-| `tiktok_api.py` | TikTok Content Posting API v2 client — imported by `post_daily.py` and `post_tiktok.py` |
+| `tiktok_api.py` | TikTok Content Posting API v2 client — imported by `post_daily.py` |
 | `products/check_duplicates.py` | Duplicate-guard library imported by `add_new_products.py`, `scrape_top_affiliates.py`, and `remove_duplicates.py`; also runnable standalone (`python products/check_duplicates.py`) |
 | `products/verify_products.py` | Stub — placeholder for future product-file verification logic; not yet implemented |
 
@@ -443,10 +443,10 @@ node download-missing.js      # attempt to download them
 node generate-placeholders.js # generate placeholders for any that still fail
 ```
 
-### Fix bad prices
+### Fix bad prices / ratings / review counts
 ```bash
-node validate-prices-parallel.js --dry-run    # see mismatches
-node validate-prices-parallel.js --workers=4  # apply fixes to CSV
+./oxylabs-amazon-product.sh --limit 20   # quick sample (mismatches logged to products/products4review.csv, CSV updated)
+./oxylabs-amazon-product.sh              # full catalog refresh
 ```
 
 ### Production build only
@@ -585,7 +585,7 @@ A three-phase workflow for fixing links, generating content, and shipping to pro
   ```
   - 🎯 **Progress:** ESLint ✅, prices ✅, images ✅, build ✅
 - [ ] **Spot-check price accuracy** (optional, if prices updated during day):
-  - `node validate-prices-parallel.js --dry-run` (fast preview, no updates)
+  - `./oxylabs-amazon-product.sh --limit 50` (live API sample; writes diffs to `products/products4review.csv` and updates CSV)
   - 🎯 **Progress:** <10% mismatch rate or none
 - [ ] **Test locally before deploy:**
   ```bash
@@ -595,7 +595,7 @@ A three-phase workflow for fixing links, generating content, and shipping to pro
   - 🎯 **Progress:** Site loads, products render, affiliate links open correctly
 - [ ] **Fix any issues found:**
   - Bad image? `node fix-single.js <product-id>`
-  - Bad price? `node validate-prices-parallel.js --workers 4` (update CSV)
+  - Bad price/rating/reviews? `./oxylabs-amazon-product.sh --limit 20` (live API; updates CSV and logs diffs)
   - Broken link? `node fix-amazon-urls.py --apply --limit 10`
 - [ ] **Final commit + push to main:**
   ```bash

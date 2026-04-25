@@ -217,19 +217,32 @@ def _remove_white_bg(img: Image.Image, threshold: int = 228) -> Image.Image:
     return rgba.filter(ImageFilter.SMOOTH_MORE)
 
 
-def _apply_ellipse_blend(img: Image.Image, feather: float = 0.12) -> Image.Image:
+def _remove_dark_bg(img: Image.Image) -> Image.Image:
+    """Cut a product out of a dark studio backdrop.
+
+    Uses rembg (u2net) when available — the only reliable option for dark-on-dark cases
+    where color-distance fails because the product (e.g. a black camera body) shares its
+    luminance with the backdrop.
+
+    Falls back to a soft radial alpha that dims the image's perimeter into the canvas.
+    The fallback is visibly worse but prevents a crash if rembg isn't installed.
     """
-    For dark-background images (fal.ai output): apply a soft elliptical alpha mask
-    so the product fades into the canvas rather than leaving a hard rectangle.
-    """
+    try:
+        from rembg import remove  # type: ignore
+        cut = remove(img.convert("RGBA"))
+        return cut.filter(ImageFilter.SMOOTH)
+    except ImportError:
+        pass
+
     rgba = img.convert("RGBA")
     w, h = rgba.size
     mask = Image.new("L", (w, h), 0)
-    md   = ImageDraw.Draw(mask)
-    px   = int(w * feather)
-    py   = int(h * feather)
+    md = ImageDraw.Draw(mask)
+    feather = 0.18
+    px = int(w * feather)
+    py = int(h * feather)
     md.ellipse([px, py, w - px, h - py], fill=255)
-    mask = mask.filter(ImageFilter.GaussianBlur(radius=max(px, py) * 0.9))
+    mask = mask.filter(ImageFilter.GaussianBlur(radius=max(px, py) * 1.2))
     rgba.putalpha(mask)
     return rgba
 
@@ -237,7 +250,7 @@ def _apply_ellipse_blend(img: Image.Image, feather: float = 0.12) -> Image.Image
 def _add_product(canvas: Image.Image, product_img: Image.Image) -> Image.Image:
     """Composite product into lower portion of canvas."""
     dark_bg = _is_dark_background(product_img)
-    prod    = _apply_ellipse_blend(product_img) if dark_bg else _remove_white_bg(product_img)
+    prod    = _remove_dark_bg(product_img) if dark_bg else _remove_white_bg(product_img)
 
     max_w = int(CANVAS * 0.72)
     max_h = int(CANVAS * 0.60)

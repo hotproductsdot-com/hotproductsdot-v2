@@ -6,17 +6,20 @@
 #
 # Usage:
 #   chmod +x oxylabs-amazon-product.sh
-#   ./oxylabs-amazon-product.sh [--limit N] [--geo GEO] [--offset N]
+#   ./oxylabs-amazon-product.sh [--limit N] [--geo GEO] [--offset N] [--check-links]
 #
 # Options:
 #   --limit  N    Only process N products (default: all)
 #   --geo    GEO  Geo location zip code (default: 90210)
 #   --offset N    Skip the first N products (default: 0)
+#   --check-links Check for dead / unavailable Amazon listings and log them to
+#                 products/broken-links.csv. Skips the price/rating/review merge.
 #
 # Examples:
 #   ./oxylabs-amazon-product.sh                        # process all
 #   ./oxylabs-amazon-product.sh --limit 50             # first 50
 #   ./oxylabs-amazon-product.sh --limit 10 --offset 20 # rows 21-30
+#   ./oxylabs-amazon-product.sh --check-links --limit 100  # audit first 100 links
 
 set -euo pipefail
 
@@ -38,18 +41,24 @@ GEO="90210"
 LIMIT=0          # 0 = no limit
 OFFSET=0
 BATCH_SIZE=5
+CHECK_LINKS=false
 CSV_FILE="$REPO_ROOT/products/top-1000.csv"
 OUTPUT_FILE="$REPO_ROOT/products/products4review.csv"
 
 # ── Argument parsing ───────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --geo)    GEO="$2";    shift 2 ;;
-    --limit)  LIMIT="$2";  shift 2 ;;
-    --offset) OFFSET="$2"; shift 2 ;;
+    --geo)          GEO="$2";       shift 2 ;;
+    --limit)        LIMIT="$2";     shift 2 ;;
+    --offset)       OFFSET="$2";    shift 2 ;;
+    --check-links)  CHECK_LINKS=true; shift ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
 done
+
+if [[ "$CHECK_LINKS" == "true" ]]; then
+  OUTPUT_FILE="$REPO_ROOT/products/broken-links.csv"
+fi
 
 # ── Dependency check ───────────────────────────────────────────────────────────
 for cmd in curl python3; do
@@ -75,7 +84,11 @@ echo "Backup created: $BACKUP_FILE"
 
 # ── Write output header if file doesn't exist ──────────────────────────────────
 if [[ ! -f "$OUTPUT_FILE" ]]; then
-  echo "ASIN,Product Name,Field,CSV Value,Live Value" > "$OUTPUT_FILE"
+  if [[ "$CHECK_LINKS" == "true" ]]; then
+    echo "ASIN,Product Name,Amazon URL,HTTP Status,Reason,Title,Price,Availability" > "$OUTPUT_FILE"
+  else
+    echo "ASIN,Product Name,Field,CSV Value,Live Value" > "$OUTPUT_FILE"
+  fi
   echo "Created output file: $OUTPUT_FILE"
 fi
 
@@ -88,11 +101,21 @@ trap 'rm -f "$TMP_ROWS" "$TMP_UPDATES"' EXIT
 readonly _NOCHANGE='__NOCHANGE__'
 
 python3 - <<PYEOF > "$TMP_ROWS"
-import csv
+import csv, re
 
 csv_file = r"$CSV_FILE"
 limit     = int("$LIMIT")
 offset    = int("$OFFSET")
+
+ASIN_RE = re.compile(r'/(?:dp|gp/product)/([A-Z0-9]{10})', re.IGNORECASE)
+
+def extract_asin(row):
+    raw = (row.get('ASIN') or '').strip()
+    if raw:
+        return raw
+    url = (row.get('Amazon URL') or '').strip()
+    m = ASIN_RE.search(url)
+    return m.group(1).upper() if m else ''
 
 with open(csv_file, encoding='utf-8-sig', errors='replace', newline='') as f:
     reader = csv.DictReader(f)
@@ -103,7 +126,7 @@ if limit > 0:
     rows = rows[:limit]
 
 for r in rows:
-    asin = (r.get('ASIN') or '').strip()
+    asin = extract_asin(r)
     if not asin:
         continue
     name    = (r.get('Product Name')    or '').replace('\t', ' ')
@@ -111,7 +134,8 @@ for r in rows:
     rating  = (r.get('Rating')          or '').strip()
     reviews = (r.get('Review Count')    or '').strip()
     bsr     = (r.get('BSR')             or '').strip()
-    print('\t'.join([asin, name, price, rating, reviews, bsr]))
+    url     = (r.get('Amazon URL')      or '').replace('\t', ' ').strip()
+    print('\t'.join([asin, name, price, rating, reviews, bsr, url]))
 PYEOF
 
 # ── Count rows to process ──────────────────────────────────────────────────────
@@ -151,8 +175,76 @@ normalize_price() {
   echo "$1" | tr -d '$,' | sed 's/[[:space:]]//g' | cut -d'-' -f1
 }
 
+# ── Helper: link-audit for a single ASIN (used in --check-links mode) ─────────
+# Reads ASIN / NAME / URL from the caller's scope and appends a row to
+# $OUTPUT_FILE when the listing is dead or unavailable. Increments BROKEN_COUNT.
+check_link_entry() {
+  local tmp
+  tmp=$(mktemp /tmp/oxylabs_link_XXXXXX.json)
+  query_asin "$ASIN" > "$tmp"
+
+  local verdict
+  # US = ASCII 0x1F (Unit Separator). Non-whitespace, so bash read won't
+  # coalesce adjacent delimiters the way it does for tab/space/newline.
+  verdict=$(python3 -c "
+import json, sys
+US = '\x1f'
+try:
+    with open(r'$tmp') as f:
+        data = json.load(f)
+    r = (data.get('results') or [{}])[0]
+    status = str(r.get('status_code', '200'))
+    content = r.get('content') or {}
+    title = (content.get('title') or '').strip()
+    price_raw = content.get('price')
+    price = ('' if price_raw in (None, '') else str(price_raw)).strip()
+    avail = (content.get('stock') or content.get('availability') or '').strip()
+
+    reason = ''
+    if status != '200':
+        reason = f'http_{status}'
+    elif not title:
+        reason = 'listing_removed'
+    elif not price:
+        a = avail.lower()
+        if ('unavailable' in a) or ('out of stock' in a) or ('not available' in a):
+            reason = 'unavailable'
+
+    # US-separated: status, reason, title, price, availability
+    print(US.join([status, reason, title.replace(US,' '), price, avail.replace(US,' ')]))
+except Exception as e:
+    print(f'parse_error{US}{e}{US}{US}{US}')
+")
+  rm -f "$tmp"
+
+  local http_status reason title live_price avail
+  IFS=$'\x1f' read -r http_status reason title live_price avail <<< "$verdict"
+
+  if [[ "$http_status" == "parse_error" ]]; then
+    echo "    ⚠  Parse error: $reason"
+    return
+  fi
+
+  if [[ -n "$reason" ]]; then
+    echo "    ✗ BROKEN ($reason, http=$http_status)"
+    printf '%s,%s,%s,%s,%s,%s,%s,%s\n' \
+      "$(escape_csv "$ASIN")" \
+      "$(escape_csv "$NAME")" \
+      "$(escape_csv "$URL")" \
+      "$(escape_csv "$http_status")" \
+      "$(escape_csv "$reason")" \
+      "$(escape_csv "$title")" \
+      "$(escape_csv "$live_price")" \
+      "$(escape_csv "$avail")" >> "$OUTPUT_FILE"
+    BROKEN_COUNT=$(( BROKEN_COUNT + 1 ))
+  else
+    echo "    ✓ OK ($title | \$$live_price)"
+  fi
+}
+
 # ── Main loop ─────────────────────────────────────────────────────────────────
 DIFF_COUNT=0
+BROKEN_COUNT=0
 CHECKED=0
 BATCH_NUM=0
 BATCH_LINES=()
@@ -163,9 +255,14 @@ process_batch() {
   echo "── Batch $BATCH_NUM (${#BATCH_LINES[@]} products) ──────────────────────────────"
 
   for entry in "${BATCH_LINES[@]}"; do
-    IFS=$'\t' read -r ASIN NAME CSV_PRICE CSV_RATING CSV_REVIEWS CSV_BSR <<< "$entry"
+    IFS=$'\t' read -r ASIN NAME CSV_PRICE CSV_RATING CSV_REVIEWS CSV_BSR URL <<< "$entry"
     CHECKED=$(( CHECKED + 1 ))
     echo "  [$CHECKED/$TOTAL] $ASIN  |  $NAME"
+
+    if [[ "$CHECK_LINKS" == "true" ]]; then
+      check_link_entry
+      continue
+    fi
 
     # Query and save response to a temp file (avoids stdin conflicts with heredoc)
     TMP_RESP=$(mktemp /tmp/oxylabs_resp_XXXXXX.json)
@@ -267,16 +364,27 @@ if [[ ${#BATCH_LINES[@]} -gt 0 ]]; then
 fi
 
 # ── Merge Price Range, Rating, Review Count into top-1000.csv ────────────────
+# Skipped in --check-links mode (no price/rating/review data collected).
 MERGED_ROWS=0
-if [[ -s "$TMP_UPDATES" ]]; then
+if [[ "$CHECK_LINKS" != "true" && -s "$TMP_UPDATES" ]]; then
   MERGED_ROWS=$(python3 - <<PYEOF
 import csv
 import os
+import re
 import tempfile
 
 csv_path = r"$CSV_FILE"
 updates_path = r"$TMP_UPDATES"
 nochange = r"$_NOCHANGE"
+
+ASIN_RE = re.compile(r'/(?:dp|gp/product)/([A-Z0-9]{10})', re.IGNORECASE)
+
+def row_asin(row):
+    raw = (row.get("ASIN") or "").strip()
+    if raw:
+        return raw.upper()
+    m = ASIN_RE.search((row.get("Amazon URL") or "").strip())
+    return m.group(1).upper() if m else ""
 
 by_asin = {}
 with open(updates_path, encoding="utf-8", errors="replace", newline="") as uf:
@@ -288,7 +396,7 @@ with open(updates_path, encoding="utf-8", errors="replace", newline="") as uf:
         if len(parts) != 4:
             continue
         asin, p, rt, rv = parts
-        by_asin[asin.strip()] = (p, rt, rv)
+        by_asin[asin.strip().upper()] = (p, rt, rv)
 
 if not by_asin:
     print(0)
@@ -301,8 +409,8 @@ with open(csv_path, encoding="utf-8-sig", errors="replace", newline="") as f:
     rows = list(reader)
 
 for row in rows:
-    asin = (row.get("ASIN") or "").strip()
-    if asin not in by_asin:
+    asin = row_asin(row)
+    if not asin or asin not in by_asin:
         continue
     p, rt, rv = by_asin[asin]
     touched = False
@@ -337,6 +445,8 @@ PYEOF
 )
   echo ""
   echo "Merged live Price Range / Rating / Review Count into: $CSV_FILE ($MERGED_ROWS row(s) updated)."
+elif [[ "$CHECK_LINKS" == "true" ]]; then
+  : # link-check mode: nothing to merge, findings already in $OUTPUT_FILE
 else
   echo ""
   echo "No Price/Rating/Review Count changes to merge into $CSV_FILE."
@@ -346,8 +456,15 @@ fi
 echo ""
 echo "═════════════════════════════════════════════════════"
 echo "Done. Checked $CHECKED products across $BATCH_NUM batches."
-echo "Differences found: $DIFF_COUNT"
-if [[ $DIFF_COUNT -gt 0 ]]; then
-  echo "Review file: $OUTPUT_FILE"
+if [[ "$CHECK_LINKS" == "true" ]]; then
+  echo "Broken / unavailable listings: $BROKEN_COUNT"
+  if [[ $BROKEN_COUNT -gt 0 ]]; then
+    echo "Broken-links report: $OUTPUT_FILE"
+  fi
+else
+  echo "Differences found: $DIFF_COUNT"
+  if [[ $DIFF_COUNT -gt 0 ]]; then
+    echo "Review file: $OUTPUT_FILE"
+  fi
 fi
 echo "Backup: $BACKUP_FILE"

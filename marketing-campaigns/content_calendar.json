@@ -1,0 +1,160 @@
+{
+  "generated_at": "2026-04-14T12:30:52.705100",
+  "days": 7,
+  "entries": [
+    {
+      "day": 1,
+      "date": "2026-04-14",
+      "platform": "instagram",
+      "product": {
+        "name": "Sony A7S III",
+        "slug": "sony-a7s-iii",
+        "category": "Photography",
+        "price": "5846",
+        "price_num": 5846.0,
+        "rating": 4.7,
+        "reviews": "1300",
+        "review_count": 1300,
+        "potential": 9,
+        "bsr": 2,
+        "amazon_url": "https://www.amazon.com/dp/B0CS6LM24Z?tag=hotproduct033-20",
+        "_score": 142110.97161253827
+      },
+      "hook": "This one's blowing up on Amazon \ud83d\udd25",
+      "cta": "Link in bio \u2192 \ud83d\uded2",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 2,
+      "date": "2026-04-15",
+      "platform": "tiktok",
+      "product": {
+        "name": "Nikon Z9 II",
+        "slug": "nikon-z9-ii",
+        "category": "Photography",
+        "price": "5296.95",
+        "price_num": 5296.95,
+        "rating": 4.5,
+        "reviews": "106",
+        "review_count": 106,
+        "potential": 9,
+        "bsr": 1,
+        "amazon_url": "https://www.amazon.com/dp/B09KHC4XCT?tag=hotproduct033-20",
+        "_score": 101181.29738724156
+      },
+      "hook": "Everyone's grabbing this right now \ud83d\udc40",
+      "cta": "Comment LINK \ud83d\udc47",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 3,
+      "date": "2026-04-16",
+      "platform": "instagram",
+      "product": {
+        "name": "Canon EOS R5 Camera",
+        "slug": "canon-eos-r5-camera",
+        "category": "Photography",
+        "price": "$2,799",
+        "price_num": 2799.0,
+        "rating": 4.7,
+        "reviews": "776",
+        "review_count": 776,
+        "potential": 9,
+        "bsr": 1,
+        "amazon_url": "https://www.amazon.com/dp/B08C68F2DX?tag=hotproduct033-20",
+        "_score": 79679.9503807583
+      },
+      "hook": "The reviews don't lie... \ud83d\udcaf",
+      "cta": "Link in bio \u2192 \ud83d\uded2",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 4,
+      "date": "2026-04-17",
+      "platform": "tiktok",
+      "product": {
+        "name": "Zeiss Otus 85mm f/1.4",
+        "slug": "zeiss-otus-85mm-f-1-4",
+        "category": "Photography",
+        "price": "$2,499",
+        "price_num": 2499.0,
+        "rating": 4.9,
+        "reviews": "800",
+        "review_count": 800,
+        "potential": 9,
+        "bsr": 1,
+        "amazon_url": "https://www.amazon.com/dp/B0F59K7M9N?tag=hotproduct033-20",
+        "_score": 74506.48414437544
+      },
+      "hook": "If you're not using this yet, you're missing out \ud83d\ude05",
+      "cta": "Comment LINK \ud83d\udc47",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 5,
+      "date": "2026-04-18",
+      "platform": "instagram",
+      "product": {
+        "name": "Canon RF 70-200mm f/2.8",
+        "slug": "canon-rf-70-200mm-f-2-8",
+        "category": "Photography",
+        "price": "3099",
+        "price_num": 3099.0,
+        "rating": 4.7,
+        "reviews": "1200",
+        "review_count": 1200,
+        "potential": 8,
+        "bsr": 2,
+        "amazon_url": "https://www.amazon.com/dp/B0FKD5HXDJ?tag=hotproduct033-20",
+        "_score": 74492.90643633982
+      },
+      "hook": "Just ordered another one for myself \u2728",
+      "cta": "Link in bio \u2192 \ud83d\uded2",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 6,
+      "date": "2026-04-19",
+      "platform": "tiktok",
+      "product": {
+        "name": "Sony A7R V Camera",
+        "slug": "sony-a7r-v-camera",
+        "category": "Photography",
+        "price": "3298",
+        "price_num": 3298.0,
+        "rating": 4.6,
+        "reviews": "273",
+        "review_count": 273,
+        "potential": 8,
+        "bsr": 2,
+        "amazon_url": "https://www.amazon.com/dp/B0BKLQFFSF?tag=hotproduct033-20",
+        "_score": 61386.80001673344
+      },
+      "hook": "This one's blowing up on Amazon \ud83d\udd25",
+      "cta": "Comment LINK \ud83d\udc47",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    },
+    {
+      "day": 7,
+      "date": "2026-04-20",
+      "platform": "instagram",
+      "product": {
+        "name": "Canon EOS R6 II Camera",
+        "slug": "canon-eos-r6-ii-camera",
+        "category": "Photography",
+        "price": "$1999",
+        "price_num": 1999.0,
+        "rating": 4.7,
+        "reviews": "594",
+        "review_count": 594,
+        "potential": 9,
+        "bsr": 1,
+        "amazon_url": "https://www.amazon.com/dp/B0BL7ZVY78?tag=hotproduct033-20",
+        "_score": 54620.40420279318
+      },
+      "hook": "Everyone's grabbing this right now \ud83d\udc40",
+      "cta": "Link in bio \u2192 \ud83d\uded2",
+      "hashtags": "#hotproducts #amazonfinds #musthave"
+    }
+  ]
+}
