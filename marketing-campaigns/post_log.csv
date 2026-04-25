@@ -7,12 +7,9 @@ Date,Platform,Product,Status,Detail
 2026-04-11,tiktok,JBL Charge 5 Portable Bluetooth Speaker,error,TIKTOK_ACCESS_TOKEN not set
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Error validating access token: The session is invalid because the user logged out.
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,Invalid OAuth access token - Cannot parse access token
-2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18328705333301676
-2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18111497794829994
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
 2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,error,"Unsupported post request. Object with ID '26645871965050479' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api"
-2026-04-11,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,18099506200965508
 2026-04-12,instagram,Garmin Forerunner 965 GPS Running Watch,error,"Error validating access token: Session has expired on Saturday, 11-Apr-26 18:00:00 PDT. The current time is Sunday, 12-Apr-26 13:59:06 PDT."
 2026-04-12,instagram,Garmin Forerunner 965 GPS Running Watch,ok,18112517698686973
 2026-04-12,instagram,Yamaha YAS-280 Student Alto Saxophone,ok,18025991393803148
@@ -27,12 +24,13 @@ Date,Platform,Product,Status,Detail
 
 If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked by Meta’s fetcher. Use a deployed hotproductsdot.com file or INSTAGRAM_RAW_GITHUB_BASE (raw.githubusercontent.com) so the JPEG is reachable before you post."
 2026-04-16,instagram,Canon EOS R5 Camera,ok,17885956107374878
-2026-04-23,instagram,Zeiss Otus 85mm f/1.4,ok,18097560736865683
-2026-04-23,instagram,Canon RF 70-200mm f/2.8,ok,18174554572400309
-2026-04-23,instagram,Apple AirPods Max,ok,18044295059546076
-2026-04-24,instagram,Instant Pot Duo 7-in-1 Electric Pressure Cooker,ok,18093351182273380
-2026-04-24,instagram,Apple iPad Pro 13-Inch (M4),ok,17986519535969095
-2026-04-25,instagram,YETI Tundra 45 Cooler,ok,17956471269118380
-2026-04-25,instagram,Apple AirPods Pro 2nd Gen,ok,17885493264487549
+2026-04-23,instagram,Zeiss Otus 85mm f/1.4,ok,18574573489031462
 2026-04-25,instagram,Milwaukee M18 Fuel Brushless Drill Driver,ok,18098507224845548
 2026-04-25,instagram,Canon EOS R6 II Camera,ok,18114704728765794
+2026-04-25,instagram,Apple AirPods Pro 2nd Gen,ok,18122875954716198
+2026-04-25,instagram,YETI Tundra 45 Cooler,ok,17994891812949745
+2026-04-25,instagram,Apple iPad Pro 13-Inch (M4),ok,17884750539514798
+2026-04-25,instagram,Instant Pot Duo 7-in-1 Electric Pressure Cooker,ok,18099028883317725
+2026-04-25,instagram,Apple AirPods Max,ok,18152978734460992
+2026-04-25,instagram,Canon RF 70-200mm f/2.8,ok,17882970315395031
+2026-04-25,instagram,JBL Charge 5 Portable Bluetooth Speaker,ok,17945130180163245

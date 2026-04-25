@@ -304,7 +304,21 @@ def _add_product(
     product_img: Image.Image,
     rembg_model: str | None = None,
 ) -> Image.Image:
-    """Composite product into lower portion of canvas."""
+    """Composite product into lower portion of canvas.
+
+    TODO(banner-centering, 2026-04-25): improve composition for asymmetric
+    products (e.g. Canon RF lens with bag + accessories). Plan:
+      1. Replace bbox-center with alpha-weighted centroid: compute
+         np.array(prod)[:,:,3] mean coordinate and translate so centroid
+         lands at canvas (50%, 60%). Avoids sparse outliers (stray lens
+         cap) shifting the whole composition.
+      2. Adaptive cy: drop the fixed 0.365 placement and target a
+         consistent visual mid-point regardless of product height.
+      3. Per-slug nudge override (CENTERING_NUDGE_BY_SLUG dict, mirrors
+         REMBG_MODEL_BY_SLUG above).
+      4. Add `--center-grid` flag to preview_repost_banners.py that draws
+         faint crosshairs so misalignment is immediately visible.
+    """
     dark_bg = _is_dark_background(product_img)
     prod    = _remove_dark_bg(product_img) if dark_bg else _remove_white_bg(product_img, rembg_model=rembg_model)
 
