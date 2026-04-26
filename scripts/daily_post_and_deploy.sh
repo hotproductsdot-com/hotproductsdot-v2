@@ -15,9 +15,9 @@ source venv/bin/activate
 {
   echo "=== START $(date -u +%FT%TZ) ==="
   posts_ok=0
-  for i in 1 2 3; do
+  for i in 1 2 3 4; do
     echo
-    echo "=== POST $i/3 $(date -u +%H:%M:%S) ==="
+    echo "=== POST $i/4 $(date -u +%H:%M:%S) ==="
     if python post_daily.py --platform instagram; then
       posts_ok=$((posts_ok + 1))
     else
@@ -25,7 +25,7 @@ source venv/bin/activate
     fi
   done
   echo
-  echo "=== POSTS DONE: $posts_ok/3 successful ==="
+  echo "=== POSTS DONE: $posts_ok/4 successful ==="
 
   if [ "$posts_ok" -gt 0 ]; then
     echo "=== BUILD + RSYNC $(date -u +%H:%M:%S) ==="
