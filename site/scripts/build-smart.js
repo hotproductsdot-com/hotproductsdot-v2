@@ -19,6 +19,8 @@ const watchedPaths = [
   path.join(siteDir, "package-lock.json"),
   path.join(siteDir, "tsconfig.json"),
   path.join(rootDir, "products", "top-1000.csv"),
+  // /latest reads this at build time — see app/lib/products.ts getInstagramPostedProducts
+  path.join(rootDir, "marketing-campaigns", "post_log.csv"),
 ];
 
 function run(command, args) {
