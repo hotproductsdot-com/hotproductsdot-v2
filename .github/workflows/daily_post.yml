@@ -57,7 +57,10 @@ jobs:
           posts_ok=0
           for i in 1 2 3 4; do
             echo "::group::Post $i/4"
-            if python post_daily.py --platform instagram; then
+            # --catalog-image-only: skip stochastic Gemini variants. They occasionally
+            # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
+            # rectangular artifacts behind the product. Catalog images are deterministic.
+            if python post_daily.py --platform instagram --catalog-image-only; then
               posts_ok=$((posts_ok + 1))
             else
               echo "::warning::Post $i failed (continuing)"
@@ -77,8 +80,11 @@ jobs:
       - name: Set up SSH for Hostinger
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/id_rsa
+          # Strip CR (Windows-style line endings) — pasted Windows keys break libcrypto
+          printf '%s\n' "${{ secrets.HOSTINGER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # Sanity-check the key parses before rsync (fails fast with a clear message)
+          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null
           ssh-keyscan -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Rsync to Hostinger
