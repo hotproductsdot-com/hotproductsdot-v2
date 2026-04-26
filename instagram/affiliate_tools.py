@@ -29,7 +29,7 @@ _MAX_TOKENS_BIO = 200
 _HOOKS_FALLBACK = [
     "This one's blowing up on Amazon 🔥",
     "Everyone's grabbing this right now 👀",
-    "The reviews don't lie... 💯",
+    "The reviews don't lie 💯",
     "If you're not using this yet, you're missing out 😅",
     "Just ordered another one for myself ✨",
 ]
@@ -88,6 +88,7 @@ def generate_hooks(product: dict, count: int = 5) -> list[str]:
 
     prompt = f"""Generate {count} scroll-stopping Instagram hooks for this Amazon product.
 Hooks should be 1-3 words, punchy, curiosity-inducing, and include relevant emojis.
+Do NOT use ellipsis ("...") or trailing dots — every hook must end with a complete word or emoji.
 
 {product_desc}
 
@@ -143,6 +144,8 @@ def build_cta(product: dict, platform: str) -> str:
     prompt = f"""Generate a single, punchy call-to-action for this product on {context}.
 
 Product: {product.get('name', 'Unknown')} (${product.get('price', 'Check Amazon')})
+
+Do NOT use ellipsis ("...") or trailing dots — the CTA must end on a complete word, price, or emoji.
 
 Return ONLY the CTA string. No markdown, no quotes, no explanation.
 Example for Instagram: Link in bio → $44.99 🛒

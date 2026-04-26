@@ -394,7 +394,7 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     category = (product.get("category") or "").strip()
 
     words    = name.split()
-    headline = " ".join(words[:6]) + ("..." if len(words) > 6 else "")
+    headline = " ".join(words[:6])
 
     # Headline reduced from 70 → 56 to give the product image more breathing room.
     f_headline = _load_font(56, bold=True)
