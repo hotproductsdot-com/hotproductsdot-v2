@@ -85,15 +85,64 @@ jobs:
         run: npm run build
 
       - name: Set up SSH for Hostinger
+        env:
+          HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh
-          # Decode base64-encoded key. Base64 avoids all CRLF/UTF-BOM/encoding
-          # gotchas that broke direct multiline secret pasting.
-          echo "${{ secrets.HOSTINGER_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+
+          # 1. Verify secret is present (without leaking it)
+          if [ -z "${HOSTINGER_SSH_KEY_B64:-}" ]; then
+            echo "::error::HOSTINGER_SSH_KEY_B64 secret is empty or unset"
+            exit 1
+          fi
+          echo "Secret length (base64 chars): ${#HOSTINGER_SSH_KEY_B64}"
+
+          # 2. Decode. Use printf (not echo) to avoid trailing newline mismatch
+          # and pipe through tr -d to strip any whitespace/CR that may have crept
+          # into the secret value via the GitHub UI.
+          printf '%s' "$HOSTINGER_SSH_KEY_B64" | tr -d '[:space:]' | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Sanity-check the key parses before rsync — fails fast with a clear error
-          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null
-          ssh-keyscan -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # 3. Diagnostics on the decoded key (safe — only metadata)
+          KEY_BYTES=$(wc -c < ~/.ssh/id_rsa)
+          echo "Decoded key bytes: $KEY_BYTES"
+          if [ "$KEY_BYTES" -lt 100 ]; then
+            echo "::error::Decoded key suspiciously small — likely bad base64"
+            exit 1
+          fi
+          if grep -q $'\r' ~/.ssh/id_rsa; then
+            echo "::warning::Key contains CR characters — stripping"
+            tr -d '\r' < ~/.ssh/id_rsa > ~/.ssh/id_rsa.clean
+            mv ~/.ssh/id_rsa.clean ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+          fi
+          echo "Key first line: $(head -1 ~/.ssh/id_rsa)"
+          echo "Key last line:  $(tail -1 ~/.ssh/id_rsa)"
+
+          # 4. Parse-check (don't silence stderr — we want the real error)
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null; then
+            echo "::error::ssh-keygen rejected the key. Re-encode locally with: base64 -w0 < ~/.ssh/hostinger_key | pbcopy"
+            exit 1
+          fi
+          echo "Key parses OK"
+
+          # 5. Capture host key (don't silence stderr; only suppress "comments")
+          ssh-keyscan -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2> /tmp/keyscan.err
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::ssh-keyscan returned no host keys. stderr:"
+            cat /tmp/keyscan.err
+            exit 1
+          fi
+
+      - name: SSH connectivity smoke test
+        run: |
+          set -e
+          ssh -p "$HOSTINGER_PORT" -i ~/.ssh/id_rsa \
+              -o BatchMode=yes -o ConnectTimeout=10 \
+              "$HOSTINGER_USER@$HOSTINGER_HOST" \
+              "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"
 
       - name: Rsync to Hostinger
         run: |
