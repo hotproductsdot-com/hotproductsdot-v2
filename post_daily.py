@@ -960,6 +960,9 @@ def main() -> None:
     parser.add_argument("--category", metavar="CATEGORY",
                         help="Only pick from products in this category (case-insensitive). "
                              "Use --list-categories to see available options.")
+    parser.add_argument("--slug", metavar="SLUG",
+                        help="Post a specific product by slug, bypassing rotation/cooldown. "
+                             "Useful for ad-hoc reposts after a banner fix.")
     parser.add_argument("--list-categories", action="store_true",
                         help="Print all available product categories and exit")
     parser.add_argument(
@@ -1013,21 +1016,28 @@ def main() -> None:
             print(f"  {cat} ({count} product{'s' if count != 1 else ''})")
         sys.exit(0)
 
-    if args.category:
-        filtered = filter_by_category(all_products, args.category)
-        if not filtered:
-            all_cats = sorted({p["category"] for p in all_products if p["category"]})
-            print(f"[!] No products found for category: '{args.category}'")
-            print("    Available categories:")
-            for cat in all_cats:
-                print(f"      {cat}")
+    if args.slug:
+        product = next((p for p in all_products if p["slug"] == args.slug), None)
+        if product is None:
+            print(f"[!] No product found for slug: '{args.slug}'")
             sys.exit(1)
-        products = filtered[:ROTATION_POOL]
-        print(f"Category filter  : {args.category} ({len(products)} product(s) in pool)")
+        print(f"Slug override    : {args.slug} (bypassing rotation/cooldown)")
     else:
-        products = all_products[:ROTATION_POOL]
+        if args.category:
+            filtered = filter_by_category(all_products, args.category)
+            if not filtered:
+                all_cats = sorted({p["category"] for p in all_products if p["category"]})
+                print(f"[!] No products found for category: '{args.category}'")
+                print("    Available categories:")
+                for cat in all_cats:
+                    print(f"      {cat}")
+                sys.exit(1)
+            products = filtered[:ROTATION_POOL]
+            print(f"Category filter  : {args.category} ({len(products)} product(s) in pool)")
+        else:
+            products = all_products[:ROTATION_POOL]
 
-    product = pick_next_product(products, force=args.force)
+        product = pick_next_product(products, force=args.force)
     logger.info(
         "Selected product name=%r slug=%s category=%r force=%s",
         product["name"],

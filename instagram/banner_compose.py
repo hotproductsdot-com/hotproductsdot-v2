@@ -21,8 +21,27 @@ import re
 from io import BytesIO
 from pathlib import Path
 
+import numpy as np
 import requests
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+
+def _alpha_centroid(prod: Image.Image) -> tuple[float, float]:
+    """Alpha-weighted centroid in product-local pixel coords.
+
+    For asymmetric products (e.g. Fire TV Stick + remote, or a lens with
+    a bag accessory), the alpha bounding-box center sits in empty space
+    between the components. Centroid weighting puts the placement anchor
+    on actual visual mass, which keeps the composition balanced.
+    """
+    a = np.asarray(prod.split()[3], dtype=np.float32)
+    total = a.sum()
+    if total <= 0:
+        return prod.width / 2, prod.height / 2
+    ys, xs = np.indices(a.shape)
+    cx = float((xs * a).sum() / total)
+    cy = float((ys * a).sum() / total)
+    return cx, cy
 
 # ── Brand constants ───────────────────────────────────────────────────────────
 CANVAS    = 1080
@@ -333,7 +352,12 @@ def _add_product(
     max_h = int(CANVAS * 0.60)
     prod.thumbnail((max_w, max_h), Image.LANCZOS)
 
-    cx = (CANVAS - prod.width) // 2
+    # Alpha-weighted centroid for horizontal placement; clamped to canvas.
+    # Asymmetric products (Fire Stick + remote, lens + bag) used to drift
+    # because bbox-center didn't reflect actual visual mass.
+    local_cx, _ = _alpha_centroid(prod)
+    cx = int(round(CANVAS // 2 - local_cx))
+    cx = max(0, min(cx, CANVAS - prod.width))
     cy = int(CANVAS * 0.365)
 
     # Drop shadow
