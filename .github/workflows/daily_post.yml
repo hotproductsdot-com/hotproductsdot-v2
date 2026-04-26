@@ -3,7 +3,13 @@ name: 📢 Daily Social Post + Deploy
 on:
   schedule:
     - cron: '0 14 * * *'   # 14:00 UTC = 9:00 AM CDT (summer) / 8:00 AM CST (winter)
-  workflow_dispatch:        # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compose + upload banners but skip IG posts (still builds + deploys to test SSH)"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   post-and-deploy:
@@ -45,6 +51,7 @@ jobs:
 
       - name: Post 4 products to Instagram
         env:
+          DRY_RUN_FLAG: ${{ inputs.dry_run && '--dry-run' || '' }}
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN:     ${{ secrets.IG_ACCESS_TOKEN }}
           TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
@@ -60,7 +67,7 @@ jobs:
             # --catalog-image-only: skip stochastic Gemini variants. They occasionally
             # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
             # rectangular artifacts behind the product. Catalog images are deterministic.
-            if python post_daily.py --platform instagram --catalog-image-only; then
+            if python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG; then
               posts_ok=$((posts_ok + 1))
             else
               echo "::warning::Post $i failed (continuing)"
@@ -95,8 +102,17 @@ jobs:
             site/out/ \
             "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"
 
+      - name: Upload composed banners as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: banners-${{ github.run_id }}
+          path: generated_images/**/banner.jpg
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Commit post log
-        if: success()
+        if: success() && !inputs.dry_run
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
