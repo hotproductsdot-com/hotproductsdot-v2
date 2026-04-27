@@ -63,9 +63,33 @@ function splitCsvLine(line) {
   return result;
 }
 
+// --- Strip ALL query parameters before checking ---
+// Critical: leaving `?tag=hotproduct033-20` in the URL causes Amazon's
+// affiliate-tracking system to count every check as a "click" against our
+// account. A weekly run of this script across 1,090 products easily generates
+// 16,000+ phantom clicks per month, which:
+//   1. Tanks the dashboard conversion rate (looks like 0.006% when it's actually fine)
+//   2. May trigger Amazon's fraud-detection heuristics on the Associates account
+//   3. Blocks PA-API qualification because the metrics look fraudulent
+// Validation only needs to know whether /dp/<ASIN> resolves — the tag is
+// irrelevant for that check, so we strip it.
+function tagFreeUrl(rawUrl) {
+  try {
+    const u = new URL(rawUrl);
+    // Keep host + path only; drop search + hash. Both `?tag=...` and any
+    // other tracking params (`th=1`, `linkCode=...`, `ref=...`) are removed.
+    return `${u.protocol}//${u.hostname}${u.pathname}`;
+  } catch {
+    return rawUrl;  // unparseable — let the caller's URL constructor fail
+  }
+}
+
 // --- HTTP check with redirect following ---
 function checkUrl(url) {
   return new Promise((resolve) => {
+    // Strip query string before any network request fires.
+    const cleanedUrl = tagFreeUrl(url);
+
     const attempt = (targetUrl, redirectCount) => {
       if (redirectCount > 5) {
         return resolve({ url, status: 'error', detail: 'Too many redirects', broken: true });
@@ -81,7 +105,10 @@ function checkUrl(url) {
       const options = {
         hostname: parsed.hostname,
         path: parsed.pathname + parsed.search,
-        method: 'GET',
+        // HEAD instead of GET: same status code information, no response body,
+        // and Amazon's client-side tracking JavaScript can't run because the
+        // body never arrives. Belt-and-suspenders alongside the tag stripping.
+        method: 'HEAD',
         headers: HEADERS,
         timeout: TIMEOUT_MS,
       };
@@ -132,7 +159,9 @@ function checkUrl(url) {
       req.end();
     };
 
-    attempt(url, 0);
+    // Use the tag-stripped URL for the network call, but report results
+    // against the original (with-tag) URL so dedup against the CSV still works.
+    attempt(cleanedUrl, 0);
   });
 }
 
