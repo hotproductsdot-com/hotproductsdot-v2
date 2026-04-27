@@ -331,6 +331,13 @@ REMBG_MODEL_BY_SLUG: dict[str, str] = {
     # accessories sharp without leaving the product body bitten.
     "canon-rf-70-200mm-f-2-8":                          "isnet-general-use",
     "instant-pot-duo-7-in-1-electric-pressure-cooker":  "isnet-general-use",
+    # Multi-tool/combo-kit products — multiple metallic protrusions that
+    # u2net treats as separate objects, leaving floating "shrapnel" fragments
+    # in the cutout. Leatherman shipped that artifact in run #55 (deleted).
+    # Milwaukee combo kits include drill + impact driver + batteries + charger
+    # in one image, same failure mode. isnet handles these much better.
+    "leatherman-wave-plus-multi-tool":                  "isnet-general-use",
+    "milwaukee-m18-fuel-drill-combo-kit":               "isnet-general-use",
 }
 
 
@@ -433,8 +440,29 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     reviews  = product.get("reviews", "")
     category = (product.get("category") or "").strip()
 
-    words    = name.split()
-    headline = " ".join(words[:6])
+    # ── Headline cleanup ─────────────────────────────────────────────────
+    # CSV product names often include bracketed metadata ("[GPS + Cellular 49mm]")
+    # and parenthetical suffixes ("(2nd Gen)", "(2023)"). The original
+    # `name.split()[:6]` truncation cut mid-bracket and produced things like
+    # "Apple Watch Ultra 3 [GPS +" (visibly broken; shipped in run #55, deleted).
+    # Three-stage cleanup before truncation:
+    #   1. Strip [...] and (...) content — adds noise, no headline value.
+    #   2. Take first 8 words (was 6) — _wrap() below still folds to 2 lines
+    #      on the 1080-wide canvas; 8 gives products like Owala / Apple Watch
+    #      enough room to read coherently.
+    #   3. Strip stray trailing punctuation/stop-words so the headline doesn't
+    #      end mid-clause ("Owala ... Water Bottle with" → "...Water Bottle").
+    clean_name = re.sub(r"\s*[\[\(].*?[\]\)]\s*", " ", name)
+    clean_name = re.sub(r"\s+", " ", clean_name).strip()
+    words      = clean_name.split()
+    headline   = " ".join(words[:8])
+    headline   = re.sub(r"[,;:\-+&]+\s*$", "", headline)
+    headline   = re.sub(
+        r"\s+(with|and|for|in|on|the|a|an|by|of)\s*$",
+        "",
+        headline,
+        flags=re.IGNORECASE,
+    ).strip()
 
     # Headline reduced from 70 → 56 to give the product image more breathing room.
     f_headline = _load_font(56, bold=True)
