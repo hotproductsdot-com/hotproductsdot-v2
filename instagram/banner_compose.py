@@ -18,12 +18,28 @@ Public upload:
   suitable for the Instagram Graph API. Set IMGBB_API_KEY in .env to enable.
 """
 import re
+import time
 from io import BytesIO
 from pathlib import Path
 
 import numpy as np
 import requests
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+
+def _fetch_image_bytes(url: str, timeout: int = 30) -> bytes:
+    """GET an image URL, retrying once on 403 for hotproductsdot.com.
+
+    Hostinger's bot-protection occasionally returns 403 to the GitHub Actions
+    runner (e.g. the 15:49 cron on 2026-04-27). The block is short-lived, so
+    a single 45s wait + retry recovers without exponential backoff.
+    """
+    resp = requests.get(url, timeout=timeout)
+    if resp.status_code == 403 and "hotproductsdot.com" in url:
+        time.sleep(45)
+        resp = requests.get(url, timeout=timeout)
+    resp.raise_for_status()
+    return resp.content
 
 
 def _alpha_centroid(prod: Image.Image) -> tuple[float, float]:
@@ -512,9 +528,7 @@ def download_square_instagram_feed_jpeg(source_url: str, dest: Path, size: int =
     Instagram feed requires aspect ratio roughly between 4:5 and 1.91:1; a
     square (1:1) is valid. Raw product JPGs are often wider than tall.
     """
-    resp = requests.get(source_url, timeout=30)
-    resp.raise_for_status()
-    im = Image.open(BytesIO(resp.content)).convert("RGB")
+    im = Image.open(BytesIO(_fetch_image_bytes(source_url))).convert("RGB")
     w, h = im.size
     if w <= 0 or h <= 0:
         raise ValueError("Invalid image dimensions")
@@ -545,9 +559,7 @@ def compose_banner(
 ) -> str:
     src = str(product_image_url_or_path)
     if src.startswith("http"):
-        resp = requests.get(src, timeout=30)
-        resp.raise_for_status()
-        prod_img = Image.open(BytesIO(resp.content)).convert("RGB")
+        prod_img = Image.open(BytesIO(_fetch_image_bytes(src))).convert("RGB")
     else:
         prod_img = Image.open(src).convert("RGB")
 
