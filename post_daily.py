@@ -36,7 +36,7 @@ import shutil
 import subprocess
 import sys
 import time
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import requests
@@ -62,6 +62,12 @@ SITE_URL        = "https://hotproductsdot.com"
 CSV_PATH        = Path(__file__).parent / "products" / "top-1000.csv"
 LOG_PATH        = Path(__file__).parent / "marketing-campaigns" / "post_log.csv"
 ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
+
+# Don't re-pick a product attempted (any status) within this many *prior* days.
+# At 4 posts/day across a 60-product pool a full cycle is ~15 days; 14 days of
+# cooldown buys defense-in-depth against the post_log.csv being lost mid-pipeline.
+# Same-day retries are still allowed so transient errors can be re-driven.
+DEFAULT_COOLDOWN_DAYS = 14
 
 logger = logging.getLogger(__name__)
 
@@ -207,17 +213,43 @@ def load_top_products(n: int | None = None) -> list[dict]:
     return products[:n] if n is not None else products
 
 
-def load_posted_products() -> set[str]:
-    """Return product names that have been successfully posted (any platform)."""
+def load_posted_products(cooldown_days: int = DEFAULT_COOLDOWN_DAYS) -> set[str]:
+    """Return product names that should be skipped today.
+
+    Two layered rules:
+      1. Any product successfully posted (Status=ok) at any time is skipped
+         forever — we never want to re-post a confirmed-published product
+         until the natural rotation pool is exhausted (handled in pick_next_product).
+      2. Any product *attempted* (ok or error) on a *prior* day within the
+         cooldown window is skipped. This protects against a single lost log
+         row (e.g. when daily_post.yml's deploy step fails before the log
+         commit) re-surfacing a product that did publish: even if today's
+         log is missing yesterday's row, the day-before-yesterday's row is
+         likely still present and will keep the product in cooldown.
+
+    Same-day attempts are *not* deduped here so transient failures can be
+    re-driven by re-running the script the same day.
+    """
     if not LOG_PATH.exists():
         return set()
     posted: set[str] = set()
+    today_iso = date.today().isoformat()
+    cutoff = (date.today() - timedelta(days=cooldown_days)).isoformat()
     with open(LOG_PATH, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            if row.get("Status") == "ok":
-                name = (row.get("Product") or "").strip()
-                if name:
-                    posted.add(name)
+            name = (row.get("Product") or "").strip()
+            if not name:
+                continue
+            row_date = (row.get("Date") or "").strip()
+            status   = row.get("Status")
+            if status == "ok":
+                # Permanent skip — never re-publish what we know is live.
+                posted.add(name)
+                continue
+            # Cooldown window: any prior-day attempt (ok or error) blocks reuse.
+            # Same-day rows fall through (allowing retry within the same run).
+            if row_date and row_date != today_iso and row_date >= cutoff:
+                posted.add(name)
     return posted
 
 
@@ -242,7 +274,11 @@ def _recent_categories(products: list[dict], n: int = CATEGORY_COOLDOWN) -> set[
         return set()
 
 
-def pick_next_product(products: list[dict], force: bool = False) -> dict:
+def pick_next_product(
+    products: list[dict],
+    force: bool = False,
+    cooldown_days: int = DEFAULT_COOLDOWN_DAYS,
+) -> dict:
     """
     Pick the next unposted product from the pool with category diversity.
 
@@ -252,12 +288,15 @@ def pick_next_product(products: list[dict], force: bool = False) -> dict:
          in a row" when cameras dominate the score).
       2. Top-scoring unposted product (cooldown unsatisfiable).
       3. Day-of-year rotation through the full pool (everything posted).
+
+    `cooldown_days` is forwarded to load_posted_products to widen the dedup
+    window beyond just successful posts.
     """
     if force:
         day = date.today().timetuple().tm_yday
         return products[(day - 1) % len(products)]
 
-    posted = load_posted_products()
+    posted = load_posted_products(cooldown_days=cooldown_days)
     unposted = [p for p in products if p["name"] not in posted]
 
     if not unposted:
@@ -957,6 +996,15 @@ def main() -> None:
     parser.add_argument("--platform", choices=["instagram", "tiktok", "all"], default="instagram")
     parser.add_argument("--force",    action="store_true",
                         help="Ignore post history and pick via day-of-year rotation")
+    parser.add_argument(
+        "--cooldown-days",
+        type=int,
+        default=DEFAULT_COOLDOWN_DAYS,
+        metavar="N",
+        help=f"Skip products attempted (any status) within the last N prior days "
+             f"(default: {DEFAULT_COOLDOWN_DAYS}). Successful posts are skipped "
+             f"forever regardless. Same-day retries are always allowed.",
+    )
     parser.add_argument("--category", metavar="CATEGORY",
                         help="Only pick from products in this category (case-insensitive). "
                              "Use --list-categories to see available options.")
@@ -1037,7 +1085,7 @@ def main() -> None:
         else:
             products = all_products[:ROTATION_POOL]
 
-        product = pick_next_product(products, force=args.force)
+        product = pick_next_product(products, force=args.force, cooldown_days=args.cooldown_days)
     logger.info(
         "Selected product name=%r slug=%s category=%r force=%s",
         product["name"],
@@ -1145,9 +1193,10 @@ def main() -> None:
         print("   (set GEMINI_API_KEY in .env to generate custom images)")
 
     # ── Banner composition (HotProducts brand style) ──────────────────────────
-    # Composes the product image into the branded 1080×1080 banner format.
-    # Requires IMGBB_API_KEY in .env to upload the banner to a public URL.
-    # Falls back to the generated/site image if no upload key is configured.
+    # Composes the product image into the branded 1080×1080 banner format and
+    # uploads to Cloudinary so Meta's Graph API can fetch it. Cloudinary is the
+    # only supported host: ImgBB worked for our HTTP probe but Meta consistently
+    # rejected i.ibb.co URLs at publish time (commits 82cf6ab0, 7dbbb8d1).
     cloudinary_url = os.environ.get("CLOUDINARY_URL", "")
     # Cloudinary only — Meta's Graph API reliably accepts res.cloudinary.com.
     # No ImgBB fallback: Meta routinely rejects i.ibb.co URLs, so a fallback would
