@@ -76,6 +76,9 @@ paperclip-company/
 # CSV backups (timestamped copies, not source)
 products/top-1000.backup.*.csv
 
+# Bestseller-discovery output (regenerated per run; not source)
+products/discovery/
+
 # Windows batch helpers (local-only)
 push-seo-fixes.bat
 
