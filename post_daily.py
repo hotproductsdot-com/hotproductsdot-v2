@@ -242,8 +242,14 @@ def load_posted_products(cooldown_days: int = DEFAULT_COOLDOWN_DAYS) -> set[str]
                 continue
             row_date = (row.get("Date") or "").strip()
             status   = row.get("Status")
-            if status == "ok":
-                # Permanent skip — never re-publish what we know is live.
+            if status == "ok" or status == "quality_blocked":
+                # Permanent skip — both for products already live (ok) and
+                # products that failed automated banner quality checks
+                # (quality_blocked). Quality blocks are persistent because the
+                # source catalog image is the root cause; re-running won't
+                # change anything until the image is replaced. To re-enable a
+                # quarantined product, edit post_log.csv to remove its
+                # quality_blocked rows.
                 posted.add(name)
                 continue
             # Cooldown window: any prior-day attempt (ok or error) blocks reuse.
@@ -979,7 +985,11 @@ def log_result(product: dict, platform: str, result: dict) -> None:
         writer = csv.writer(f)
         if write_header:
             writer.writerow(["Date", "Platform", "Product", "Status", "Detail"])
-        status = "ok" if result.get("ok") else "error"
+        # Caller can pass an explicit status (e.g. "quality_blocked" for
+        # quarantines) instead of letting result["ok"] decide. This keeps
+        # log_result the single source of truth for the post log shape.
+        explicit_status = result.get("status")
+        status = explicit_status if explicit_status else ("ok" if result.get("ok") else "error")
         detail = result.get("post_id") or result.get("publish_id") or result.get("error") or ""
         writer.writerow([date.today().isoformat(), platform, product["name"], status, detail])
 
@@ -1229,6 +1239,20 @@ def main() -> None:
                 chosen_image_url = None
                 logger.warning("Cloudinary upload returned no URL")
                 print("   [!] Cloudinary upload failed — Instagram post will be skipped")
+        except banner_compose.BannerQualityError as exc:
+            # Permanent quarantine: a row with status="quality_blocked" is
+            # written so load_posted_products will skip this product on every
+            # future run. The Instagram post is suppressed for today, and the
+            # next workflow iteration will pick a different product.
+            chosen_image_url = None
+            logger.warning("Banner quality check rejected %s: %s", product["name"], exc.reason)
+            print(f"   [!] Banner quality check rejected: {exc.reason} — quarantining product")
+            log_result(
+                product,
+                "instagram",
+                {"ok": False, "status": "quality_blocked", "error": exc.reason},
+            )
+            sys.exit(2)
         except Exception as exc:
             chosen_image_url = None
             logger.exception("Banner compose failed: %s", exc)

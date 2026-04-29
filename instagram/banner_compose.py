@@ -42,6 +42,81 @@ def _fetch_image_bytes(url: str, timeout: int = 30) -> bytes:
     return resp.content
 
 
+class BannerQualityError(Exception):
+    """Raised when an automated quality check rejects a generated banner.
+
+    Treated as a permanent skip by post_daily.py — re-running won't help
+    because the source catalog image is the root cause (extreme aspect
+    ratio, lifestyle scene with floor/walls, fully-erased low-contrast
+    body, etc). Surfaces a `.reason` so the post log row explains why.
+    """
+
+    def __init__(self, reason: str):
+        super().__init__(reason)
+        self.reason = reason
+
+
+def _validate_source_image(img: Image.Image) -> tuple[bool, str]:
+    """Pre-cutout sanity check on the catalog source image.
+
+    Catches two failure modes seen in the 2026-04-29 batch:
+      - Extreme aspect ratios that render as a strip (Mac Mini's 1500×593
+        front-face crop composes as a thin band on a 1080² canvas).
+      - Lifestyle scenes where rembg can't isolate the product (HOROW
+        toilet's wood-floor + wall + door frame source).
+
+    Heuristic for lifestyle detection: corner samples are classified as
+    light / dark / scene by mean brightness. Catalog shots have ≥3
+    light-or-dark corners; scene-y backdrops have ≥2 mid-tone corners.
+    """
+    w, h = img.size
+    aspect = w / h
+    if aspect > 3.0 or aspect < 0.33:
+        return False, f"source aspect {aspect:.2f} composes to a strip"
+
+    corner = max(40, min(w, h) // 20)
+    samples = [
+        img.crop((0, 0, corner, corner)),
+        img.crop((w - corner, 0, w, corner)),
+        img.crop((0, h - corner, corner, h)),
+        img.crop((w - corner, h - corner, w, h)),
+    ]
+    classes: list[str] = []
+    for c in samples:
+        brightness = float(np.asarray(c.convert("RGB"), dtype=np.float32).mean())
+        if brightness > 215:
+            classes.append("light")
+        elif brightness < 35:
+            classes.append("dark")
+        else:
+            classes.append("scene")
+    scene_corners = classes.count("scene")
+    if scene_corners >= 2:
+        return False, f"{scene_corners}/4 corners are mid-tone (lifestyle scene, not catalog)"
+
+    return True, ""
+
+
+def _validate_cutout(prod: Image.Image) -> tuple[bool, str]:
+    """Post-cutout sanity check on the rembg alpha output.
+
+    Catches:
+      - Product fully erased (silver Mac Mini under isnet — coverage near 0).
+      - Background fully retained (lifestyle scene rembg couldn't isolate —
+        coverage near 100% means nothing was removed).
+    """
+    a = np.asarray(prod.split()[3], dtype=np.float32)
+    total = a.size
+    if total == 0:
+        return False, "empty cutout"
+    opaque = float((a > 200).sum() / total)
+    if opaque < 0.05:
+        return False, f"product mostly erased ({opaque:.1%} opaque after cutout)"
+    if opaque > 0.85:
+        return False, f"background retained ({opaque:.1%} opaque — cutout failed to isolate)"
+    return True, ""
+
+
 def _alpha_centroid(prod: Image.Image) -> tuple[float, float]:
     """Alpha-weighted centroid in product-local pixel coords.
 
@@ -338,15 +413,48 @@ REMBG_MODEL_BY_SLUG: dict[str, str] = {
     # in one image, same failure mode. isnet handles these much better.
     "leatherman-wave-plus-multi-tool":                  "isnet-general-use",
     "milwaukee-m18-fuel-drill-combo-kit":               "isnet-general-use",
+    # 2026-04-29 batch — u2net + hybrid recovery shipped three broken cutouts:
+    #   Husqvarna mower: catalog drop-shadow merged back in (bright white halo
+    #     under the product on the dark canvas).
+    #   Sony A7R V: black hand-grip on the left half partially erased — half
+    #     of the camera body became transparent.
+    #   HOROW Smart Toilet: lifestyle source (wood floor + wall + door frame),
+    #     hybrid recovery preserves the entire scene around the product.
+    # isnet's saliency cuts cleanly on all three.
+    #
+    # NOTE: Mac Mini M4 (2024) is also broken with u2net (frayed silver edges)
+    # but isnet is WORSE — it erases the silver body entirely and only two
+    # USB-C ports survive. The flat front-face source image is the real
+    # problem (silver-on-white, no perspective). Needs a 3/4 hero shot from
+    # Amazon's image gallery before it can be fixed at the cutout layer.
+    "husqvarna-automower-450x-robotic-lawn-mower":      "isnet-general-use",
+    "sony-a7r-v-camera":                                "isnet-general-use",
+    "horow-black-smart-toilet-with-pump-and-bidet-built-in": "isnet-general-use",
 }
+
+
+def _cutout_product(
+    product_img: Image.Image,
+    rembg_model: str | None = None,
+) -> Image.Image:
+    """Run the appropriate background removal for the source backdrop.
+
+    Split out from _add_product so compose_banner can run quality checks
+    against the alpha mask before the placement step.
+    """
+    dark_bg = _is_dark_background(product_img)
+    return (
+        _remove_dark_bg(product_img)
+        if dark_bg
+        else _remove_white_bg(product_img, rembg_model=rembg_model)
+    )
 
 
 def _add_product(
     canvas: Image.Image,
-    product_img: Image.Image,
-    rembg_model: str | None = None,
+    prod: Image.Image,
 ) -> Image.Image:
-    """Composite product into lower portion of canvas.
+    """Composite an already-cutout product into the lower portion of canvas.
 
     TODO(banner-centering, 2026-04-25): improve composition for asymmetric
     products (e.g. Canon RF lens with bag + accessories). Plan:
@@ -361,9 +469,6 @@ def _add_product(
       4. Add `--center-grid` flag to preview_repost_banners.py that draws
          faint crosshairs so misalignment is immediately visible.
     """
-    dark_bg = _is_dark_background(product_img)
-    prod    = _remove_dark_bg(product_img) if dark_bg else _remove_white_bg(product_img, rembg_model=rembg_model)
-
     # Crop to the alpha bounding box so the visible product (not the original
     # source dimensions, which may have wide transparent margins after cutout)
     # is what gets centered on the canvas.
@@ -593,10 +698,27 @@ def compose_banner(
 
     rembg_model = product.get("rembg_model") or REMBG_MODEL_BY_SLUG.get(product.get("slug", ""))
 
+    # Source-image check is a pre-flight tripwire for unfamiliar products
+    # (lifestyle scenes, extreme aspect ratios). Skip it when an explicit
+    # rembg_model override exists for this slug — the override means a
+    # human has already inspected the output and approved it (e.g. HOROW
+    # toilet's lifestyle source cuts cleanly under isnet). The cutout
+    # check still runs as a final safety net.
+    if not rembg_model:
+        src_ok, src_reason = _validate_source_image(prod_img)
+        if not src_ok:
+            raise BannerQualityError(f"source image: {src_reason}")
+
+    prod = _cutout_product(prod_img, rembg_model=rembg_model)
+
+    cut_ok, cut_reason = _validate_cutout(prod)
+    if not cut_ok:
+        raise BannerQualityError(f"cutout: {cut_reason}")
+
     canvas = _make_background()
     canvas = _add_orange_glow(canvas)
     canvas = _add_kinetic_curves(canvas)
-    canvas = _add_product(canvas, prod_img, rembg_model=rembg_model)
+    canvas = _add_product(canvas, prod)
     canvas = _add_text(canvas, product)
 
     out = Path(output_path)
