@@ -450,6 +450,49 @@ def _cutout_product(
     )
 
 
+def _keep_largest_component(prod: Image.Image, min_components: int = 4) -> Image.Image:
+    """When the cutout has many disconnected regions, keep only the largest.
+
+    Defends against Amazon catalog images that are multi-product collages —
+    e.g. Shark Stratos vacuum's catalog jpg shows the main vacuum plus 4
+    repeated detail shots and 2 accessory thumbnails. rembg correctly cuts
+    the white background but leaves all 7 foreground regions, producing a
+    banner with ghosted duplicates around the main product.
+
+    Heuristic: if the alpha mask has ≥ `min_components` distinct connected
+    regions, the source is almost certainly a collage. Keep only the largest
+    region (the main hero shot) and zero the rest. For 1–3 components we
+    leave the cutout alone — those are legitimate multi-part products
+    (Fire TV Stick + remote, lens + bag) where preserving all parts is
+    correct.
+
+    Falls back to a no-op if scipy isn't available — better to let the
+    cutout-coverage validator catch the failure than crash the pipeline.
+    """
+    try:
+        from scipy import ndimage
+    except ImportError:
+        return prod
+
+    a = np.asarray(prod.split()[3], dtype=np.uint8)
+    binary = a > 200
+    labels, num_components = ndimage.label(binary)
+    if num_components < min_components:
+        return prod
+
+    # Bin label sizes; index 0 is background, skip it.
+    sizes = np.bincount(labels.ravel())
+    sizes[0] = 0
+    largest_label = int(sizes.argmax())
+
+    keep_mask = labels == largest_label
+    new_alpha = np.where(keep_mask, a, 0).astype(np.uint8)
+
+    rgba = np.array(prod.convert("RGBA"))
+    rgba[..., 3] = new_alpha
+    return Image.fromarray(rgba, "RGBA")
+
+
 def _add_product(
     canvas: Image.Image,
     prod: Image.Image,
@@ -710,6 +753,7 @@ def compose_banner(
             raise BannerQualityError(f"source image: {src_reason}")
 
     prod = _cutout_product(prod_img, rembg_model=rembg_model)
+    prod = _keep_largest_component(prod)
 
     cut_ok, cut_reason = _validate_cutout(prod)
     if not cut_ok:

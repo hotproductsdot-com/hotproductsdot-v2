@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Compose + upload banners but skip IG posts (still builds + deploys to test SSH)"
+        description: "DRY RUN (default: ON) — compose + upload banners but skip IG posts. Toggle OFF to actually post to Instagram."
         required: false
         type: boolean
-        default: false
+        default: true
 
 jobs:
   post-and-deploy:
@@ -51,7 +51,13 @@ jobs:
 
       - name: Post 4 products to Instagram
         env:
-          DRY_RUN_FLAG: ${{ inputs.dry_run && '--dry-run' || '' }}
+          # Safe-by-default: only post to Instagram when this is a manual
+          # workflow_dispatch AND the operator has explicitly toggled dry_run
+          # OFF. Scheduled cron runs always dry-run (compose + upload to
+          # artifacts only) so unattended posting can't ship bad banners
+          # while validators are still maturing. Operator approves each batch
+          # by triggering "Run workflow" with dry_run unchecked.
+          DRY_RUN_FLAG: ${{ (github.event_name == 'workflow_dispatch' && !inputs.dry_run) && '' || '--dry-run' }}
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN:     ${{ secrets.IG_ACCESS_TOKEN }}
           TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
@@ -87,7 +93,11 @@ jobs:
       # would then re-pick the same products (e.g. DJI Air 3S re-selected on
       # consecutive days because yesterday's deploy hiccup blocked the log push).
       - name: Commit post log (pre-deploy)
-        if: success() && !inputs.dry_run
+        # Match the same gate as DRY_RUN_FLAG: only commit log entries when
+        # this run actually posted (workflow_dispatch with dry_run=false).
+        # Cron runs and dry-run dispatches don't produce log changes anyway,
+        # but keeping the condition consistent avoids future drift.
+        if: success() && github.event_name == 'workflow_dispatch' && !inputs.dry_run
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
