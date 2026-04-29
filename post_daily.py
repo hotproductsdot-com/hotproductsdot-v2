@@ -1212,8 +1212,23 @@ def main() -> None:
     # No ImgBB fallback: Meta routinely rejects i.ibb.co URLs, so a fallback would
     # produce silent post failures. Fail loud if Cloudinary isn't configured/working.
     if cloudinary_url:
-        source = chosen_image_url or product_image_url(product)
-        logger.debug("Banner compose source URL=%s", source)
+        # Prefer the local on-repo JPG over hotproductsdot.com so banner
+        # composition doesn't depend on Hostinger's web tier. Hostinger's
+        # bot-protection 403s the GitHub Actions runner unpredictably (see
+        # 2026-04-29 19:07 UTC run — both initial fetch and the 45s retry
+        # in _fetch_image_bytes got 403). The catalog JPG is checked into
+        # the repo at site/public/products/{slug}.jpg, so on the runner the
+        # file is always present at zero cost. Falls back to the public URL
+        # only if the local file is missing (e.g. dev workstation without
+        # the site checkout).
+        local_jpg = Path(__file__).parent / "site" / "public" / "products" / f"{product['slug']}.jpg"
+        if chosen_image_url:
+            source = chosen_image_url
+        elif local_jpg.is_file():
+            source = str(local_jpg)
+        else:
+            source = product_image_url(product)
+        logger.debug("Banner compose source=%s", source)
         banner_save_dir = (
             Path(__file__).parent
             / "generated_images"
