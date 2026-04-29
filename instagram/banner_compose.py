@@ -772,7 +772,17 @@ def upload_to_cloudinary(local_path: str, cloudinary_url: str, *, public_id: str
 
     timestamp = int(time.time())
     pid = (public_id or Path(local_path).stem or "hotproducts-banner").strip()[:100]
-    params_to_sign = f"public_id={pid}&timestamp={timestamp}"
+    # Sign overwrite + invalidate so re-uploading the same public_id always
+    # bumps the version and busts the CDN cache. Without these, Cloudinary
+    # hash-dedupes silently — a re-uploaded banner that happens to be
+    # bit-identical to a prior asset (or any retry path Cloudinary thinks is
+    # equivalent) returns the prior URL, so Instagram fetches the OLD banner.
+    # 2026-04-29 16:00 UTC's broken Mac Mini banner (v1777478330) kept
+    # resurfacing on later workflow runs because of this.
+    # Signed params must be sorted alphabetically for the SHA1 to match.
+    params_to_sign = (
+        f"invalidate=true&overwrite=true&public_id={pid}&timestamp={timestamp}"
+    )
     signature = hashlib.sha1((params_to_sign + api_secret).encode()).hexdigest()
 
     try:
@@ -783,6 +793,8 @@ def upload_to_cloudinary(local_path: str, cloudinary_url: str, *, public_id: str
                     "api_key": api_key,
                     "timestamp": timestamp,
                     "public_id": pid,
+                    "overwrite": "true",
+                    "invalidate": "true",
                     "signature": signature,
                 },
                 files={"file": f},
