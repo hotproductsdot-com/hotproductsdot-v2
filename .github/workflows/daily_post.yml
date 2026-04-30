@@ -62,7 +62,14 @@ jobs:
           # artifacts only) so unattended posting can't ship bad banners
           # while validators are still maturing. Operator approves each batch
           # by triggering "Run workflow" with dry_run unchecked.
-          DRY_RUN_FLAG: ${{ (github.event_name == 'workflow_dispatch' && !inputs.dry_run) && '' || '--dry-run' }}
+          #
+          # The decision lives in bash, not a GHA expression: an earlier
+          # `(cond) && '' || '--dry-run'` form silently always returned
+          # '--dry-run' because empty string is falsy in GHA, cascading
+          # through the ||. That bug forced every dispatch into dry-run
+          # regardless of the input checkbox.
+          EVENT_NAME:    ${{ github.event_name }}
+          DRY_RUN_INPUT: ${{ inputs.dry_run }}
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN:     ${{ secrets.IG_ACCESS_TOKEN }}
           TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
@@ -73,6 +80,14 @@ jobs:
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
           MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}
         run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DRY_RUN_INPUT" = "false" ]; then
+            DRY_RUN_FLAG=""
+            echo "Mode: REAL POSTING (manual dispatch with dry_run=false)"
+          else
+            DRY_RUN_FLAG="--dry-run"
+            echo "Mode: DRY RUN (event=$EVENT_NAME dry_run_input=$DRY_RUN_INPUT)"
+          fi
+
           posts_ok=0
           for i in 1 2 3 4; do
             echo "::group::Post $i/4"
