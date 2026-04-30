@@ -51,6 +51,11 @@ jobs:
 
       - name: Post 4 products to Instagram
         env:
+          # AI vision gate enforces semantic banner quality (scene clutter,
+          # brand mismatch, weird crops, anything heuristics can't measure).
+          # Verified locally on 5 banners — flip to "shadow" to log without
+          # blocking, "off" to skip the API call entirely.
+          BANNER_AI_GATE: enforce
           # Safe-by-default: only post to Instagram when this is a manual
           # workflow_dispatch AND the operator has explicitly toggled dry_run
           # OFF. Scheduled cron runs always dry-run (compose + upload to
