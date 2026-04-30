@@ -45,7 +45,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 import tiktok_api
-from instagram import image_gen, image_gen_gemini, banner_compose
+from instagram import image_gen, image_gen_gemini, banner_compose, ad_creative_gen
 
 # Optional: AI-powered affiliate tools (guarded import)
 try:
@@ -1029,6 +1029,14 @@ def main() -> None:
         help="Skip ModelsLab generation; use the on-site product JPG (ImgBB banner still uses it if configured).",
     )
     parser.add_argument(
+        "--ad-creative",
+        action="store_true",
+        help="Replace the white-card banner with an AI-generated ad creative "
+             "(Gemini Nano Banana Pro grounded on Tavily reference images). "
+             "Falls back to the white-card pipeline if Tavily/Gemini fail. "
+             "Requires GEMINI_API_KEY and TAVILY_API_KEY.",
+    )
+    parser.add_argument(
         "--banner-only",
         action="store_true",
         help="Skip AI image variant generation (banner, studio_dark, etc.); compose and post the banner only.",
@@ -1236,9 +1244,15 @@ def main() -> None:
             / product["slug"]
         )
         banner_path = str(banner_save_dir / "banner.jpg")
-        print(">> Composing HotProducts branded banner...")
+        if args.ad_creative:
+            print(">> Composing AI ad creative (Gemini + Tavily references)...")
+        else:
+            print(">> Composing HotProducts branded banner...")
         try:
-            banner_compose.compose_banner(product, source, banner_path)
+            if args.ad_creative:
+                ad_creative_gen.compose_ad_creative_banner(product, source, banner_path)
+            else:
+                banner_compose.compose_banner(product, source, banner_path)
             print(f"   Banner saved → {banner_path}")
             print("   Uploading to Cloudinary...")
             public_url = banner_compose.upload_to_cloudinary(
