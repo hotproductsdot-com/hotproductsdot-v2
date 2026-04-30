@@ -98,7 +98,7 @@ jobs:
             # --catalog-image-only: skip stochastic Gemini variants. They occasionally
             # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
             # rectangular artifacts behind the product. Catalog images are deterministic.
-            if python post_daily.py --platform instagram --catalog-image-only --ad-creative $DRY_RUN_FLAG; then
+            if python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG; then
               posts_ok=$((posts_ok + 1))
             else
               echo "::warning::Post $i failed (continuing)"

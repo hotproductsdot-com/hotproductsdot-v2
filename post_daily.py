@@ -1030,11 +1030,12 @@ def main() -> None:
     )
     parser.add_argument(
         "--ad-creative",
-        action="store_true",
-        help="Replace the white-card banner with an AI-generated ad creative "
-             "(Gemini Nano Banana Pro grounded on Tavily reference images). "
-             "Falls back to the white-card pipeline if Tavily/Gemini fail. "
-             "Requires GEMINI_API_KEY and TAVILY_API_KEY.",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="AI-generated ad creative banner (Gemini Nano Banana Pro grounded "
+             "on Tavily reference images). Default: ON. Use --no-ad-creative "
+             "to force the white-card pipeline. The AI path falls back to the "
+             "white-card pipeline automatically on Tavily/Gemini failure.",
     )
     parser.add_argument(
         "--banner-only",
