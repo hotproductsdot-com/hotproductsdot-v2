@@ -60,43 +60,17 @@ class BannerQualityError(Exception):
 
 
 def _validate_source_image(img: Image.Image) -> tuple[bool, str]:
-    """Pre-cutout sanity check on the catalog source image.
+    """Pre-render sanity check on the catalog source image.
 
-    Catches two failure modes seen in the 2026-04-29 batch:
-      - Extreme aspect ratios that render as a strip (Mac Mini's 1500×593
-        front-face crop composes as a thin band on a 1080² canvas).
-      - Lifestyle scenes where rembg can't isolate the product (HOROW
-        toilet's wood-floor + wall + door frame source).
-
-    Heuristic for lifestyle detection: corner samples are classified as
-    light / dark / scene by mean brightness. Catalog shots have ≥3
-    light-or-dark corners; scene-y backdrops have ≥2 mid-tone corners.
+    The white-card pipeline frames the source on its original background, so
+    lifestyle vs. catalog no longer matters — both compose cleanly. Extreme
+    aspect ratios still don't, since a 3:1 strip becomes a thin band of
+    pixels inside the square-ish card with most of the card empty.
     """
     w, h = img.size
     aspect = w / h
     if aspect > 3.0 or aspect < 0.33:
         return False, f"source aspect {aspect:.2f} composes to a strip"
-
-    corner = max(40, min(w, h) // 20)
-    samples = [
-        img.crop((0, 0, corner, corner)),
-        img.crop((w - corner, 0, w, corner)),
-        img.crop((0, h - corner, corner, h)),
-        img.crop((w - corner, h - corner, w, h)),
-    ]
-    classes: list[str] = []
-    for c in samples:
-        brightness = float(np.asarray(c.convert("RGB"), dtype=np.float32).mean())
-        if brightness > 215:
-            classes.append("light")
-        elif brightness < 35:
-            classes.append("dark")
-        else:
-            classes.append("scene")
-    scene_corners = classes.count("scene")
-    if scene_corners >= 2:
-        return False, f"{scene_corners}/4 corners are mid-tone (lifestyle scene, not catalog)"
-
     return True, ""
 
 
@@ -857,6 +831,54 @@ def download_square_instagram_feed_jpeg(source_url: str, dest: Path, size: int =
     )
 
 
+def _add_white_card(canvas: Image.Image, src_img: Image.Image) -> Image.Image:
+    """Frame the source image as a rounded white card on the dark canvas.
+
+    Replaces the rembg cutout pipeline. The catalog image — multi-product
+    collage, scene shot, or clean isolate — sits on its original white
+    background, framed by a card with a soft drop shadow and a thin orange
+    brand-accent border that ties it to the banner's accent palette.
+    """
+    card_w = 760
+    card_h = 600
+    padding = 28
+    border_w = 3
+    card_x = (CANVAS - card_w) // 2
+    card_y = int(CANVAS * 0.33)
+
+    src_fit = src_img.copy()
+    src_fit.thumbnail((card_w - padding * 2, card_h - padding * 2), Image.LANCZOS)
+    if src_fit.mode != "RGB":
+        src_fit = src_fit.convert("RGB")
+
+    shadow = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    sd.rounded_rectangle(
+        [card_x - 4, card_y + 12, card_x + card_w + 4, card_y + card_h + 22],
+        radius=28,
+        fill=(0, 0, 0, 140),
+    )
+    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=18))
+    canvas = Image.alpha_composite(canvas, shadow)
+
+    card_layer = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    cd = ImageDraw.Draw(card_layer)
+    cd.rounded_rectangle(
+        [card_x, card_y, card_x + card_w, card_y + card_h],
+        radius=24,
+        fill=(255, 255, 255, 255),
+        outline=(*ORANGE, 255),
+        width=border_w,
+    )
+    canvas = Image.alpha_composite(canvas, card_layer)
+
+    img_x = card_x + (card_w - src_fit.width) // 2
+    img_y = card_y + (card_h - src_fit.height) // 2
+    canvas.paste(src_fit, (img_x, img_y))
+
+    return canvas
+
+
 def compose_banner(
     product: dict,
     product_image_url_or_path: str,
@@ -868,30 +890,18 @@ def compose_banner(
     else:
         prod_img = Image.open(src).convert("RGB")
 
-    rembg_model = product.get("rembg_model") or REMBG_MODEL_BY_SLUG.get(product.get("slug", ""))
-
-    # Source-image check is a pre-flight tripwire for unfamiliar products
-    # (lifestyle scenes, extreme aspect ratios). Skip it when an explicit
-    # rembg_model override exists for this slug — the override means a
-    # human has already inspected the output and approved it (e.g. HOROW
-    # toilet's lifestyle source cuts cleanly under isnet). The cutout
-    # check still runs as a final safety net.
-    if not rembg_model:
-        src_ok, src_reason = _validate_source_image(prod_img)
-        if not src_ok:
-            raise BannerQualityError(f"source image: {src_reason}")
-
-    prod = _cutout_product(prod_img, rembg_model=rembg_model)
-    prod = _keep_largest_component(prod)
-
-    cut_ok, cut_reason = _validate_cutout(prod)
-    if not cut_ok:
-        raise BannerQualityError(f"cutout: {cut_reason}")
+    # Source-image tripwire: extreme aspect ratios and lifestyle scenes
+    # still look wrong even framed inside a white card. The cutout-stage
+    # validators are gone (no cutout to check); this is the only heuristic
+    # gate before the AI vision pass.
+    src_ok, src_reason = _validate_source_image(prod_img)
+    if not src_ok:
+        raise BannerQualityError(f"source image: {src_reason}")
 
     canvas = _make_background()
     canvas = _add_orange_glow(canvas)
     canvas = _add_kinetic_curves(canvas)
-    canvas = _add_product(canvas, prod)
+    canvas = _add_white_card(canvas, prod_img)
     canvas = _add_text(canvas, product)
 
     out = Path(output_path)
