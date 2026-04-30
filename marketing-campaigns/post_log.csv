@@ -62,3 +62,7 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-04-29,instagram,NuWave Precision Induction Cooktop,ok,18058366106687748
 2026-04-29,instagram,Project Hail Mary: A Novel,quality_blocked,cutout: product mostly erased (0.3% opaque after cutout)
 2026-04-29,instagram,Shark Stratos Vacuum,ok,18133877293552724
+2026-04-30,instagram,DJI Mini 4 Pro Drone,ok,18099416630106148
+2026-04-30,instagram,3D Face Recognition Smart Lock,ok,17996161463946443
+2026-04-30,instagram,Smeg Retro Toaster,ok,18223183933319306
+2026-04-30,instagram,Autonomous Standing Desk,quality_blocked,ai vision: Brand identity mismatch ('OffiGo' logos on monitors) and excessive scene clutter with multiple non-product objects both require rejection.
