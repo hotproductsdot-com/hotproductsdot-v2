@@ -7,6 +7,9 @@
     "build": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js webpack",
     "build:fast": "node scripts/ensure-lightningcss.js && node scripts/build-smart.js turbopack",
     "social:generate": "node scripts/generate-social-images.mjs",
+    "deploy:zip": "npm run build && rm -f ../out.tar.gz && tar -czf ../out.tar.gz -C out . && echo \"\\n✓ Built and packaged → $(realpath ../out.tar.gz)\"",
+    "deploy:rsync:dry": "npm run build && rsync -avz --delete --itemize-changes --dry-run out/ hotproducts:domains/hotproductsdot.com/public_html/",
+    "deploy:rsync": "npm run build && rsync -avz --delete --human-readable --info=stats2,progress2 out/ hotproducts:domains/hotproductsdot.com/public_html/ && echo \"\\n✓ Synced to hotproductsdot.com\"",
     "start": "next start",
     "lint": "eslint"
   },
