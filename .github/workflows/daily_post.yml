@@ -77,6 +77,10 @@ jobs:
           # dropped (commits 82cf6ab0, 7dbbb8d1) because Meta blocks i.ibb.co.
           CLOUDINARY_URL:      ${{ secrets.CLOUDINARY_URL }}
           GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          # TAVILY grounds the --ad-creative banner in real-world reference
+          # images. Missing key only degrades quality (Gemini still runs
+          # without references) — the pipeline does not error out.
+          TAVILY_API_KEY:      ${{ secrets.TAVILY_API_KEY }}
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
           MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}
         run: |
@@ -94,7 +98,7 @@ jobs:
             # --catalog-image-only: skip stochastic Gemini variants. They occasionally
             # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
             # rectangular artifacts behind the product. Catalog images are deterministic.
-            if python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG; then
+            if python post_daily.py --platform instagram --catalog-image-only --ad-creative $DRY_RUN_FLAG; then
               posts_ok=$((posts_ok + 1))
             else
               echo "::warning::Post $i failed (continuing)"
