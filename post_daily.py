@@ -1259,14 +1259,20 @@ def main() -> None:
             # written so load_posted_products will skip this product on every
             # future run. The Instagram post is suppressed for today, and the
             # next workflow iteration will pick a different product.
+            #
+            # On --dry-run we skip the log write so a preview pass can scan
+            # multiple candidates without permanently disabling any of them.
             chosen_image_url = None
             logger.warning("Banner quality check rejected %s: %s", product["name"], exc.reason)
-            print(f"   [!] Banner quality check rejected: {exc.reason} — quarantining product")
-            log_result(
-                product,
-                "instagram",
-                {"ok": False, "status": "quality_blocked", "error": exc.reason},
-            )
+            if args.dry_run:
+                print(f"   [!] Banner quality check rejected: {exc.reason} — would quarantine (skipped: --dry-run)")
+            else:
+                print(f"   [!] Banner quality check rejected: {exc.reason} — quarantining product")
+                log_result(
+                    product,
+                    "instagram",
+                    {"ok": False, "status": "quality_blocked", "error": exc.reason},
+                )
             sys.exit(2)
         except Exception as exc:
             chosen_image_url = None
