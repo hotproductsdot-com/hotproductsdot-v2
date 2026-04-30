@@ -17,6 +17,9 @@ Public upload:
   Use upload_to_imgbb(path, api_key, name="slug-banner") so ImgBB titles are per-product (not "banner").
   suitable for the Instagram Graph API. Set IMGBB_API_KEY in .env to enable.
 """
+import base64
+import json
+import os
 import re
 import time
 from io import BytesIO
@@ -95,6 +98,118 @@ def _validate_source_image(img: Image.Image) -> tuple[bool, str]:
         return False, f"{scene_corners}/4 corners are mid-tone (lifestyle scene, not catalog)"
 
     return True, ""
+
+
+def _ai_vision_validate_banner(
+    banner_path: str | Path, product_name: str
+) -> tuple[bool, str]:
+    """Final-stage AI gate that catches defects heuristics can't see.
+
+    Heuristic validators handle pixel-level failures (lifestyle scenes,
+    extreme aspect ratios, fully erased products, multi-component
+    collages). They miss semantic failures:
+      - Cluttered scene compositions (Autonomous standing desk + 8
+        accessories all on one connected blob).
+      - Catalog brand mismatches (a desk titled "Autonomous" showing
+        an OffiGo monitor in the source image).
+      - Wrong product entirely (Amazon's main image being for a
+        different SKU than the title implies).
+      - Cropped product (head missing, etc.) where the cutout coverage
+        is fine but the result looks broken.
+
+    Sends the composed banner JPG + product name to Claude Haiku 4.5
+    with a strict-mode prompt: approve only if the banner shows a
+    single, clean, recognizable instance of the named product.
+
+    Returns (ok, reason). Reason is empty when approved.
+
+    Defensive about API problems: a missing ANTHROPIC_API_KEY, network
+    error, or unparseable response all return (True, "") so the gate
+    fails open. Catching real defects matters more than blocking on
+    API outages — the heuristic checks already ran by this point.
+    """
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        return True, ""
+
+    try:
+        import anthropic  # type: ignore
+    except ImportError:
+        return True, ""
+
+    try:
+        with open(banner_path, "rb") as f:
+            jpg_b64 = base64.standard_b64encode(f.read()).decode("ascii")
+    except OSError:
+        return True, ""
+
+    prompt = (
+        f'You are an unforgiving QA reviewer for a brand Instagram account. '
+        f'The banner below has the product title: "{product_name}".\n\n'
+        f'Walk through these checks IN ORDER and write your findings to the '
+        f'"checks" object. After each check, decide approve/reject. Only set '
+        f'approved=true if EVERY check passes. Default to rejecting when uncertain.\n\n'
+        f'CHECK 1 — Single product (no duplicates):\n'
+        f'  Count the distinct instances of the named product visible. If you see '
+        f'  the same product shown more than once (e.g., a vacuum + 4 detail shots '
+        f'  of the vacuum head), set check1 to "fail: N copies".\n\n'
+        f'CHECK 2 — Scene clutter:\n'
+        f'  List every NON-product object you see (laptops, plants, monitors, '
+        f'  headphones, backpacks, keyboards, cups, props). If the non-product '
+        f'  objects are NOT part of the named product itself, set check2 to '
+        f'  "fail: <list>".\n'
+        f'  Example: a banner titled "Autonomous Standing Desk" with monitors, a '
+        f'  laptop, a plant, headphones and a backpack on it FAILS this check.\n\n'
+        f'CHECK 3 — Brand identity:\n'
+        f'  Read every visible logo or text on objects in the image. If any logo '
+        f'  contradicts the product title (e.g. "OffiGo" on a "Autonomous" desk; '
+        f'  "Generic" on a "Shark" vacuum), set check3 to "fail: <wrong brand>".\n\n'
+        f'CHECK 4 — Cutout artifacts:\n'
+        f'  Look for jagged edges, ghost fragments, white halo around the product, '
+        f'  or partial erasure of the product body. If present, set check4 to '
+        f'  "fail: <what you see>".\n\n'
+        f'Reply with ONLY a single JSON object, no markdown fences, no preamble:\n'
+        f'{{"checks": {{"check1": "...", "check2": "...", "check3": "...", "check4": "..."}}, '
+        f'"approved": true|false, "reason": "<one short sentence; required when approved=false>"}}'
+    )
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=400,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": jpg_b64,
+                            },
+                        },
+                        {"type": "text", "text": prompt},
+                    ],
+                }
+            ],
+        )
+        response_text = msg.content[0].text.strip()
+    except Exception:
+        return True, ""
+
+    try:
+        # Tolerate the model wrapping JSON in ```json fences.
+        cleaned = re.sub(r"^```(?:json)?|```$", "", response_text, flags=re.MULTILINE).strip()
+        data = json.loads(cleaned)
+        approved = bool(data.get("approved"))
+        reason = str(data.get("reason") or "").strip()
+        if approved:
+            return True, ""
+        return False, reason or "AI vision rejected banner (no reason given)"
+    except (json.JSONDecodeError, AttributeError, KeyError, TypeError):
+        return True, ""
 
 
 def _validate_cutout(prod: Image.Image) -> tuple[bool, str]:
@@ -776,6 +891,33 @@ def compose_banner(
         progressive=False,
         subsampling=0,
     )
+
+    # Final-stage AI vision gate — catches semantic defects the heuristic
+    # validators miss (scene clutter, brand mismatches, miscropped products,
+    # subtle cutout artifacts that pass the alpha-coverage check).
+    #
+    # Mode is controlled by BANNER_AI_GATE env var:
+    #   "off"     → skip the API call entirely (free, no protection)
+    #   "shadow"  → call the API and PRINT the verdict, but never raise.
+    #               Use to iterate on the prompt and validate model accuracy
+    #               before you trust it to block posts. THIS IS THE DEFAULT.
+    #   "enforce" → call the API and raise BannerQualityError on rejection.
+    #               Switch to this once shadow-mode logs prove the model
+    #               is reliably distinguishing good from bad banners.
+    #
+    # Always fails open on missing API key / network / parse errors so an
+    # Anthropic outage can never halt the pipeline.
+    mode = (os.environ.get("BANNER_AI_GATE") or "shadow").lower().strip()
+    name = product.get("name", "")
+    if mode != "off" and name:
+        ai_ok, ai_reason = _ai_vision_validate_banner(out, name)
+        if mode == "enforce":
+            if not ai_ok:
+                raise BannerQualityError(f"ai vision: {ai_reason}")
+        else:
+            verdict = "APPROVED" if ai_ok else f"REJECTED ({ai_reason})"
+            print(f"   [ai-gate shadow] {verdict}")
+
     return str(out)
 
 
