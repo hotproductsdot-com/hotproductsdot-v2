@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "DRY RUN (default: ON) — compose + upload banners but skip IG posts. Toggle OFF to actually post to Instagram."
+        description: "DRY RUN (default: OFF — manual dispatch posts for real). Toggle ON to compose + upload banners without posting."
         required: false
         type: boolean
-        default: true
+        default: false
 
 jobs:
   post-and-deploy:
