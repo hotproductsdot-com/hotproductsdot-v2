@@ -122,10 +122,12 @@ jobs:
           posts_blocked=0
           for i in 1 2 3 4; do
             echo "::group::Post $i/4"
-            # --catalog-image-only: skip stochastic Gemini variants. They occasionally
-            # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
-            # rectangular artifacts behind the product. Catalog images are deterministic.
-            python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG && rc=0 || rc=$?
+            # --ad-creative: AI-generated ad-creative banner (Gemini Nano Banana
+            # Pro grounded on Tavily reference imagery). The white-card pipeline
+            # replaced rembg cutouts, so the historical reason for forcing
+            # --catalog-image-only is gone. Stochastic flakiness now lands in
+            # quality_blocked (rc=2) rather than corrupting banners.
+            python post_daily.py --platform instagram --ad-creative $DRY_RUN_FLAG && rc=0 || rc=$?
             case "$rc" in
               0) posts_ok=$((posts_ok + 1)); echo "Post $i: posted (rc=0)" ;;
               2) posts_blocked=$((posts_blocked + 1)); echo "::notice::Post $i quality_blocked (rc=2)" ;;
