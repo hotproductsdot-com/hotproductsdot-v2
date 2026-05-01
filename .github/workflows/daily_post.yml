@@ -56,12 +56,12 @@ jobs:
           # Verified locally on 5 banners — flip to "shadow" to log without
           # blocking, "off" to skip the API call entirely.
           BANNER_AI_GATE: enforce
-          # Safe-by-default: only post to Instagram when this is a manual
-          # workflow_dispatch AND the operator has explicitly toggled dry_run
-          # OFF. Scheduled cron runs always dry-run (compose + upload to
-          # artifacts only) so unattended posting can't ship bad banners
-          # while validators are still maturing. Operator approves each batch
-          # by triggering "Run workflow" with dry_run unchecked.
+          # Posting policy:
+          #   - schedule:          REAL POSTING (production daily cron).
+          #   - workflow_dispatch: honors the dry_run checkbox (default ON,
+          #                        so manual runs stay safe-by-default).
+          # Validators (BANNER_AI_GATE=enforce + --catalog-image-only) gate
+          # bad banners regardless of trigger.
           #
           # The decision lives in bash, not a GHA expression: an earlier
           # `(cond) && '' || '--dry-run'` form silently always returned
@@ -84,7 +84,10 @@ jobs:
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
           MODELSLAB_KEY:       ${{ secrets.MODELSLAB_KEY }}
         run: |
-          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DRY_RUN_INPUT" = "false" ]; then
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DRY_RUN_FLAG=""
+            echo "Mode: REAL POSTING (scheduled cron)"
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DRY_RUN_INPUT" = "false" ]; then
             DRY_RUN_FLAG=""
             echo "Mode: REAL POSTING (manual dispatch with dry_run=false)"
           else
@@ -117,11 +120,12 @@ jobs:
       # would then re-pick the same products (e.g. DJI Air 3S re-selected on
       # consecutive days because yesterday's deploy hiccup blocked the log push).
       - name: Commit post log (pre-deploy)
-        # Match the same gate as DRY_RUN_FLAG: only commit log entries when
-        # this run actually posted (workflow_dispatch with dry_run=false).
-        # Cron runs and dry-run dispatches don't produce log changes anyway,
-        # but keeping the condition consistent avoids future drift.
-        if: success() && github.event_name == 'workflow_dispatch' && !inputs.dry_run
+        # Match the same gate as DRY_RUN_FLAG: commit log entries whenever
+        # this run actually posted — schedule (always real) or
+        # workflow_dispatch with dry_run=false. Dry-run dispatches don't
+        # produce log changes anyway, but keeping the condition consistent
+        # avoids future drift.
+        if: success() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run))
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
