@@ -1391,6 +1391,13 @@ def main() -> None:
     if any(not r["ok"] for r in results.values()):
         logger.error("One or more platforms failed; exiting 1")
         sys.exit(1)
+    if not results:
+        # No platform attempted a post — typically dry-run or operator
+        # declined approval. Exit with a distinct code so CI can count
+        # "skipped" separately from "posted" without false-positive
+        # success counts.
+        logger.info("No platforms attempted to post (dry-run or skipped); exiting 3")
+        sys.exit(3)
     logger.info("post_daily finished ok results=%s", list(results.keys()))
 
 

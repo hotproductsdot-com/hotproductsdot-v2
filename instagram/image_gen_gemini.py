@@ -23,14 +23,16 @@ from pathlib import Path
 import requests
 
 try:
-    import google.generativeai as genai
+    from google import genai
 except ImportError:
     genai = None
 
 import anthropic
 
-# Note: We use the REST API directly for image generation, so genai SDK is optional
-# but kept for future expansion (e.g., text generation, vision APIs)
+# Note: We use the REST API directly for image generation, so the genai SDK
+# is optional but kept for future expansion (e.g., text generation, vision
+# APIs). The new SDK is `google-genai` (replaces the deprecated
+# `google-generativeai` package).
 
 SITE_URL = "https://hotproductsdot.com"
 
@@ -347,7 +349,7 @@ def generate_product_images(
         raise ValueError("GEMINI_API_KEY not set — add it to .env to generate images")
 
     if not genai:
-        raise ValueError("google-generativeai not installed — run: pip install google-generativeai")
+        raise ValueError("google-genai not installed — run: pip install google-genai")
 
     if save_dir:
         save_dir.mkdir(parents=True, exist_ok=True)

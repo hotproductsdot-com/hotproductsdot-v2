@@ -1,8 +1,12 @@
 anthropic>=0.28.0
 beautifulsoup4==4.12.2
-google-generativeai>=0.5.0
+google-genai>=1.0.0
 Pillow>=10.0.0
 python-dotenv>=1.0.0
 rapidfuzz>=3.0.0
 rembg[cpu]>=2.0.75
+# Pin onnxruntime to break the rembg resolver cascade. Without this, pip
+# re-resolves to the latest matching wheel each run and re-downloads the
+# 18 MB binary even though our pip cache directory is hit.
+onnxruntime==1.25.1
 requests>=2.31.0

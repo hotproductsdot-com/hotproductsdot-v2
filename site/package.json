@@ -28,11 +28,14 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^10",
+    "eslint": "^9.27.0",
     "eslint-config-next": "16.2.4",
     "lightningcss": "^1.32.0",
     "serve": "^14.2.6",
     "tailwindcss": "^4",
     "typescript": "^6"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
   }
 }

@@ -49,6 +49,20 @@ jobs:
         working-directory: site
         run: npm ci
 
+      # Cache Next.js's incremental build artifacts (.next/cache) so subsequent
+      # builds reuse webpack module hashes, RSC payloads, and image-optimization
+      # output. The cache key is keyed on the lockfile + every .ts/.tsx/.js
+      # source file in site/, so any source change busts the cache and triggers
+      # a clean rebuild.
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: site/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-${{ hashFiles('site/**/*.ts', 'site/**/*.tsx', 'site/**/*.js', 'site/**/*.mjs') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
+            nextjs-${{ runner.os }}-
+
       - name: Post 4 products to Instagram
         env:
           # AI vision gate enforces semantic banner quality (scene clutter,
@@ -95,22 +109,36 @@ jobs:
             echo "Mode: DRY RUN (event=$EVENT_NAME dry_run_input=$DRY_RUN_INPUT)"
           fi
 
+          # Exit-code contract from post_daily.py:
+          #   0 = at least one platform posted successfully
+          #   1 = at least one platform attempted and failed
+          #   2 = banner quality_blocked (product quarantined, no post)
+          #   3 = no platform attempted (dry-run or operator skipped approval)
+          # Counting only rc=0 as "posted" prevents dry-run iterations from
+          # masquerading as successful posts (the old `if python ...; then ok++`
+          # form treated rc=0 from a skip as a real post).
           posts_ok=0
+          posts_skipped=0
+          posts_blocked=0
           for i in 1 2 3 4; do
             echo "::group::Post $i/4"
             # --catalog-image-only: skip stochastic Gemini variants. They occasionally
             # produce white-on-light backgrounds that rembg can't cleanly cut, leaving
             # rectangular artifacts behind the product. Catalog images are deterministic.
-            if python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG; then
-              posts_ok=$((posts_ok + 1))
-            else
-              echo "::warning::Post $i failed (continuing)"
-            fi
+            python post_daily.py --platform instagram --catalog-image-only $DRY_RUN_FLAG && rc=0 || rc=$?
+            case "$rc" in
+              0) posts_ok=$((posts_ok + 1)); echo "Post $i: posted (rc=0)" ;;
+              2) posts_blocked=$((posts_blocked + 1)); echo "::notice::Post $i quality_blocked (rc=2)" ;;
+              3) posts_skipped=$((posts_skipped + 1)); echo "::notice::Post $i skipped (rc=3, dry-run or unapproved)" ;;
+              *) echo "::warning::Post $i failed (rc=$rc, continuing)" ;;
+            esac
             echo "::endgroup::"
           done
-          echo "Posts succeeded: $posts_ok / 4"
-          if [ "$posts_ok" -eq 0 ]; then
-            echo "::error::All 4 posts failed — aborting deploy"
+          echo "Posts: ${posts_ok} posted, ${posts_skipped} skipped, ${posts_blocked} blocked (of 4)"
+          # Real-posting runs require at least one true post.
+          # Dry-run / skipped runs are allowed to proceed to build+deploy with no posts.
+          if [ -z "$DRY_RUN_FLAG" ] && [ "$posts_ok" -eq 0 ]; then
+            echo "::error::Real-posting run produced 0 successful posts — aborting deploy"
             exit 1
           fi
 
@@ -201,8 +229,22 @@ jobs:
               "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"
 
       - name: Rsync to Hostinger
+        # --delete removes anything in dest not present in source. The
+        # exclude list below preserves files Hostinger generates server-side
+        # that the static export doesn't (and shouldn't) ship — losing any
+        # of these would break SSL renewal, panel-managed caching, or PHP
+        # behavior. site/out/ contains none of these patterns, so they
+        # cannot legitimately be re-introduced from source.
         run: |
           rsync -avz --delete \
+            --exclude='.htaccess' \
+            --exclude='.htpasswd' \
+            --exclude='.well-known/' \
+            --exclude='cgi-bin/' \
+            --exclude='.user.ini' \
+            --exclude='error_log' \
+            --exclude='error_log.*' \
+            --exclude='php.ini' \
             -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa" \
             site/out/ \
             "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"
