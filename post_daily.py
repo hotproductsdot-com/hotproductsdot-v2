@@ -69,6 +69,13 @@ ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
 # Same-day retries are still allowed so transient errors can be re-driven.
 DEFAULT_COOLDOWN_DAYS = 14
 
+# Hard ceiling on how many successful posts (Status=ok) a single UTC day may
+# contain per platform. The daily_post.yml workflow runs 4 invocations per
+# scheduled cron — if a re-run / accidental dispatch triggers another batch,
+# the quota guard refuses to post and exits rc=3. Override with env var if
+# the daily volume ever changes.
+DAILY_PLATFORM_QUOTA = int(os.environ.get("DAILY_PLATFORM_QUOTA", "4"))
+
 logger = logging.getLogger(__name__)
 
 
@@ -211,6 +218,28 @@ def load_top_products(n: int | None = None) -> list[dict]:
 
     products.sort(key=lambda x: x["_score"], reverse=True)
     return products[:n] if n is not None else products
+
+
+def count_today_ok_posts(platform: str) -> int:
+    """Return how many Status=ok rows for `platform` have today's UTC date.
+
+    Used by main() as a daily-quota guard to prevent re-runs of daily_post.yml
+    (or accidental manual dispatches) from posting more than DAILY_PLATFORM_QUOTA
+    real posts per UTC day. The check intentionally reads the on-disk CSV (not
+    a remote source) — the workflow is responsible for syncing post_log.csv
+    from origin/main before posting so re-attempts see prior attempts' rows.
+    """
+    if not LOG_PATH.exists():
+        return 0
+    today_iso = date.today().isoformat()
+    n = 0
+    with open(LOG_PATH, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if (row.get("Date", "").strip() == today_iso
+                    and row.get("Platform", "").strip() == platform
+                    and row.get("Status", "").strip() == "ok"):
+                n += 1
+    return n
 
 
 def load_posted_products(cooldown_days: int = DEFAULT_COOLDOWN_DAYS) -> set[str]:
@@ -1064,6 +1093,22 @@ def main() -> None:
 
     configure_logging(verbose=args.verbose, quiet=args.quiet, log_file=args.log_file)
     logger.info("post_daily start platform=%s dry_run=%s", args.platform, args.dry_run)
+
+    # Daily-quota guard: refuse to post if today already has DAILY_PLATFORM_QUOTA
+    # successful rows for this platform. Closes the re-run double-post hole where
+    # GitHub Actions retries re-checkout the original commit and dedup misses
+    # rows pushed by attempt 1. Bypassed for --dry-run, --slug (intentional
+    # ad-hoc repost) and --force (manual override).
+    if not args.dry_run and not args.slug and not args.force \
+            and args.platform in ("instagram", "tiktok"):
+        today_count = count_today_ok_posts(args.platform)
+        if today_count >= DAILY_PLATFORM_QUOTA:
+            print(f"[!] Daily quota reached: {today_count} '{args.platform}' "
+                  f"posts already logged for today (limit={DAILY_PLATFORM_QUOTA}). "
+                  f"Skipping to prevent duplicate posts.")
+            logger.info("daily quota reached platform=%s today_count=%d limit=%d",
+                        args.platform, today_count, DAILY_PLATFORM_QUOTA)
+            sys.exit(3)
 
     # Set when branded banner compositing runs (ImgBB path).
     banner_path: str | None = None

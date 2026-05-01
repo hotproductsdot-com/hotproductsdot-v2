@@ -63,6 +63,22 @@ jobs:
             nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
             nextjs-${{ runner.os }}-
 
+      # Defense vs re-run double posts: when a workflow run is re-run
+      # (run_attempt > 1), GitHub re-checks-out the ORIGINAL commit. If
+      # attempt 1 successfully pushed log entries (step 9) before failing
+      # downstream (e.g. SSH/rsync), attempt 2's checkout is stale —
+      # post_daily.py's dedup misses attempt 1's posts and re-picks 4 new
+      # products. Pulling the latest post_log.csv from origin/main here
+      # closes the gap. post_daily.py also has a DAILY_PLATFORM_QUOTA
+      # guard as a second line of defense.
+      - name: Sync post log from origin/main (anti double-post)
+        run: |
+          set -e
+          git fetch --quiet origin main
+          git checkout origin/main -- marketing-campaigns/post_log.csv
+          echo "post_log.csv synced to origin/main HEAD ($(git rev-parse --short origin/main))"
+          wc -l marketing-campaigns/post_log.csv
+
       - name: Post 4 products to Instagram
         env:
           # AI vision gate enforces semantic banner quality (scene clutter,
@@ -137,9 +153,12 @@ jobs:
             echo "::endgroup::"
           done
           echo "Posts: ${posts_ok} posted, ${posts_skipped} skipped, ${posts_blocked} blocked (of 4)"
-          # Real-posting runs require at least one true post.
-          # Dry-run / skipped runs are allowed to proceed to build+deploy with no posts.
-          if [ -z "$DRY_RUN_FLAG" ] && [ "$posts_ok" -eq 0 ]; then
+          # Real-posting runs require at least one true post UNLESS every
+          # invocation skipped (rc=3) — that means post_daily.py's daily-quota
+          # guard fired because the day's posts were already made by a
+          # previous (succeeded) attempt. In that case the redeploy still
+          # needs to run, so don't fail the workflow.
+          if [ -z "$DRY_RUN_FLAG" ] && [ "$posts_ok" -eq 0 ] && [ "$posts_skipped" -ne 4 ]; then
             echo "::error::Real-posting run produced 0 successful posts — aborting deploy"
             exit 1
           fi
