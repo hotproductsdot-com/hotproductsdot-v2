@@ -50,6 +50,7 @@ export default function Footer() {
               <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">Legal</span>
               <Link href="/disclaimer" className="hover:text-white transition-colors">Affiliate Disclaimer</Link>
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-zinc-400 font-semibold uppercase tracking-wider text-[10px]">Follow Us</span>
