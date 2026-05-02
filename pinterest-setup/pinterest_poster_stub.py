@@ -76,7 +76,7 @@ def build_destination_url(
         sep = "&" if "?" in amazon_url else "?"
         # Ensure affiliate tag present (matches site/app/lib/affiliate.ts)
         if "tag=" not in amazon_url:
-            amazon_url = f"{amazon_url}{sep}tag=hotproducts033-20"
+            amazon_url = f"{amazon_url}{sep}tag=hotproduct033-20"
             sep = "&"
         subtag = AMAZON_SUBTAG_TEMPLATE.format(board=board, date=date)
         return amazon_url + subtag
@@ -136,7 +136,7 @@ def example_workflow():
 
     # Direct-Amazon example (30% of pins, hot/seasonal items):
     url2 = build_destination_url(
-        amazon_url="https://www.amazon.com/dp/B0XXXXX?tag=hotproducts033-20",
+        amazon_url="https://www.amazon.com/dp/B0XXXXX?tag=hotproduct033-20",
         board="best-kitchen-gadgets-2026",
         date="20260427",
     )

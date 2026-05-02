@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllCategories, getProductsByCategory, type Product } from "../../lib/products";
 import { SITE_URL } from "../../lib/constants";
+import { getCategorySeo } from "../../lib/categorySeo";
 import { getCategoryIcon } from "../../components/CategoryIcon";
 import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
 
@@ -65,13 +66,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = cats.find((c) => c.slug === slug);
   if (!cat) return { title: "Category Not Found" };
   const canonical = `${SITE_URL}/best/${slug}`;
-  const title = `Best ${cat.name} for 2026 — Expert Picks & Reviews`;
-  const description = `Top-rated ${cat.name} on Amazon. We reviewed the bestsellers so you don't have to. Unbiased, verified reviews with real prices.`;
+  const seo = getCategorySeo(slug, cat.name);
   return {
-    title,
-    description,
+    title: seo.title,
+    description: seo.description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    openGraph: { title: seo.title, description: seo.description, url: canonical },
   };
 }
 
@@ -84,6 +84,7 @@ export default async function BestCategoryPage({ params }: Props) {
   const topProducts = products.slice(0, 5);
   const topPick = topProducts[0]!;
   const canonical = `${SITE_URL}/best/${slug}`;
+  const seo = getCategorySeo(slug, catName);
 
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
   const breadcrumbLd = {
@@ -185,10 +186,10 @@ export default async function BestCategoryPage({ params }: Props) {
           {catName} Guide
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">
-          Best {catName} for 2026
+          {seo.h1}
         </h1>
         <p className="text-lg text-zinc-400 mb-6">
-          We reviewed the top {topProducts.length} bestsellers on Amazon. Here's our unbiased breakdown to help you choose.
+          {seo.intro}
         </p>
 
         {/* Quick Facts */}

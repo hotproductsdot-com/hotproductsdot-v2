@@ -1,7 +1,7 @@
 # Pinterest Playbook — hotproductsdot.com
 
 **Account:** @affiliate1009 · Profile: "Hot Products" · Domain: hotproductsdot.com
-**Goal:** Drive Pinterest traffic to Amazon affiliate links (tag: `hotproducts033-20`)
+**Goal:** Drive Pinterest traffic to Amazon affiliate links (tag: `hotproduct033-20`)
 **Last updated:** 2026-04-24
 
 ---
@@ -157,7 +157,7 @@ https://hotproductsdot.com/best/kitchen?utm_source=pinterest&utm_medium=social&u
 
 **Format for DIRECT Amazon pins (if you must):**
 ```
-https://www.amazon.com/dp/B0XXXXX?tag=hotproducts033-20&ascsubtag=pin-<board>-<date>
+https://www.amazon.com/dp/B0XXXXX?tag=hotproduct033-20&ascsubtag=pin-<board>-<date>
 ```
 
 `ascsubtag` is Amazon's affiliate sub-tag — you'll see it in your Amazon Associates report and can attribute every sale back to the specific pin.

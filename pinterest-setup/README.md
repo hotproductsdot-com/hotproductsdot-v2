@@ -25,7 +25,7 @@ You chose to pin direct Amazon affiliate links. That works, but Pinterest's spam
 
 - Always disclose (`#affiliate` per pin + bio-level disclosure)
 - Never repeat the same URL > 5×/day
-- Even when "pinning direct," send 70% of pins to your own `/best/<category>` and `/products/<slug>` pages — they already enforce your `tag=hotproducts033-20` via `buildAffiliateUrl()` in `site/app/lib/affiliate.ts`, AND you keep the retargeting pixel + control if Pinterest changes policy.
+- Even when "pinning direct," send 70% of pins to your own `/best/<category>` and `/products/<slug>` pages — they already enforce your `tag=hotproduct033-20` via `buildAffiliateUrl()` in `site/app/lib/affiliate.ts`, AND you keep the retargeting pixel + control if Pinterest changes policy.
 
 ## Integration with your existing stack
 
