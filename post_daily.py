@@ -46,6 +46,7 @@ load_dotenv(override=True)
 
 import tiktok_api
 from instagram import image_gen, image_gen_gemini, banner_compose, ad_creative_gen
+import oxylabs_refresh
 
 # Optional: AI-powered affiliate tools (guarded import)
 try:
@@ -350,6 +351,106 @@ def pick_next_product(
             print(f"   (avoiding recent categories: {', '.join(sorted(recent_cats))})")
         return diverse[0]
     return unposted[0]
+
+
+# ── Pre-post live refresh ───────────────────────────────────────────────────
+# Catches stale CSV prices and unavailable products before banner generation.
+# 1 Oxylabs call per post (4/day). Updates product in-memory; persists CSV
+# on price drift > 5%. Returns 'unavailable' so caller can re-pick.
+
+PRICE_DRIFT_THRESHOLD = 0.05
+
+
+def _persist_csv_price_row(name: str, price: float, rating: float | None,
+                           reviews: int | None) -> bool:
+    """Update Price Range / Rating / Review Count / Refreshed Date for the
+    matching CSV row. Atomic write. Returns True on success."""
+    try:
+        with CSV_PATH.open(encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f)
+            fieldnames = reader.fieldnames
+            rows = list(reader)
+        matched = False
+        for row in rows:
+            if row.get("Product Name") == name:
+                row["Price Range"] = f"{price:.2f}"
+                if rating is not None:
+                    row["Rating"] = f"{rating:.1f}"
+                if reviews is not None:
+                    row["Review Count"] = str(reviews)
+                row["Refreshed Date"] = date.today().isoformat()
+                matched = True
+                break
+        if not matched:
+            logger.warning("CSV persist: no row matched name=%r", name[:60])
+            return False
+        tmp = CSV_PATH.with_suffix(".csv.tmp")
+        with tmp.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+        tmp.replace(CSV_PATH)
+        return True
+    except Exception as exc:
+        logger.warning("CSV persist failed for %s: %s", name[:60], exc)
+        return False
+
+
+def pre_post_refresh(product: dict, *, dry_run: bool) -> str:
+    """Live-refresh the picked product against Oxylabs Amazon scraper.
+
+    Mutates `product` in place on price drift. Persists CSV on drift unless
+    dry_run. Returns one of:
+      'ok'           — fresh data fetched (with or without drift update)
+      'unavailable'  — Amazon reports product currently unavailable
+      'no_creds'     — OXYLABS env vars missing (skip gate, continue)
+      'error'        — fetch failed (skip gate, continue)
+    """
+    user = os.environ.get("OXYLABS_USERNAME", "")
+    pw = os.environ.get("OXYLABS_PASSWORD", "")
+    if not (user and pw):
+        logger.info("pre_post_refresh: OXYLABS creds absent — skipping price gate")
+        return "no_creds"
+
+    asin = oxylabs_refresh.extract_asin(product.get("amazon_url", ""))
+    if not asin:
+        logger.warning("pre_post_refresh: no ASIN in URL %s", product.get("amazon_url"))
+        return "error"
+
+    result = oxylabs_refresh.fetch_oxylabs(asin, username=user, password=pw)
+    if result.error:
+        logger.warning("pre_post_refresh: Oxylabs error for %s [%s]: %s",
+                       product["name"][:60], asin, result.error)
+        return "error"
+
+    if result.available is False:
+        logger.warning("pre_post_refresh: %s is UNAVAILABLE on Amazon (ASIN %s)",
+                       product["name"][:60], asin)
+        return "unavailable"
+
+    if result.price is not None:
+        old = float(product.get("price_num") or 0.0)
+        if old > 0:
+            drift = abs(result.price - old) / old
+            if drift > PRICE_DRIFT_THRESHOLD:
+                pct = (result.price - old) / old * 100
+                logger.warning(
+                    "pre_post_refresh: PRICE DRIFT for %s: CSV=$%.2f Amazon=$%.2f (%+.1f%%) — patching",
+                    product["name"][:60], old, result.price, pct,
+                )
+                product["price"] = f"{result.price:.2f}"
+                product["price_num"] = result.price
+                if not dry_run:
+                    if _persist_csv_price_row(
+                        product["name"], result.price, result.rating, result.reviews
+                    ):
+                        logger.info("pre_post_refresh: CSV row updated for %s",
+                                    product["name"][:60])
+            else:
+                logger.info("pre_post_refresh: %s price within tolerance ($%.2f vs $%.2f)",
+                            product["name"][:60], old, result.price)
+
+    return "ok"
 
 
 def product_page_url(product: dict) -> str:
@@ -1128,6 +1229,8 @@ def main() -> None:
             print(f"  {cat} ({count} product{'s' if count != 1 else ''})")
         sys.exit(0)
 
+    products: list[dict] | None = None  # Pool used for rotation (None on --slug)
+
     if args.slug:
         product = next((p for p in all_products if p["slug"] == args.slug), None)
         if product is None:
@@ -1150,6 +1253,35 @@ def main() -> None:
             products = all_products[:ROTATION_POOL]
 
         product = pick_next_product(products, force=args.force, cooldown_days=args.cooldown_days)
+
+    # ── Pre-post live refresh: catch stale prices and unavailable products ──
+    # On 'unavailable': re-pick (rotation path only, max 3 attempts).
+    # On price drift > 5%: patch in-memory + persist CSV (unless --dry-run).
+    MAX_REPICK_ATTEMPTS = 3
+    repick_attempts = 0
+    while True:
+        status = pre_post_refresh(product, dry_run=args.dry_run)
+        if status != "unavailable":
+            break
+        if products is None:
+            # --slug path: don't override user's explicit choice; warn and continue.
+            print(f"[!] WARNING: {product['name']} is currently unavailable on Amazon "
+                  f"(--slug override; posting anyway).")
+            break
+        repick_attempts += 1
+        if repick_attempts >= MAX_REPICK_ATTEMPTS:
+            print(f"[!] Hit max re-pick attempts ({MAX_REPICK_ATTEMPTS}) — "
+                  f"falling back to last pick {product['name']!r}.")
+            break
+        print(f"[!] {product['name']} unavailable on Amazon — re-picking "
+              f"(attempt {repick_attempts}/{MAX_REPICK_ATTEMPTS}).")
+        products = [p for p in products if p["slug"] != product["slug"]]
+        if not products:
+            print("[!] Pool exhausted after availability filter; aborting.")
+            sys.exit(4)
+        product = pick_next_product(products, force=args.force,
+                                    cooldown_days=args.cooldown_days)
+
     logger.info(
         "Selected product name=%r slug=%s category=%r force=%s",
         product["name"],
