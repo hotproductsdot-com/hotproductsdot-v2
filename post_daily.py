@@ -1168,9 +1168,13 @@ def main() -> None:
              "white-card pipeline automatically on Tavily/Gemini failure.",
     )
     parser.add_argument(
-        "--banner-only",
+        "--gen-variants",
         action="store_true",
-        help="Skip AI image variant generation (banner, studio_dark, etc.); compose and post the banner only.",
+        help="Generate 5 stylized product images via Gemini Nano-Banana-Pro before "
+             "the banner step (image_gen_gemini.generate_product_images). Default: OFF — "
+             "the ad-creative banner alone is sufficient and the variant pre-gen costs "
+             "5× the per-product Gemini spend without affecting what gets posted. "
+             "Opt in only when explicitly auditing variant quality.",
     )
     parser.add_argument(
         "--use-local-flux",
@@ -1343,7 +1347,7 @@ def main() -> None:
             chosen_image_url = None
             print(f"   ✗ Generation error: {exc}")
             print("   Using catalog image instead.")
-    elif os.environ.get("GEMINI_API_KEY"):
+    elif args.gen_variants and os.environ.get("GEMINI_API_KEY"):
         save_dir = (
             Path(__file__).parent
             / "generated_images"
@@ -1384,9 +1388,14 @@ def main() -> None:
             print("Aborted.")
             sys.exit(0)
     else:
-        logger.info("GEMINI_API_KEY unset; image source=catalog")
+        if os.environ.get("GEMINI_API_KEY"):
+            logger.info("Variant pre-gen disabled (--gen-variants not set); image source=catalog")
+            reason = "(--gen-variants not set; banner step still runs)"
+        else:
+            logger.info("GEMINI_API_KEY unset; image source=catalog")
+            reason = "(set GEMINI_API_KEY in .env to enable AI variant pre-gen)"
         print(f"Image URL        : {product_image_url(product)}")
-        print("   (set GEMINI_API_KEY in .env to generate custom images)")
+        print(f"   {reason}")
 
     # ── Banner composition (HotProducts brand style) ──────────────────────────
     # Composes the product image into the branded 1080×1080 banner format and
