@@ -20,9 +20,9 @@ jobs:
       contents: write
 
     env:
-      HOSTINGER_HOST: 145.79.4.128
-      HOSTINGER_USER: u143258947
-      HOSTINGER_PORT: 65002
+      HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+      HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+      HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
       HOSTINGER_DEST: domains/hotproductsdot.com/public_html/
 
     steps:
