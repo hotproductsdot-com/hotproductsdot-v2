@@ -64,6 +64,12 @@ CSV_PATH        = Path(__file__).parent / "products" / "top-1000.csv"
 LOG_PATH        = Path(__file__).parent / "marketing-campaigns" / "post_log.csv"
 ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
 
+
+class PoolExhaustedError(Exception):
+    """Raised when neither the rotation pool nor the full catalog has any
+    unposted product left. Caller exits with rc=4 rather than risk a
+    duplicate post."""
+
 # Don't re-pick a product attempted (any status) within this many *prior* days.
 # At 4 posts/day across a 60-product pool a full cycle is ~15 days; 14 days of
 # cooldown buys defense-in-depth against the post_log.csv being lost mid-pipeline.
@@ -314,6 +320,7 @@ def pick_next_product(
     products: list[dict],
     force: bool = False,
     cooldown_days: int = DEFAULT_COOLDOWN_DAYS,
+    full_catalog: list[dict] | None = None,
 ) -> dict:
     """
     Pick the next unposted product from the pool with category diversity.
@@ -323,10 +330,14 @@ def pick_next_product(
          the last CATEGORY_COOLDOWN successful posts (prevents "5 cameras
          in a row" when cameras dominate the score).
       2. Top-scoring unposted product (cooldown unsatisfiable).
-      3. Day-of-year rotation through the full pool (everything posted).
+      3. First unposted product in `full_catalog` (the broader catalog
+         beyond the rotation pool) when the pool is exhausted.
+      4. Raises PoolExhaustedError when even `full_catalog` has nothing
+         left — caller exits non-zero rather than re-posting a duplicate.
 
     `cooldown_days` is forwarded to load_posted_products to widen the dedup
-    window beyond just successful posts.
+    window beyond just successful posts. `full_catalog` defaults to
+    `products` for backward compatibility (tests / ad-hoc callers).
     """
     if force:
         day = date.today().timetuple().tm_yday
@@ -336,9 +347,26 @@ def pick_next_product(
     unposted = [p for p in products if p["name"] not in posted]
 
     if not unposted:
-        print("[!] All products in pool have been posted. Cycling back from the full pool.")
-        day = date.today().timetuple().tm_yday
-        return products[(day - 1) % len(products)]
+        # Pool exhausted: widen to full_catalog (avoids the deterministic
+        # day-of-year duplicate that produced 3× Zeiss Otus on 2026-05-04
+        # — the old fallback returned products[(day-1) % len(products)]
+        # ignoring `posted`, so every same-day re-invocation re-posted the
+        # same product). The new behavior posts a *fresh* catalog product
+        # or aborts loud.
+        wider = full_catalog if full_catalog is not None else products
+        wider_unposted = [p for p in wider if p["name"] not in posted]
+        if wider_unposted:
+            print(
+                f"[!] Rotation pool exhausted ({len(products)} products all posted). "
+                f"Widening to full catalog: {len(wider_unposted)} unposted candidates remain."
+            )
+            recent_cats = _recent_categories(wider)
+            diverse = [p for p in wider_unposted if p["category"] not in recent_cats]
+            return diverse[0] if diverse else wider_unposted[0]
+        raise PoolExhaustedError(
+            f"Rotation pool ({len(products)}) and full catalog ({len(wider)}) "
+            f"are both fully posted/cooled-down. No unique product to post."
+        )
 
     skipped = len(products) - len(unposted)
     if skipped:
@@ -1256,7 +1284,16 @@ def main() -> None:
         else:
             products = all_products[:ROTATION_POOL]
 
-        product = pick_next_product(products, force=args.force, cooldown_days=args.cooldown_days)
+        try:
+            product = pick_next_product(
+                products,
+                force=args.force,
+                cooldown_days=args.cooldown_days,
+                full_catalog=all_products,
+            )
+        except PoolExhaustedError as exc:
+            print(f"[!] {exc}")
+            sys.exit(4)
 
     # ── Pre-post live refresh: catch stale prices and unavailable products ──
     # On 'unavailable': re-pick (rotation path only, max 3 attempts).
@@ -1283,8 +1320,16 @@ def main() -> None:
         if not products:
             print("[!] Pool exhausted after availability filter; aborting.")
             sys.exit(4)
-        product = pick_next_product(products, force=args.force,
-                                    cooldown_days=args.cooldown_days)
+        try:
+            product = pick_next_product(
+                products,
+                force=args.force,
+                cooldown_days=args.cooldown_days,
+                full_catalog=all_products,
+            )
+        except PoolExhaustedError as exc:
+            print(f"[!] {exc}")
+            sys.exit(4)
 
     logger.info(
         "Selected product name=%r slug=%s category=%r force=%s",
