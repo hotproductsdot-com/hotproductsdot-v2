@@ -163,6 +163,28 @@ jobs:
             exit 1
           fi
 
+      # Defense-in-depth: catch any duplicate IG posts written today before the
+      # log gets pushed to origin/main. Triggered when the rotation fallback
+      # path mis-fires (the 2026-05-04 triple-Zeiss incident — pick_next_product
+      # returned products[(day_of_year-1) % 60] deterministically when the
+      # 60-product pool was exhausted by `posted`, so iterations 2/3/4 all
+      # picked the same product). Fix landed in 6acb6e6f, but if a future
+      # regression slips a duplicate through, fail loud here so the operator
+      # sees an error rather than discovering it on the IG feed days later.
+      - name: Verify no duplicate IG posts today
+        if: success() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run))
+        run: |
+          today="$(date -u +%F)"
+          dups=$(awk -F, -v d="$today" '$1==d && $2=="instagram" && $4=="ok" {print $3}' \
+            marketing-campaigns/post_log.csv | sort | uniq -d)
+          if [ -n "$dups" ]; then
+            echo "::error::Duplicate Instagram posts detected for ${today}:"
+            echo "$dups" | sed 's/^/  - /'
+            echo "::error::IG side has the duplicates already; log push blocked to surface the bug."
+            exit 1
+          fi
+          echo "OK: ${today} has no duplicate IG posts."
+
       # Commit the post log immediately after posting succeeds, BEFORE build/deploy.
       # If we deferred this until after rsync (the previous behavior), any deploy
       # failure would orphan the day's post records — the next run's dedup logic
