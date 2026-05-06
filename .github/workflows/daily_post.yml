@@ -265,21 +265,58 @@ jobs:
           fi
           echo "Key parses OK"
 
-          # 5. Capture host key (don't silence stderr; only suppress "comments")
-          ssh-keyscan -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2> /tmp/keyscan.err
+          # 5. Capture host key with retries — Hostinger SSH occasionally
+          # throttles or is slow to respond, and a single keyscan miss
+          # historically tanked the whole workflow.
+          for attempt in 1 2 3 4 5; do
+            : > /tmp/keyscan.err
+            ssh-keyscan -T 15 -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2> /tmp/keyscan.err || true
+            if [ -s ~/.ssh/known_hosts ]; then
+              echo "ssh-keyscan succeeded on attempt $attempt"
+              break
+            fi
+            echo "::warning::ssh-keyscan attempt $attempt produced no host keys; retrying in $((attempt * 5))s. stderr:"
+            cat /tmp/keyscan.err || true
+            sleep $((attempt * 5))
+          done
           if [ ! -s ~/.ssh/known_hosts ]; then
-            echo "::error::ssh-keyscan returned no host keys. stderr:"
-            cat /tmp/keyscan.err
+            echo "::error::ssh-keyscan failed after 5 attempts. Final stderr:"
+            cat /tmp/keyscan.err || true
             exit 1
           fi
 
       - name: SSH connectivity smoke test
+        # Hostinger shared hosting is intermittently slow on the SSH handshake
+        # (fail2ban warm-up, occasional load spikes). The previous 10s
+        # ConnectTimeout + zero retries was the dominant cause of "intermittent
+        # SSH failure" workflow runs. Bump to 30s, keep BatchMode (no prompts),
+        # add ConnectionAttempts and keepalives, and retry up to 4 times with
+        # exponential-ish backoff.
         run: |
           set -e
-          ssh -p "$HOSTINGER_PORT" -i ~/.ssh/id_rsa \
-              -o BatchMode=yes -o ConnectTimeout=10 \
-              "$HOSTINGER_USER@$HOSTINGER_HOST" \
-              "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"
+          attempt=1
+          max_attempts=4
+          while : ; do
+            if ssh -p "$HOSTINGER_PORT" -i ~/.ssh/id_rsa \
+                -o BatchMode=yes \
+                -o ConnectTimeout=30 \
+                -o ConnectionAttempts=3 \
+                -o ServerAliveInterval=20 \
+                -o ServerAliveCountMax=6 \
+                "$HOSTINGER_USER@$HOSTINGER_HOST" \
+                "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"; then
+              echo "Smoke test succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::SSH smoke test failed after $max_attempts attempts"
+              exit 1
+            fi
+            wait_s=$((attempt * 15))
+            echo "::warning::SSH smoke test attempt $attempt failed; retrying in ${wait_s}s"
+            sleep "$wait_s"
+            attempt=$((attempt + 1))
+          done
 
       - name: Rsync to Hostinger
         # --delete removes anything in dest not present in source. The
@@ -288,19 +325,47 @@ jobs:
         # of these would break SSL renewal, panel-managed caching, or PHP
         # behavior. site/out/ contains none of these patterns, so they
         # cannot legitimately be re-introduced from source.
+        #
+        # Resilience flags (added 2026-05-05 to fix intermittent SSH failures):
+        #   --partial          : preserve partial transfers so a retry resumes
+        #                        instead of restarting from zero.
+        #   --timeout=60       : abort if no I/O for 60s (catches frozen TCP
+        #                        connections faster than the kernel default).
+        #   ssh -o ServerAlive*: keep the channel alive across Hostinger's
+        #                        idle-cutoff and brief network blips.
+        #   Retry loop         : 3 attempts with backoff. Most rsync drops on
+        #                        Hostinger are single-event; a retry usually
+        #                        completes in seconds because --partial means
+        #                        only the unfinished delta moves.
         run: |
-          rsync -avz --delete \
-            --exclude='.htaccess' \
-            --exclude='.htpasswd' \
-            --exclude='.well-known/' \
-            --exclude='cgi-bin/' \
-            --exclude='.user.ini' \
-            --exclude='error_log' \
-            --exclude='error_log.*' \
-            --exclude='php.ini' \
-            -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa" \
-            site/out/ \
-            "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"
+          set -e
+          attempt=1
+          max_attempts=3
+          while : ; do
+            if rsync -avz --delete --partial --timeout=60 \
+                --exclude='.htaccess' \
+                --exclude='.htpasswd' \
+                --exclude='.well-known/' \
+                --exclude='cgi-bin/' \
+                --exclude='.user.ini' \
+                --exclude='error_log' \
+                --exclude='error_log.*' \
+                --exclude='php.ini' \
+                -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 -o ServerAliveInterval=20 -o ServerAliveCountMax=6" \
+                site/out/ \
+                "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"; then
+              echo "Rsync succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::Rsync failed after $max_attempts attempts"
+              exit 1
+            fi
+            wait_s=$((attempt * 30))
+            echo "::warning::Rsync attempt $attempt failed; retrying in ${wait_s}s (--partial preserves progress)"
+            sleep "$wait_s"
+            attempt=$((attempt + 1))
+          done
 
       - name: Upload composed banners as artifact
         if: always()
