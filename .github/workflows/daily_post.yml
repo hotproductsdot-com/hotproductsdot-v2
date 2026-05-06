@@ -136,22 +136,32 @@ jobs:
           posts_ok=0
           posts_skipped=0
           posts_blocked=0
-          for i in 1 2 3 4; do
-            echo "::group::Post $i/4"
-            # --ad-creative: AI-generated ad-creative banner (Gemini Nano Banana
-            # Pro grounded on Tavily reference imagery). The white-card pipeline
-            # replaced rembg cutouts, so the historical reason for forcing
-            # --catalog-image-only is gone. Stochastic flakiness now lands in
-            # quality_blocked (rc=2) rather than corrupting banners.
-            python post_daily.py --platform instagram --ad-creative $DRY_RUN_FLAG && rc=0 || rc=$?
-            case "$rc" in
-              0) posts_ok=$((posts_ok + 1)); echo "Post $i: posted (rc=0)" ;;
-              2) posts_blocked=$((posts_blocked + 1)); echo "::notice::Post $i quality_blocked (rc=2)" ;;
-              3) posts_skipped=$((posts_skipped + 1)); echo "::notice::Post $i skipped (rc=3, dry-run or unapproved)" ;;
-              *) echo "::warning::Post $i failed (rc=$rc, continuing)" ;;
-            esac
-            echo "::endgroup::"
-          done
+          # Dry-run short-circuit: post_daily.py still runs pre_post_refresh,
+          # ad-creative generation (Tavily + Gemini), and banner validation
+          # before the dry-run gate, burning ~$ in API credits per iteration.
+          # Skip the loop entirely — counters stay at 0 and every downstream
+          # gate (real-post check, dup-check, log-commit, deploy) is already
+          # guarded by `[ -z "$DRY_RUN_FLAG" ]` or `!inputs.dry_run`.
+          if [ -n "$DRY_RUN_FLAG" ]; then
+            echo "::notice::Dry-run mode — skipping 4-post Instagram loop (no API calls, no credit spend)"
+          else
+            for i in 1 2 3 4; do
+              echo "::group::Post $i/4"
+              # --ad-creative: AI-generated ad-creative banner (Gemini Nano Banana
+              # Pro grounded on Tavily reference imagery). The white-card pipeline
+              # replaced rembg cutouts, so the historical reason for forcing
+              # --catalog-image-only is gone. Stochastic flakiness now lands in
+              # quality_blocked (rc=2) rather than corrupting banners.
+              python post_daily.py --platform instagram --ad-creative && rc=0 || rc=$?
+              case "$rc" in
+                0) posts_ok=$((posts_ok + 1)); echo "Post $i: posted (rc=0)" ;;
+                2) posts_blocked=$((posts_blocked + 1)); echo "::notice::Post $i quality_blocked (rc=2)" ;;
+                3) posts_skipped=$((posts_skipped + 1)); echo "::notice::Post $i skipped (rc=3, unapproved)" ;;
+                *) echo "::warning::Post $i failed (rc=$rc, continuing)" ;;
+              esac
+              echo "::endgroup::"
+            done
+          fi
           echo "Posts: ${posts_ok} posted, ${posts_skipped} skipped, ${posts_blocked} blocked (of 4)"
           # Real-posting runs require at least one true post UNLESS every
           # invocation skipped (rc=3) — that means post_daily.py's daily-quota
