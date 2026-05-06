@@ -6,6 +6,7 @@ import { SITE_URL } from "../../lib/constants";
 import { getCategorySeo } from "../../lib/categorySeo";
 import { getCategoryIcon } from "../../components/CategoryIcon";
 import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
+import ProductImage from "../../components/ProductImage";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -214,10 +215,12 @@ export default async function BestCategoryPage({ params }: Props) {
         <div className="flex gap-6">
           <div className="flex-shrink-0 w-32 h-32 bg-zinc-800 rounded-lg overflow-hidden">
             {topPick.imageUrl && (
-              <img
+              <ProductImage
                 src={topPick.imageUrl}
                 alt={topPick.name}
                 className="w-full h-full object-cover"
+                sizes="128px"
+                priority
               />
             )}
           </div>
@@ -258,10 +261,11 @@ export default async function BestCategoryPage({ params }: Props) {
               <div className="flex gap-6 mb-4">
                 <div className="flex-shrink-0 w-24 h-24 bg-zinc-800 rounded-lg overflow-hidden">
                   {product.imageUrl && (
-                    <img
+                    <ProductImage
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-cover"
+                      sizes="96px"
                     />
                   )}
                 </div>

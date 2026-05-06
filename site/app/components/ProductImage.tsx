@@ -1,48 +1,93 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
 
 interface ProductImageProps {
   src: string;
   alt: string;
-  fallback?: React.ReactNode;
   className?: string;
+  /** Tells the browser the image's rendered width across breakpoints. Defaults to a card-sized hint. */
+  sizes?: string;
+  /** Set true on the LCP image — eager + fetchpriority=high. */
+  priority?: boolean;
 }
 
-export default function ProductImage({ src, alt, className }: ProductImageProps) {
-  const [prevSrc, setPrevSrc] = useState(src);
-  const [status, setStatus] = useState<"loading" | "ok" | "failed">("loading");
+const DEFAULT_SIZES = "(max-width: 640px) 45vw, 240px";
+const OPT_DIR = "/products/_opt";
+const WEBP_WIDTHS = [240, 480, 800] as const;
+const JPG_FALLBACK_WIDTH = 480;
 
-  if (prevSrc !== src) {
-    setPrevSrc(src);
-    setStatus("loading");
-  }
+interface Variants {
+  webpSrcSet: string;
+  jpgFallback: string;
+}
 
-  if (status === "failed" || !src) {
-    return null;
-  }
+function deriveVariants(src: string): Variants | null {
+  const match = src.match(/^\/products\/([^/]+)\.jpg(\?.*)?$/);
+  if (!match) return null;
+  const [, slug, query = ""] = match;
+  const webpSrcSet = WEBP_WIDTHS.map(
+    (w) => `${OPT_DIR}/${slug}-${w}.webp${query} ${w}w`,
+  ).join(", ");
+  return {
+    webpSrcSet,
+    jpgFallback: `${OPT_DIR}/${slug}-${JPG_FALLBACK_WIDTH}.jpg${query}`,
+  };
+}
 
-  return (
-    <>
-      {status === "loading" && (
-        <div className="absolute inset-0 animate-pulse bg-zinc-100" />
-      )}
-      <Image
-        fill
+export default function ProductImage({
+  src,
+  alt,
+  className,
+  sizes = DEFAULT_SIZES,
+  priority = false,
+}: ProductImageProps) {
+  const [failed, setFailed] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
+
+  if (failed || !src) return null;
+
+  const loading = priority ? "eager" : "lazy";
+  const fetchPriority = priority ? "high" : "auto";
+  const variants = deriveVariants(src);
+
+  if (!variants) {
+    return (
+      <img
         src={src}
         alt={alt}
         className={className}
-        style={status === "loading" ? { opacity: 0 } : undefined}
-        onError={() => setStatus("failed")}
-        onLoad={(e) => {
-          const img = e.currentTarget;
-          if (img.naturalWidth <= 10 || img.naturalHeight <= 10) {
-            setStatus("failed");
+        loading={loading}
+        decoding="async"
+        fetchPriority={fetchPriority}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  const imgSrc = usingFallback ? src : variants.jpgFallback;
+
+  return (
+    <picture style={{ display: "contents" }}>
+      {!usingFallback && (
+        <source type="image/webp" srcSet={variants.webpSrcSet} sizes={sizes} />
+      )}
+      <img
+        src={imgSrc}
+        alt={alt}
+        width={480}
+        height={480}
+        className={className}
+        loading={loading}
+        decoding="async"
+        fetchPriority={fetchPriority}
+        onError={() => {
+          if (!usingFallback) {
+            setUsingFallback(true);
           } else {
-            setStatus("ok");
+            setFailed(true);
           }
         }}
       />
-    </>
+    </picture>
   );
 }

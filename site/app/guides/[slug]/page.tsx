@@ -6,6 +6,7 @@ import { getProductBySlug } from "../../lib/products";
 import { buildAffiliateUrl } from "../../lib/affiliate";
 import { SITE_URL } from "../../lib/constants";
 import ProductGrid from "../../components/ProductGrid";
+import ProductImage from "../../components/ProductImage";
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -101,8 +102,12 @@ export default async function GuidePage({ params }: Props) {
                     >
                       <div className="w-16 h-16 bg-white rounded-lg shrink-0 flex items-center justify-center overflow-hidden">
                         {product.imageUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-1" />
+                          <ProductImage
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-contain p-1"
+                            sizes="64px"
+                          />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

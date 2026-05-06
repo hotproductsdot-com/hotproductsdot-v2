@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 products.json
+
+# build-time generated responsive image variants (regenerated from products/*.jpg)
+/public/products/_opt/
