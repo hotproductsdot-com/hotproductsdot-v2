@@ -265,25 +265,16 @@ jobs:
           fi
           echo "Key parses OK"
 
-          # 5. Capture host key with retries — Hostinger SSH occasionally
-          # throttles or is slow to respond, and a single keyscan miss
-          # historically tanked the whole workflow.
-          for attempt in 1 2 3 4 5; do
-            : > /tmp/keyscan.err
-            ssh-keyscan -T 15 -p "$HOSTINGER_PORT" -H "$HOSTINGER_HOST" >> ~/.ssh/known_hosts 2> /tmp/keyscan.err || true
-            if [ -s ~/.ssh/known_hosts ]; then
-              echo "ssh-keyscan succeeded on attempt $attempt"
-              break
-            fi
-            echo "::warning::ssh-keyscan attempt $attempt produced no host keys; retrying in $((attempt * 5))s. stderr:"
-            cat /tmp/keyscan.err || true
-            sleep $((attempt * 5))
-          done
-          if [ ! -s ~/.ssh/known_hosts ]; then
-            echo "::error::ssh-keyscan failed after 5 attempts. Final stderr:"
-            cat /tmp/keyscan.err || true
-            exit 1
-          fi
+          # 5. Initialize known_hosts. We deliberately do NOT run ssh-keyscan:
+          # Hostinger silently drops unauthenticated banner probes from CI runner
+          # IP ranges (observed 2026-05-07: 5/5 keyscan attempts returned empty
+          # stdout AND empty stderr while the same runner could complete an
+          # authenticated SSH session moments later). Authenticated SSH still
+          # works, so we use StrictHostKeyChecking=accept-new on the first
+          # connection — OpenSSH writes the host key on initial use and pins
+          # against it for every subsequent ssh/rsync invocation in the run.
+          : > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: SSH connectivity smoke test
         # Hostinger shared hosting is intermittently slow on the SSH handshake
@@ -303,6 +294,8 @@ jobs:
                 -o ConnectionAttempts=3 \
                 -o ServerAliveInterval=20 \
                 -o ServerAliveCountMax=6 \
+                -o StrictHostKeyChecking=accept-new \
+                -o UserKnownHostsFile=~/.ssh/known_hosts \
                 "$HOSTINGER_USER@$HOSTINGER_HOST" \
                 "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"; then
               echo "Smoke test succeeded on attempt $attempt"
@@ -351,7 +344,7 @@ jobs:
                 --exclude='error_log' \
                 --exclude='error_log.*' \
                 --exclude='php.ini' \
-                -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 -o ServerAliveInterval=20 -o ServerAliveCountMax=6" \
+                -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 -o ServerAliveInterval=20 -o ServerAliveCountMax=6 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
                 site/out/ \
                 "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"; then
               echo "Rsync succeeded on attempt $attempt"
