@@ -456,6 +456,18 @@ def pre_post_refresh(product: dict, *, dry_run: bool) -> str:
                        product["name"][:60], asin)
         return "unavailable"
 
+    # Strict mode: if Oxylabs returned no definitive availability signal,
+    # treat the product as unavailable rather than risk posting a stale pick.
+    # User requirement: 100% available at post time. The audit dump shows
+    # which signals were missing so we can tighten the parser later.
+    if result.available is None:
+        logger.warning(
+            "pre_post_refresh: %s availability UNKNOWN — treating as unavailable. "
+            "ASIN=%s signals=%s",
+            product["name"][:60], asin, result.signals,
+        )
+        return "unavailable"
+
     if result.price is not None:
         old = float(product.get("price_num") or 0.0)
         if old > 0:

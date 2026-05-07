@@ -57,6 +57,9 @@ class Refresh:
     reviews: int | None = None
     available: bool | None = None
     error: str | None = None
+    # Diagnostic snapshot of fields _parse_availability inspected. Populated
+    # by fetch_oxylabs so callers can audit why `available` came back None.
+    signals: dict | None = None
 
 
 def latest_picks(limit: int) -> list[str]:
@@ -140,6 +143,14 @@ def fetch_oxylabs(asin: str, *, username: str, password: str) -> Refresh:
         r.rating = _to_float(rating)
         r.reviews = _to_int(reviews)
         r.available = _parse_availability(content)
+        # Capture only the fields _parse_availability looked at, so the audit
+        # log stays small and never leaks the full Oxylabs payload.
+        r.signals = {
+            "is_in_stock": content.get("is_in_stock"),
+            "availability": content.get("availability"),
+            "stock": content.get("stock"),
+            "has_price": price is not None,
+        }
     except Exception as exc:
         r.error = str(exc)[:120]
     return r
