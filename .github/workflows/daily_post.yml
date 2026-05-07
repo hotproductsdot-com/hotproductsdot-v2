@@ -286,6 +286,21 @@ jobs:
           fi
           echo "known_hosts entries (non-comment): $(grep -Ec '^[^#[:space:]]' ~/.ssh/known_hosts)"
 
+          # Connection multiplexing — the smoke test opens a master SSH
+          # channel and the subsequent rsync reuses it, skipping a second
+          # full TCP+TLS+auth handshake to Hostinger. The handshake is the
+          # dominant flakiness source on this host (fail2ban warm-up, slow
+          # PAM), so reusing it cuts the deploy's failure surface roughly
+          # in half. ControlPersist=10m keeps the master alive long enough
+          # to cover post + build + rsync even on slow runs.
+          cat >> ~/.ssh/config <<'EOF'
+          Host *
+              ControlMaster auto
+              ControlPath ~/.ssh/cm-%r@%h:%p
+              ControlPersist 10m
+          EOF
+          chmod 600 ~/.ssh/config
+
       - name: SSH connectivity smoke test
         # Hostinger shared hosting is intermittently slow on the SSH handshake
         # (fail2ban warm-up, occasional load spikes). The previous 10s
