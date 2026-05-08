@@ -387,6 +387,9 @@ def pick_next_product(
 # on price drift > 5%. Returns 'unavailable' so caller can re-pick.
 
 PRICE_DRIFT_THRESHOLD = 0.05
+# Drifts larger than this are likely bad Oxylabs data (wrong variant, sale badge,
+# geo pricing, etc.). Keep the catalog price rather than silently overwrite it.
+MAX_PRICE_DRIFT_THRESHOLD = 0.25
 
 
 def _persist_csv_price_row(name: str, price: float, rating: float | None,
@@ -472,7 +475,16 @@ def pre_post_refresh(product: dict, *, dry_run: bool) -> str:
         old = float(product.get("price_num") or 0.0)
         if old > 0:
             drift = abs(result.price - old) / old
-            if drift > PRICE_DRIFT_THRESHOLD:
+            if drift > MAX_PRICE_DRIFT_THRESHOLD:
+                pct = (result.price - old) / old * 100
+                logger.warning(
+                    "pre_post_refresh: SUSPICIOUS PRICE DRIFT for %s: "
+                    "CSV=$%.2f Amazon=$%.2f (%+.1f%%) exceeds %d%% ceiling — "
+                    "keeping catalog price (verify manually)",
+                    product["name"][:60], old, result.price, pct,
+                    int(MAX_PRICE_DRIFT_THRESHOLD * 100),
+                )
+            elif drift > PRICE_DRIFT_THRESHOLD:
                 pct = (result.price - old) / old * 100
                 logger.warning(
                     "pre_post_refresh: PRICE DRIFT for %s: CSV=$%.2f Amazon=$%.2f (%+.1f%%) — patching",
@@ -1208,6 +1220,15 @@ def main() -> None:
              "white-card pipeline automatically on Tavily/Gemini failure.",
     )
     parser.add_argument(
+        "--competitor-brand",
+        type=str,
+        default=None,
+        help="When --ad-creative is ON, ground the banner on Facebook Ad Library "
+             "winners for this brand or keyword (via ScrapeCreators) instead of "
+             "generic Tavily web images. Falls back to Tavily, then white-card, "
+             "if SCRAPECREATORS_API_KEY is unset or returns no ads.",
+    )
+    parser.add_argument(
         "--gen-variants",
         action="store_true",
         help="Generate 5 stylized product images via Gemini Nano-Banana-Pro before "
@@ -1489,12 +1510,22 @@ def main() -> None:
         )
         banner_path = str(banner_save_dir / "banner.jpg")
         if args.ad_creative:
-            print(">> Composing AI ad creative (Gemini + Tavily references)...")
+            ref_label = (
+                f"ScrapeCreators '{args.competitor_brand}'"
+                if args.competitor_brand
+                else "Tavily"
+            )
+            print(f">> Composing AI ad creative (Gemini + {ref_label} references)...")
         else:
             print(">> Composing HotProducts branded banner...")
         try:
             if args.ad_creative:
-                ad_creative_gen.compose_ad_creative_banner(product, source, banner_path)
+                ad_creative_gen.compose_ad_creative_banner(
+                    product,
+                    source,
+                    banner_path,
+                    competitor_brand=args.competitor_brand,
+                )
             else:
                 banner_compose.compose_banner(product, source, banner_path)
             print(f"   Banner saved → {banner_path}")

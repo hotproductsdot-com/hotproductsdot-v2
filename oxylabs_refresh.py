@@ -44,6 +44,9 @@ LOG_PATH = REPO / "marketing-campaigns" / "post_log.csv"
 CSV_PATH = REPO / "products" / "top-1000.csv"
 OXY_ENDPOINT = "https://realtime.oxylabs.io/v1/queries"
 ASIN_RE = re.compile(r"/dp/([A-Z0-9]{10})")
+# Price drifts larger than this are treated as suspicious (wrong variant, geo
+# pricing, flash sale badge) and skipped rather than written to the catalog.
+MAX_PRICE_DRIFT = 0.25
 
 logger = logging.getLogger("refresh_latest")
 
@@ -273,7 +276,19 @@ def main() -> int:
         if not changed(row, new):
             continue
         if new.price is not None:
-            row["Price Range"] = f"{new.price:.2f}"
+            old_price = _to_float(row.get("Price Range"))
+            if old_price and old_price > 0:
+                drift = abs(new.price - old_price) / old_price
+                if drift > MAX_PRICE_DRIFT:
+                    pct = (new.price - old_price) / old_price * 100
+                    logger.warning(
+                        "SKIPPED price update for %-60s: "
+                        "CSV=$%.2f Oxylabs=$%.2f (%+.1f%%) exceeds %d%% ceiling",
+                        name[:60], old_price, new.price, pct, int(MAX_PRICE_DRIFT * 100),
+                    )
+                    new.price = None  # don't write, but still update rating/reviews
+            if new.price is not None:
+                row["Price Range"] = f"{new.price:.2f}"
         if new.rating is not None:
             row["Rating"] = f"{new.rating:.1f}"
         if new.reviews is not None:
