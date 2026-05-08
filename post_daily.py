@@ -64,6 +64,12 @@ CSV_PATH        = Path(__file__).parent / "products" / "top-1000.csv"
 LOG_PATH        = Path(__file__).parent / "marketing-campaigns" / "post_log.csv"
 ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
 
+# Categories with 0% effective Amazon commission — exclude from rotation so
+# daily posting slots go to revenue-generating products only.
+ZERO_COMMISSION_CATEGORIES = frozenset({
+    "Kindle Free E-Books",  # price is $0 → commission is $0
+})
+
 
 class PoolExhaustedError(Exception):
     """Raised when neither the rotation pool nor the full catalog has any
@@ -180,6 +186,10 @@ def load_top_products(n: int | None = None) -> list[dict]:
             name = (row.get("Product Name") or "").strip()
             if not name:
                 continue
+
+            category = (row.get("Category") or "").strip()
+            if category in ZERO_COMMISSION_CATEGORIES:
+                continue  # skip: 0% Amazon commission, daily slots are finite
 
             amazon_url = (row.get("Amazon URL") or "").strip()
             if not amazon_url:

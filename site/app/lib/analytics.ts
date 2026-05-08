@@ -100,9 +100,56 @@ function startOfDay(date: Date): number {
   return d.getTime();
 }
 
-// Amazon avg commission ~3%, typical affiliate conversion rate ~2%
-const COMMISSION_RATE = 0.03;
+// Amazon commission rates by category (US, 2024).
+// Source: https://affiliate-program.amazon.com/help/node/topic/GRXPHT8U84RAYDXZ
+const COMMISSION_RATE_BY_CATEGORY: Record<string, number> = {
+  "Luxury Beauty":        0.08,
+  "Photography":          0.04,
+  "Books":                0.045,
+  "Kindle Paid E-Books":  0.045,
+  "Musical Instruments":  0.035,
+  "Baby & Kids":          0.03,
+  "Beauty":               0.03,
+  "Fitness":              0.03,
+  "Furniture":            0.03,
+  "Gardening":            0.03,
+  "Home":                 0.03,
+  "Home Improvement":     0.03,
+  "Kitchen":              0.03,
+  "Office Supplies":      0.03,
+  "Outdoor & Camping":    0.03,
+  "Personal Care":        0.03,
+  "Pet Supplies":         0.03,
+  "Power Tools":          0.03,
+  "Robot Vacuums":        0.03,
+  "Security":             0.03,
+  "Smart Home":           0.03,
+  "Sports Equipment":     0.03,
+  "Streaming":            0.03,
+  "Travel Accessories":   0.03,
+  "Wearables":            0.03,
+  "Audio":                0.025,
+  "Automotive":           0.025,
+  "Desktops & Mini PCs":  0.025,
+  "Drones":               0.025,
+  "Gaming Headsets":      0.025,
+  "Gaming PCs":           0.025,
+  "Gaming Peripherals":   0.025,
+  "Headphones":           0.025,
+  "Laptops":              0.025,
+  "Monitors":             0.025,
+  "Smart Displays":       0.025,
+  "Speakers":             0.025,
+  "Tablets":              0.025,
+  "Health & Wellness":    0.01,
+  "Kindle Free E-Books":  0.00,
+};
+const DEFAULT_COMMISSION_RATE = 0.03;
 const CONVERSION_RATE = 0.02;
+
+function commissionRate(category: string): number {
+  return COMMISSION_RATE_BY_CATEGORY[category] ?? DEFAULT_COMMISSION_RATE;
+}
 
 export function getAnalytics(): AnalyticsData {
   const clicks = loadClicks();
@@ -134,7 +181,7 @@ export function getAnalytics(): AnalyticsData {
       name: d.name,
       category: d.category,
       clicks: d.clicks,
-      estimatedEarnings: (d.totalPrice / d.clicks) * d.clicks * COMMISSION_RATE * CONVERSION_RATE,
+      estimatedEarnings: (d.totalPrice / d.clicks) * d.clicks * commissionRate(d.category) * CONVERSION_RATE,
     }))
     .sort((a, b) => b.clicks - a.clicks)
     .slice(0, 10);

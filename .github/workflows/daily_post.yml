@@ -173,6 +173,36 @@ jobs:
             exit 1
           fi
 
+      # TikTok: 1 post per day, non-fatal. Runs after Instagram so the rotation
+      # pool is already pruned of today's IG picks — TikTok gets a fresh product.
+      # continue-on-error: true ensures a TikTok API failure never blocks the
+      # site deploy or the IG log commit.
+      - name: Post 1 product to TikTok
+        continue-on-error: true
+        env:
+          BANNER_AI_GATE: enforce
+          EVENT_NAME:          ${{ github.event_name }}
+          DRY_RUN_INPUT:       ${{ inputs.dry_run }}
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+          CLOUDINARY_URL:      ${{ secrets.CLOUDINARY_URL }}
+          GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          TAVILY_API_KEY:      ${{ secrets.TAVILY_API_KEY }}
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            DRY_RUN_FLAG=""
+            echo "TikTok: REAL POSTING (scheduled cron)"
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DRY_RUN_INPUT" = "false" ]; then
+            DRY_RUN_FLAG=""
+            echo "TikTok: REAL POSTING (manual dispatch)"
+          else
+            echo "TikTok: dry-run mode — skipping"
+            exit 0
+          fi
+          python post_daily.py --platform tiktok --ad-creative $DRY_RUN_FLAG \
+            && echo "TikTok: posted OK" \
+            || echo "::warning::TikTok post failed (non-fatal — IG deploy continues)"
+
       # Defense-in-depth: catch any duplicate IG posts written today before the
       # log gets pushed to origin/main. Triggered when the rotation fallback
       # path mis-fires (the 2026-05-04 triple-Zeiss incident — pick_next_product
