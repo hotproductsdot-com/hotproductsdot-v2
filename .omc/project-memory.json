@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778107666982,
+  "lastScanned": 1778196690949,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -57,7 +57,7 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1778107666700,
+      "lastAccessed": 1778196690651,
       "keyFiles": [
         "fix_amazon_urls.cpython-312.pyc",
         "oxylabs_refresh.cpython-312.pyc",
@@ -70,7 +70,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1778107666733,
+      "lastAccessed": 1778196690713,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
@@ -79,14 +79,14 @@
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778107666747,
+      "lastAccessed": 1778196690731,
       "keyFiles": []
     },
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 14,
-      "lastAccessed": 1778107666767,
+      "fileCount": 16,
+      "lastAccessed": 1778196690760,
       "keyFiles": [
         "__init__.py",
         "ad_creative_gen.py",
@@ -99,7 +99,7 @@
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778107666788,
+      "lastAccessed": 1778196690768,
       "keyFiles": [
         "content_calendar.json",
         "post_log.csv"
@@ -109,7 +109,7 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778107666807,
+      "lastAccessed": 1778196690776,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
@@ -119,7 +119,7 @@
       "path": "pinterest-setup",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1778107666833,
+      "lastAccessed": 1778196690782,
       "keyFiles": [
         "BOARDS.csv",
         "CONTENT_CALENDAR.md",
@@ -132,7 +132,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 10,
-      "lastAccessed": 1778107666851,
+      "lastAccessed": 1778196690794,
       "keyFiles": [
         "broken-links.csv",
         "check_duplicates.py",
@@ -145,7 +145,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 14,
-      "lastAccessed": 1778107666871,
+      "lastAccessed": 1778196690800,
       "keyFiles": [
         "_debug_ai_gate.py",
         "_debug_validator.py",
@@ -158,7 +158,7 @@
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1778107666880,
+      "lastAccessed": 1778196690825,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -171,7 +171,7 @@
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1778107666891,
+      "lastAccessed": 1778196690832,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -180,7 +180,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1778107666956,
+      "lastAccessed": 1778196690932,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -190,8 +190,8 @@
     "venv/bin": {
       "path": "venv/bin",
       "purpose": "Executable scripts",
-      "fileCount": 23,
-      "lastAccessed": 1778107666972,
+      "fileCount": 26,
+      "lastAccessed": 1778196690945,
       "keyFiles": [
         "Activate.ps1",
         "activate",
@@ -202,39 +202,75 @@
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1778107666982,
+      "lastAccessed": 1778196690949,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "post_daily.py",
-      "accessCount": 22,
-      "lastAccessed": 1778021106531,
+      "accessCount": 39,
+      "lastAccessed": 1778265265531,
+      "type": "file"
+    },
+    {
+      "path": "oxylabs_refresh.py",
+      "accessCount": 11,
+      "lastAccessed": 1778264314882,
+      "type": "file"
+    },
+    {
+      "path": "dashboard.py",
+      "accessCount": 7,
+      "lastAccessed": 1778201268307,
+      "type": "file"
+    },
+    {
+      "path": "instagram/ad_creative_gen.py",
+      "accessCount": 6,
+      "lastAccessed": 1778197154958,
+      "type": "file"
+    },
+    {
+      "path": "instagram/banner_compose.py",
+      "accessCount": 6,
+      "lastAccessed": 1778197185481,
       "type": "file"
     },
     {
       "path": "generate_products.py",
-      "accessCount": 3,
-      "lastAccessed": 1777986020365,
+      "accessCount": 6,
+      "lastAccessed": 1778207234770,
+      "type": "file"
+    },
+    {
+      "path": "products/check_duplicates.py",
+      "accessCount": 6,
+      "lastAccessed": 1778208601753,
+      "type": "file"
+    },
+    {
+      "path": "add_new_products.py",
+      "accessCount": 6,
+      "lastAccessed": 1778208682385,
+      "type": "file"
+    },
+    {
+      "path": "scrape_top_affiliates.py",
+      "accessCount": 5,
+      "lastAccessed": 1778208646670,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/analytics.ts",
+      "accessCount": 5,
+      "lastAccessed": 1778265267411,
       "type": "file"
     },
     {
       "path": "instagram/image_gen_gemini.py",
       "accessCount": 2,
       "lastAccessed": 1777985835179,
-      "type": "file"
-    },
-    {
-      "path": "instagram/ad_creative_gen.py",
-      "accessCount": 2,
-      "lastAccessed": 1777985835885,
-      "type": "file"
-    },
-    {
-      "path": "instagram/banner_compose.py",
-      "accessCount": 2,
-      "lastAccessed": 1777985836190,
       "type": "file"
     },
     {
@@ -247,6 +283,18 @@
       "path": "site/app/lib/products.ts",
       "accessCount": 2,
       "lastAccessed": 1778073068832,
+      "type": "file"
+    },
+    {
+      "path": "instagram/test_modelslab_image_gen.py",
+      "accessCount": 2,
+      "lastAccessed": 1778196509831,
+      "type": "file"
+    },
+    {
+      "path": "instagram/poster.py",
+      "accessCount": 2,
+      "lastAccessed": 1778264031805,
       "type": "file"
     },
     {
@@ -310,12 +358,6 @@
       "type": "file"
     },
     {
-      "path": "instagram/poster.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985814157,
-      "type": "file"
-    },
-    {
       "path": "instagram/caption.py",
       "accessCount": 1,
       "lastAccessed": 1777985814330,
@@ -376,24 +418,6 @@
       "type": "file"
     },
     {
-      "path": "oxylabs_refresh.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985849414,
-      "type": "file"
-    },
-    {
-      "path": "instagram/test_modelslab_image_gen.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985849875,
-      "type": "file"
-    },
-    {
-      "path": "add_new_products.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985858793,
-      "type": "file"
-    },
-    {
       "path": "add_product_by_asin.py",
       "accessCount": 1,
       "lastAccessed": 1777985859505,
@@ -403,12 +427,6 @@
       "path": "affiliate_cli.py",
       "accessCount": 1,
       "lastAccessed": 1777985860480,
-      "type": "file"
-    },
-    {
-      "path": "dashboard.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985860695,
       "type": "file"
     },
     {
@@ -424,21 +442,9 @@
       "type": "file"
     },
     {
-      "path": "scrape_top_affiliates.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985869879,
-      "type": "file"
-    },
-    {
       "path": "remove_duplicates.py",
       "accessCount": 1,
       "lastAccessed": 1777985877839,
-      "type": "file"
-    },
-    {
-      "path": "products/check_duplicates.py",
-      "accessCount": 1,
-      "lastAccessed": 1777985879227,
       "type": "file"
     },
     {
@@ -475,12 +481,6 @@
       "path": "site/app/layout.tsx",
       "accessCount": 1,
       "lastAccessed": 1777985891800,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/analytics.ts",
-      "accessCount": 1,
-      "lastAccessed": 1777985894261,
       "type": "file"
     },
     {

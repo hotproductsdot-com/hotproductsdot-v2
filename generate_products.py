@@ -823,6 +823,7 @@ def build_row(category, name, price, reviews, rating, bsr, affiliate):
         "Affiliate Potential": affiliate,
         "Amazon URL": url(name),
         "Refreshed Date": "",
+        "Action Needed": "",
     }
 
 
@@ -845,7 +846,8 @@ def main():
 
     all_rows = existing_rows + new_rows
     fieldnames = ["Product Name", "Category", "Price Range", "Review Count",
-                  "Rating", "BSR", "Affiliate Potential", "Amazon URL", "Refreshed Date"]
+                  "Rating", "BSR", "Affiliate Potential", "Amazon URL",
+                  "Refreshed Date", "Action Needed"]
 
     with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)

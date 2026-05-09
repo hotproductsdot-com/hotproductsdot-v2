@@ -455,9 +455,9 @@ def build_product_row(
     return ProductRow(
         name=product.name,
         category=category,
-        price=product.price if product.price != "$0" else "$29-49",
-        review_count=reviews if reviews > 0 else random.randint(500, 5000),
-        rating=rating_val if rating_val > 0 else 4.5,
+        price=product.price,
+        review_count=reviews,
+        rating=rating_val,
         bsr=f"#{bsr_rank}",
         affiliate_potential=potential,
         amazon_url=amazon_url,
@@ -583,9 +583,14 @@ def discover_products(
             if name_lower in seen_names:
                 continue
 
+            # Skip products with missing/zero price — refuse to fabricate data
+            if not product.price or product.price.strip() in ("", "$0"):
+                print(f"    SKIP (no price): {product.name[:60]}...")
+                continue
+
             # Fuzzy duplicate check against catalog
             try:
-                warnings = check_product(product.name, category, catalog)
+                warnings = check_product(product.name, category, catalog, asin=product.asin)
                 if warnings:
                     top_match = max(warnings, key=lambda m: m.max_score)
                     print(f"    SKIP (near-dup {top_match.max_score:.0f}%): {product.name[:60]}...")

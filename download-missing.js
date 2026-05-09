@@ -9,22 +9,6 @@ const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 
 // These products had 404 ASINs — try searching Amazon for them
 const missing = [
-  { slug: 'asus-rog-zephyrus-g14-gaming', search: 'ASUS ROG Zephyrus G14 2024' },
-  { slug: 'sony-ult-field-7-speaker', search: 'Sony ULT Field 7 speaker' },
-  { slug: 'samsung-hw-q930d-soundbar', search: 'Samsung HW-Q930D soundbar' },
-  { slug: 'samsung-hw-q800d-soundbar', search: 'Samsung HW-Q800D soundbar' },
-  { slug: 'sonos-beam-gen-2', search: 'Sonos Beam Gen 2 soundbar' },
-  { slug: 'asus-pa247cv-professional-monitor', search: 'ASUS PA247CV ProArt monitor' },
-  { slug: 'dji-inspire-3-drone', search: 'DJI Inspire 3 drone' },
-  { slug: 'ninja-creami-ice-cream-maker', search: 'Ninja Creami Ice Cream Maker' },
-  { slug: 'samsung-galaxy-tab-s10-fe', search: 'Samsung Galaxy Tab S10 FE' },
-  { slug: 'theragun-pro-plus-massage-gun', search: 'Theragun Pro Plus massage gun' },
-  { slug: 'philips-hue-gradient-lightstrip-6ft', search: 'Philips Hue Gradient Lightstrip 6ft' },
-  { slug: 'milwaukee-m18-fuel-drill-combo-kit', search: 'Milwaukee M18 FUEL drill combo kit' },
-  { slug: 'garmin-forerunner-265-gps-running-watch', search: 'Garmin Forerunner 265 GPS running watch' },
-  { slug: 'kindle-paperwhite-16gb-2024', search: 'Kindle Paperwhite 16GB 2024' },
-  { slug: 'sony-wh-1000xm5-wireless-headphones', search: 'Sony WH-1000XM5 wireless headphones' },
-  { slug: 'nvidia-jetson-orin-nano-super-developer-kit', search: 'NVIDIA Jetson Orin Nano Super Developer Kit' },
 ];
 
 async function searchAndDownload(product) {

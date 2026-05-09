@@ -29,6 +29,7 @@ from pathlib import Path
 import requests
 from PIL import Image
 
+from instagram import competitor_ads
 from instagram.banner_compose import (
     CANVAS,
     BannerQualityError,
@@ -198,12 +199,16 @@ def compose_ad_creative_banner(
     product: dict,
     product_image_url_or_path: str,
     output_path: str | Path,
+    competitor_brand: str | None = None,
 ) -> str:
     """Compose an AI-generated ad-creative banner.
 
-    Returns the output path. On Tavily/Gemini failure, transparently falls
-    back to the white-card pipeline so a single upstream outage cannot
-    halt the daily rotation.
+    When ``competitor_brand`` is set, the reference image stack is sourced
+    from the Facebook Ad Library via ScrapeCreators (high-impression active
+    ads matching the brand or keyword) instead of generic Tavily web
+    images. The competitor path falls back to Tavily, then to the
+    white-card pipeline, so a single upstream outage cannot halt the
+    daily rotation. Returns the output path.
     """
     name = product.get("name", "")
     category = (product.get("category") or "Best Sellers").strip()
@@ -221,8 +226,22 @@ def compose_ad_creative_banner(
         print("   [ad-creative] product image unreadable; falling back to white-card")
         return compose_banner(product, src, out)
 
-    query = f"{name} {category} product photo lifestyle"
-    ref_urls = _tavily_image_urls(query, N_REFERENCES)
+    ref_urls: list[str] = []
+    ref_source = "tavily"
+    if competitor_brand and competitor_brand.strip():
+        ref_urls = competitor_ads.collect_reference_image_urls(
+            competitor_brand.strip(), N_REFERENCES
+        )
+        ref_source = "scrapecreators"
+        if not ref_urls:
+            print(
+                f"   [ad-creative] ScrapeCreators returned 0 ads for "
+                f"{competitor_brand!r}; falling back to Tavily"
+            )
+            ref_source = "tavily"
+    if not ref_urls:
+        query = f"{name} {category} product photo lifestyle"
+        ref_urls = _tavily_image_urls(query, N_REFERENCES)
     ref_jpegs: list[bytes] = []
     for u in ref_urls:
         raw = _load_image_bytes(u)
@@ -232,7 +251,8 @@ def compose_ad_creative_banner(
         if norm is not None:
             ref_jpegs.append(norm)
     print(
-        f"   [ad-creative] Tavily: {len(ref_urls)} URLs / {len(ref_jpegs)} usable references"
+        f"   [ad-creative] {ref_source}: {len(ref_urls)} URLs / "
+        f"{len(ref_jpegs)} usable references"
     )
 
     prompt = PROMPT_TEMPLATE.format(name=name, category=category)

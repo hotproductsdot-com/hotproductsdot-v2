@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -76,6 +77,17 @@ _MULTI_WORD_BRANDS: tuple[str, ...] = (
     "acer nitro",
     "acer chromebook",
 )
+
+
+_ASIN_RE = re.compile(r"/dp/([A-Z0-9]{10})")
+
+
+def extract_asin(url_or_text: str) -> str:
+    """Pull a 10-char Amazon ASIN out of a URL or free-text. Returns '' if none."""
+    if not url_or_text:
+        return ""
+    m = _ASIN_RE.search(url_or_text)
+    return m.group(1) if m else ""
 
 
 def extract_brand(product_name: str) -> str:
@@ -142,16 +154,32 @@ def check_product(
     name: str,
     category: str,
     catalog: list[dict],
+    asin: str | None = None,
     block_threshold: float = BLOCK_THRESHOLD,
     warn_threshold: float = WARN_THRESHOLD,
 ) -> list[Match]:
     """
     Check a single product against the existing catalog.
 
-    - Raises DuplicateError for the first true duplicate found (score >= block_threshold).
+    - If *asin* is provided and an existing row has the same ASIN, raises
+      DuplicateError immediately (zero false positives, defeats name-divergence).
+    - Raises DuplicateError for the first true name duplicate found (score >= block_threshold).
     - Returns a list of Match objects for near-duplicates (score >= warn_threshold).
     """
     warnings: list[Match] = []
+
+    # ── ASIN exact-match guard (catches cases the fuzzy name check misses) ──
+    if asin:
+        for i, row in enumerate(catalog, start=2):
+            if extract_asin(row.get("Amazon URL", "")) == asin:
+                match = Match(
+                    name=row.get("Product Name", "").strip(),
+                    category=row.get("Category", "").strip(),
+                    row=i,
+                    token_sort_score=100.0,
+                    partial_score=100.0,
+                )
+                raise DuplicateError(new_name=name, match=match)
 
     new_brand = extract_brand(name)
 
@@ -218,6 +246,28 @@ def scan_catalog(
     blocked: list[tuple[int, int, Match]] = []
     warnings: list[tuple[int, int, Match]] = []
     n = len(catalog)
+
+    # ── ASIN duplicate sweep (cheap, catches name-divergent dupes) ──
+    asin_to_row: dict[str, int] = {}
+    for i in range(n):
+        asin = extract_asin(catalog[i].get("Amazon URL", ""))
+        if not asin:
+            continue
+        if asin in asin_to_row:
+            j = asin_to_row[asin]
+            blocked.append((
+                j + 2,
+                i + 2,
+                Match(
+                    name=catalog[i].get("Product Name", "").strip(),
+                    category=catalog[i].get("Category", "").strip(),
+                    row=i + 2,
+                    token_sort_score=100.0,
+                    partial_score=100.0,
+                ),
+            ))
+        else:
+            asin_to_row[asin] = i
 
     for i in range(n):
         name_a = catalog[i].get("Product Name", "").strip()

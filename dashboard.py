@@ -22,12 +22,20 @@ from dotenv import load_dotenv
 # Load environment
 load_dotenv(override=True)
 
+# ── Page config (must be the FIRST Streamlit call) ────────────────────────
+st.set_page_config(
+    page_title="HotProducts Affiliate Tools",
+    page_icon="🛒",
+    layout="wide",
+)
+
 # Try to import affiliate_tools, but don't fail if it's not available
+_AFFILIATE_IMPORT_ERROR: str | None = None
 try:
     from instagram import affiliate_tools
     _AFFILIATE_TOOLS_AVAILABLE = True
 except Exception as e:
-    st.error(f"⚠️ Could not load affiliate_tools: {e}")
+    _AFFILIATE_IMPORT_ERROR = str(e)
     _AFFILIATE_TOOLS_AVAILABLE = False
     affiliate_tools = None
 
@@ -39,15 +47,11 @@ except Exception as e:
     _PRODUCTS_AVAILABLE = False
     load_top_products = None
 
-# ── Page config ────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="HotProducts Affiliate Tools",
-    page_icon="🛒",
-    layout="wide",
-)
-
 st.title("🛒 HotProducts Affiliate Content Tools")
 st.markdown("AI-powered tools for Amazon affiliate marketing content creation")
+
+if _AFFILIATE_IMPORT_ERROR:
+    st.error(f"⚠️ Could not load affiliate_tools: {_AFFILIATE_IMPORT_ERROR}")
 
 
 # ── Check API key ──────────────────────────────────────────────────────────
@@ -83,7 +87,9 @@ with tab1:
         price = st.text_input("Price", value="$49.99")
 
     if st.button("✨ Generate Hooks", key="hook_gen"):
-        if not product_name or not category:
+        if not _AFFILIATE_TOOLS_AVAILABLE:
+            st.error("affiliate_tools module is unavailable — cannot generate hooks.")
+        elif not product_name or not category:
             st.error("Please fill in Product Name and Category")
         else:
             with st.spinner("Generating hooks..."):
@@ -123,7 +129,9 @@ with tab2:
         platform_cta = st.radio("Platform", ["Instagram", "TikTok"], horizontal=True)
 
     if st.button("✨ Generate CTA", key="cta_gen"):
-        if not product_name_cta or not price_cta:
+        if not _AFFILIATE_TOOLS_AVAILABLE:
+            st.error("affiliate_tools module is unavailable — cannot generate CTA.")
+        elif not product_name_cta or not price_cta:
             st.error("Please fill in Product Name and Price")
         else:
             with st.spinner("Generating CTA..."):
@@ -152,11 +160,11 @@ with tab3:
     st.header("📅 Content Calendar")
     st.markdown("Plan N days of product posts with AI-selected hooks and CTAs.")
 
-    if not _PRODUCTS_AVAILABLE:
+    if not _PRODUCTS_AVAILABLE or not _AFFILIATE_TOOLS_AVAILABLE:
         st.warning(
-            "⚠️ **Products module not available.** "
-            "Make sure you're running this from the hotproductsdot-v2 project root directory. "
-            "You can still use Hook Writer and CTA Builder tabs."
+            "⚠️ **Required module not available.** "
+            "Make sure you're running this from the hotproductsdot-v2 project root directory "
+            "and that `instagram/affiliate_tools.py` imports cleanly."
         )
     else:
         col1, col2 = st.columns(2)
@@ -233,6 +241,9 @@ with tab4:
         niche_bio = st.text_input("Niche (optional)", value="Amazon trending products")
 
     if st.button("✨ Generate Bio", key="bio_gen"):
+        if not _AFFILIATE_TOOLS_AVAILABLE:
+            st.error("affiliate_tools module is unavailable — cannot generate bio.")
+            st.stop()
         with st.spinner("Generating bio..."):
             bio = affiliate_tools.generate_bio(
                 platform=platform_bio.lower(),
