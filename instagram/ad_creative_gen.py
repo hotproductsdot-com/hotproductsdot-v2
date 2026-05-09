@@ -29,7 +29,10 @@ from pathlib import Path
 import requests
 from PIL import Image
 
-from instagram import competitor_ads
+try:
+    from instagram import competitor_ads as competitor_ads
+except ImportError:
+    competitor_ads = None  # type: ignore[assignment]
 from instagram.banner_compose import (
     CANVAS,
     BannerQualityError,
@@ -228,7 +231,7 @@ def compose_ad_creative_banner(
 
     ref_urls: list[str] = []
     ref_source = "tavily"
-    if competitor_brand and competitor_brand.strip():
+    if competitor_brand and competitor_brand.strip() and competitor_ads is not None:
         ref_urls = competitor_ads.collect_reference_image_urls(
             competitor_brand.strip(), N_REFERENCES
         )
