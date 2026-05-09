@@ -114,3 +114,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-08,instagram,Baby Trend Expedition Jogger Travel System,ok,18090958043245602
 2026-05-08,instagram,Baby Trend Expedition Jogger Travel System,ok,17870527821672867
 2026-05-09,instagram,Samsung Galaxy Watch 6 Classic,quality_blocked,image filename slug mismatch — renamed; skip today
+2026-05-09,instagram,Autonomous SmartDesk Pro,quality_blocked,"ai vision: Scene contains multiple unrelated lifestyle objects (laptop, monitors, speakers, keyboard, mouse, water bottle, floral vase) that are not bundled accessories of the SmartDesk Pro, creating significant clutter."
+2026-05-09,instagram,Roku Ultra 2023,ok,18099214496105062
+2026-05-09,instagram,Shure SM7B Vocal Dynamic Microphone,ok,18047324087750995
+2026-05-09,instagram,EltaMD UV Clear Broad-Spectrum SPF 46,ok,17933804151068503
+2026-05-09,tiktok,GoveeLife Smart Purifier,error,TIKTOK_ACCESS_TOKEN not set
