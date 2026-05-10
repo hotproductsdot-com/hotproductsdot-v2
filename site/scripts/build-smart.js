@@ -21,6 +21,10 @@ const watchedPaths = [
   path.join(rootDir, "products", "top-1000.csv"),
   // /latest reads this at build time — see app/lib/products.ts getInstagramPostedProducts
   path.join(rootDir, "marketing-campaigns", "post_log.csv"),
+  // growth-engine writes JSON guides here; merged into guides at build time
+  // by site/app/lib/guides.ts. Without this entry, smart-build skips rebuild
+  // when the engine adds new articles.
+  path.join(siteDir, "content", "guides-generated"),
 ];
 
 function run(command, args) {

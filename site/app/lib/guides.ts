@@ -153,10 +153,60 @@ export const guides: Guide[] = [
   },
 ];
 
+// ─── growth-engine: load JSON guides from site/content/guides-generated/ ───
+// These files are written by the Python growth-engine. They use the same
+// Guide schema and are merged with the inline `guides` array above. The
+// merge prefers inline guides on slug collision so editorial overrides win.
+import fs from "fs";
+import path from "path";
+
+function loadGeneratedGuides(): Guide[] {
+  // When Next.js runs from inside site/, process.cwd() is site/.
+  const candidates = [
+    path.join(process.cwd(), "content", "guides-generated"),
+    path.join(process.cwd(), "..", "site", "content", "guides-generated"),
+    path.join(process.cwd(), "site", "content", "guides-generated"),
+  ];
+  const target = candidates.find((p) => {
+    try {
+      return fs.existsSync(p) && fs.statSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  });
+  if (!target) return [];
+  const files = fs.readdirSync(target).filter((f) => f.endsWith(".json"));
+  const out: Guide[] = [];
+  for (const file of files) {
+    try {
+      const raw = fs.readFileSync(path.join(target, file), "utf8");
+      const obj = JSON.parse(raw);
+      if (
+        typeof obj?.slug === "string" &&
+        typeof obj?.title === "string" &&
+        Array.isArray(obj?.sections)
+      ) {
+        out.push(obj as Guide);
+      }
+    } catch {
+      // skip malformed
+    }
+  }
+  return out;
+}
+
+const generatedGuides: Guide[] = loadGeneratedGuides();
+const inlineSlugs = new Set(guides.map((g) => g.slug));
+const mergedGuides: Guide[] = [
+  ...guides,
+  ...generatedGuides.filter((g) => !inlineSlugs.has(g.slug)),
+];
+
 export function getAllGuides(): Guide[] {
-  return guides;
+  return mergedGuides;
 }
 
 export function getGuideBySlug(slug: string): Guide | undefined {
-  return guides.find((g) => g.slug === slug);
+  return mergedGuides.find((g) => g.slug === slug);
 }
+

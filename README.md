@@ -12,12 +12,38 @@ hotproductsdot-v2/
 ├── products/
 │   ├── top-1000.csv             # Product database (name, price, category, ASIN)
 │   └── products4review.csv      # Oxylabs CSV vs live diffs (created/updated by script)
+├── growth-engine/               # AI SEO autopilot — see growth-engine/README.md
 ├── oxylabs-amazon-product.sh    # Batch Oxylabs check; backs up & updates top-1000.csv
 ├── site/public/products/        # Downloaded product images (.jpg)
+├── site/content/guides-generated/   # JSON guides written by growth-engine
 ├── perform_qualityassurance.sh  # Full QA pipeline
 ├── *.js                         # JS utility scripts (run from project root)
 └── *.py                         # Python utility scripts (run from project root)
 ```
+
+---
+
+## Growth Engine (BabyLoveGrowth clone)
+
+Self-hosted AI SEO autopilot at [`growth-engine/`](growth-engine/README.md).
+Replaces a $99/month BabyLoveGrowth subscription with ~$10–$20/month in API costs.
+
+- Daily Claude-written buying guides committed to the site
+- AI visibility tracking across Claude / GPT / Perplexity
+- Backlink prospect finder + outreach email drafter
+- 30-day content planner driven by SERP gap analysis
+- Windows Task Scheduler installer for full autopilot
+
+```bash
+cd growth-engine
+pip install -r requirements.txt
+python scripts/run_daily.py             # full pipeline
+python scripts/2_generate_article.py    # just write one article
+python scripts/5_publish.py --include-guides-ts --deploy   # ship it
+```
+
+See [`growth-engine/README.md`](growth-engine/README.md) for full details,
+architecture, troubleshooting, and the daily-autopilot installer.
 
 ---
 
