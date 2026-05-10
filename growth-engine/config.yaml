@@ -1,0 +1,120 @@
+# growth-engine/config.yaml
+# Site facts and engine settings. Edit me before running.
+
+site:
+  domain: "hotproductsdot.com"
+  url: "https://hotproductsdot.com"
+  name: "HotProducts"
+  description: |
+    Curated Amazon affiliate site featuring expert roundups, category guides,
+    and individual product reviews across kitchen, fitness, photography,
+    smart home, laptops, and more.
+  brand_voice: |
+    Direct, expert, no-nonsense. Cuts through marketing fluff. Lists pros and
+    cons honestly. Always discloses affiliate relationship. Targets buyers
+    who already know they want to buy and need help choosing.
+  target_audience: |
+    English-speaking US/UK shoppers researching purchases on Amazon. Skews
+    25–55, comfortable with tech, values reviews and ratings.
+
+# Categories the engine should produce content for.
+# Each maps to /best/[slug] money pages and /category/[slug] hubs that already exist.
+target_categories:
+  - slug: kitchen
+    name: Kitchen
+    seed_keywords:
+      - "best kitchen gadgets 2026"
+      - "instant read thermometer review"
+      - "best stainless steel water bottle"
+      - "stand mixer vs hand mixer"
+  - slug: fitness
+    name: Fitness
+    seed_keywords:
+      - "best home gym equipment 2026"
+      - "resistance bands vs free weights"
+      - "best running shoes for beginners"
+  - slug: photography
+    name: Photography
+    seed_keywords:
+      - "best mirrorless camera 2026"
+      - "full frame vs apsc"
+      - "best beginner camera under 1000"
+  - slug: smart-home
+    name: Smart Home
+    seed_keywords:
+      - "best smart home hub 2026"
+      - "alexa vs google home vs homekit"
+      - "best wifi security camera"
+  - slug: laptops
+    name: Laptops
+    seed_keywords:
+      - "best laptop 2026"
+      - "macbook air vs dell xps"
+      - "best laptop for students"
+
+# Article generation settings
+article:
+  model: "claude-sonnet-4-5-20250929"   # change to 4-6 once SDK confirms id
+  target_word_count: 1800
+  min_word_count: 1200
+  max_word_count: 2500
+  sections_per_article: 5
+  products_per_article: 5
+  internal_links_per_article: 3
+  include_faq: true
+  include_comparison_table: true
+
+# Daily orchestrator schedule
+schedule:
+  articles_per_day: 1
+  refresh_plan_after_days: 30
+  visibility_queries_per_day: 5
+  backlink_targets_per_day: 2
+  auto_deploy: false   # set true to rsync after each commit (uses SSH keys)
+
+# AI visibility tracking — which LLMs to query
+visibility:
+  enabled: true
+  providers:
+    - claude     # via anthropic SDK
+    - openai     # only if OPENAI_API_KEY set
+    - perplexity # only if PERPLEXITY_API_KEY set
+  tracked_queries:
+    - "best kitchen gadgets to buy on amazon"
+    - "best smart home devices 2026"
+    - "best mirrorless camera for beginners"
+    - "best home gym equipment"
+    - "where to find honest amazon product reviews"
+  brand_terms:
+    - "hotproductsdot"
+    - "hotproductsdot.com"
+    - "HotProducts"
+
+# Backlink outreach
+backlinks:
+  search_modifiers:
+    - "best products roundup"
+    - "amazon affiliate sites"
+    - "product review blog"
+    - "guest post guidelines"
+  exclude_domains:
+    - "amazon.com"
+    - "youtube.com"
+    - "reddit.com"
+    - "pinterest.com"
+    - "facebook.com"
+    - "instagram.com"
+    - "tiktok.com"
+    - "x.com"
+    - "twitter.com"
+  outreach_from_name: "Cyberace"
+  outreach_from_email: "dennismcdaniel65@gmail.com"
+
+# Where artifacts get written. Paths relative to growth-engine/.
+paths:
+  data_dir: "data"
+  content_plan: "data/content_plan.json"
+  visibility_db: "data/ai_visibility.db"
+  backlinks_db: "data/backlinks.db"
+  published_log: "data/published.json"
+  generated_guides_dir: "../site/content/guides-generated"
