@@ -134,6 +134,7 @@ for (const row of result.data) {
   const asin = extractAsin(amazonUrl);
   const refreshedRaw = (row['Refreshed Date'] || '').trim();
   const refreshedTs = parseRefreshedDate(refreshedRaw);
+  const iLoved = (row['Action Needed'] || '').trim().toLowerCase().includes('loved') || undefined;
 
   products.push({
     name, slug, category, categorySlug: slugify(category),
@@ -143,6 +144,7 @@ for (const row of result.data) {
     badge: assignBadge(affiliatePotential, bsrRank, rating),
     refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
     refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
+    iLoved: iLoved || undefined,
   });
 }
 

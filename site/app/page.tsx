@@ -5,6 +5,7 @@ import {
   getAllCategories,
   getFeaturedProducts,
   getInstagramPostedProducts,
+  getILovedProducts,
   getSaleProducts,
 } from "./lib/products";
 import ProductGrid from "./components/ProductGrid";
@@ -31,6 +32,7 @@ export default function HomePage() {
   const featured = getFeaturedProducts(8);
   const deals = getSaleProducts(6);
   const recentlyPosted = getInstagramPostedProducts(8);
+  const lovedProducts = getILovedProducts();
   const categories = getAllCategories();
   const allProducts = getAllProducts();
 
@@ -98,6 +100,23 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Products I LOVE */}
+      {lovedProducts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">❤️</span>
+                <span className="text-pink-400 text-xs font-bold uppercase tracking-widest">Personal Picks</span>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Products I LOVE</h2>
+              <p className="text-zinc-500 text-sm mt-1">Hand-picked by me — stuff I actually use and swear by</p>
+            </div>
+          </div>
+          <ProductGrid products={lovedProducts} />
+        </section>
+      )}
 
       {/* Recently on Instagram — surfaces what IG visitors just saw in their feed */}
       {recentlyPosted.length > 0 && (

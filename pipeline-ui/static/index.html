@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HotProducts Pipeline</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="name">HotProducts <em>Pipeline</em></span>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="pipeline">Pipeline</button>
+      <button class="tab" data-tab="jobs">Job History</button>
+      <button class="tab" data-tab="logs">Live Log</button>
+      <button class="tab" data-tab="catalog">Catalog Review</button>
+    </nav>
+    <div class="status" id="status-indicator">connecting…</div>
+  </header>
+
+  <main>
+    <section id="view-pipeline" class="view active">
+      <div id="pipeline-graph" class="pipeline-graph"></div>
+    </section>
+
+    <section id="view-jobs" class="view">
+      <div class="panel">
+        <div class="panel-title">Recent jobs <button class="btn-ghost" id="refresh-jobs">refresh</button></div>
+        <table class="jobs-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Activity</th>
+              <th>Started</th>
+              <th>Duration</th>
+              <th>Exit</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="jobs-tbody"><tr><td colspan="6" class="muted">No jobs yet — click any activity card to run one.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="view-logs" class="view">
+      <div class="panel logs-panel">
+        <div class="panel-title">
+          <span id="log-title">No active job</span>
+          <span class="spacer"></span>
+          <button class="btn-ghost" id="clear-log">clear</button>
+          <button class="btn-warn" id="stop-job">stop</button>
+        </div>
+        <pre id="log-output" class="log-output"></pre>
+      </div>
+    </section>
+
+    <section id="view-catalog" class="view">
+      <div class="panel">
+        <div class="catalog-toolbar">
+          <input id="catalog-search" type="search" placeholder="Search products…" class="catalog-search-input" />
+          <select id="catalog-category" class="catalog-filter-select">
+            <option value="">All categories</option>
+          </select>
+          <select id="catalog-sort" class="catalog-filter-select">
+            <option value="name">Name A–Z</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="score-desc">Score ↓</option>
+            <option value="rating-desc">Rating ↓</option>
+            <option value="date-desc">Newest first</option>
+          </select>
+          <label class="catalog-toggle">
+            <input type="checkbox" id="catalog-recent-only" />
+            <span>Recent only</span>
+          </label>
+          <span class="spacer"></span>
+          <span id="catalog-count" class="muted"></span>
+          <button class="btn-warn" id="catalog-delete-selected" disabled>Delete selected</button>
+          <button class="btn-ghost" id="catalog-refresh">refresh</button>
+        </div>
+        <div class="catalog-table-wrap">
+          <table class="catalog-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="catalog-select-all" /></th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Score</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="catalog-tbody">
+              <tr><td colspan="9" class="muted" style="text-align:center;padding:30px">Loading catalog…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Run modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <header>
+        <h2 id="modal-title">Run activity</h2>
+        <button class="btn-ghost" id="modal-close">×</button>
+      </header>
+      <p id="modal-desc" class="muted"></p>
+      <div id="modal-cmd" class="cmd-preview"></div>
+      <form id="modal-form" class="param-form"></form>
+      <footer>
+        <button class="btn-ghost" id="modal-cancel">Cancel</button>
+        <button class="btn-primary" id="modal-run">Run</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

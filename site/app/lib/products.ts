@@ -22,6 +22,7 @@ export interface Product {
   badge: "hot" | "top-rated" | "best-seller" | null;
   refreshedDate?: string;
   refreshedTs?: number;
+  iLoved?: boolean;
 }
 
 /** Parse "M/D/YYYY" or "YYYY-MM-DD" → epoch ms; 0 if unparseable. */
@@ -210,6 +211,8 @@ export function getAllProducts(): Product[] {
     const asin = extractAsin(amazonUrl);
     const refreshedRaw = (row["Refreshed Date"] || "").trim();
     const refreshedTs = parseRefreshedDate(refreshedRaw);
+    const actionNeeded = (row["Action Needed"] || "").trim().toLowerCase();
+    const iLoved = actionNeeded.includes("loved");
 
     products.push({
       name,
@@ -229,6 +232,7 @@ export function getAllProducts(): Product[] {
       badge: assignBadge(affiliatePotential, bsrRank, rating),
       refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
       refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
+      iLoved: iLoved || undefined,
     });
   }
 
@@ -369,6 +373,10 @@ export function getInstagramPostedProducts(count = 50): InstagramPostedProduct[]
   return Array.from(newest.values())
     .sort((a, b) => b.postedTs - a.postedTs)
     .slice(0, count);
+}
+
+export function getILovedProducts(): Product[] {
+  return getAllProducts().filter((p) => p.iLoved === true);
 }
 
 export function getAllCategories() {

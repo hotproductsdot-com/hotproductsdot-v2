@@ -483,6 +483,36 @@ Set `FORCE_BUILD=1` in the GitHub Actions workflow environment, or re-run the wo
 
 ---
 
+## Products I LOVE
+
+A hand-curated section that appears at the top of the homepage (right after the hero) showcasing products you personally recommend. Unlike the algorithmic Top Picks rotation, this list is fully manual — you control it via the CSV.
+
+### How to tag a product
+
+In `products/top-1000.csv`, set the `Action Needed` column to `loved` for any product you want featured:
+
+```
+Product Name,...,Refreshed Date,Action Needed
+TESSAN European Travel Plug Adapter USB C 3 Pack,...,5/10/2026,loved
+```
+
+After editing the CSV, regenerate the build cache:
+
+```bash
+cd site && node prebuild.js
+```
+
+The section only renders when at least one product is tagged. To remove a product from the section, clear or change its `Action Needed` value and re-run `prebuild.js`.
+
+| Piece | Role |
+|-------|------|
+| `products/top-1000.csv` — `Action Needed` column | Source of truth — set to `loved` to include |
+| `site/app/lib/products.ts` — `getILovedProducts()` | Filters the catalog for `iLoved === true` |
+| `site/prebuild.js` | Parses `Action Needed` and writes `iLoved` into `products.json` |
+| `site/app/page.tsx` — "Products I LOVE" section | Renders the grid, only shown when products exist |
+
+---
+
 ## Homepage featured picks (daily rotation)
 
 The homepage **Top Picks** grid is not a fixed “top 8 forever” list. It is built from a **quality pool** (roughly the strongest ~120 products by affiliate score and rating), then **shuffled with a deterministic seed** so the visible eight change **each UTC calendar day** when the site is rebuilt.
