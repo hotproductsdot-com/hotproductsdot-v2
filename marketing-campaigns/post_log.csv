@@ -119,3 +119,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-09,instagram,Shure SM7B Vocal Dynamic Microphone,ok,18047324087750995
 2026-05-09,instagram,EltaMD UV Clear Broad-Spectrum SPF 46,ok,17933804151068503
 2026-05-09,tiktok,GoveeLife Smart Purifier,error,TIKTOK_ACCESS_TOKEN not set
+2026-05-10,instagram,Bose Headphones 700,quality_blocked,"ai vision: The headphones display a Soundcore/Anker logo, not Bose, creating a direct brand identity mismatch with the product title."
+2026-05-10,instagram,Rubbermaid FastTrack Garage Storage System,ok,17936635485248845
+2026-05-10,instagram,Lenovo ThinkCentre M90q Gen 4 Tiny PC,ok,18077154089643539
+2026-05-10,instagram,Ninja AF400 Air Fryer,quality_blocked,"ai vision: The physical product shown is a NutriChef air fryer, directly contradicting the 'Ninja AF400' product title in the banner."
+2026-05-10,tiktok,Jackery Explorer 2000 Portable Power Station,error,TIKTOK_ACCESS_TOKEN not set
