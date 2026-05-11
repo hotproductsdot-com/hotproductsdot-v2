@@ -178,6 +178,10 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 
 | Command | Description |
 |---------|-------------|
+| `python refresh_prices.py` | Fetch live prices for all products via Scrapling (free, no API key required) and write changes back to `top-1000.csv` |
+| `python refresh_prices.py --workers 4` | Concurrent fetch workers (default: 4) |
+| `python refresh_prices.py --delay 3.0` | Per-worker request delay in seconds (default: 2.0) |
+| `python refresh_prices.py --dry-run` | Preview price changes without writing to CSV |
 | `./oxylabs-amazon-product.sh` | Pull live price / rating / review count for every product via the Oxylabs Amazon Product API and merge into `products/top-1000.csv` |
 | `./oxylabs-amazon-product.sh --limit 50` | Only process the first 50 products (quick sample) |
 | `./oxylabs-amazon-product.sh --offset 500 --limit 100` | Resume / process a slice |
@@ -185,7 +189,11 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 | `./oxylabs-amazon-product.sh --check-links` | Audit every Amazon link for dead (404) / removed / unavailable listings. Writes offenders to `products/broken-links.csv`; skips the price/rating/review merge |
 | `./oxylabs-amazon-product.sh --check-links --limit 100` | Audit only the first 100 links |
 
-> **How it works:** requests Oxylabs `amazon_product` realtime API with `parse=true`, so responses are structured JSON (no HTML scraping, no CAPTCHAs). Differences land in `products/products4review.csv`; a dated backup of the CSV is written before any merge.
+> **`refresh_prices.py` vs Oxylabs:** `refresh_prices.py` scrapes Amazon directly via Scrapling (TLS fingerprint impersonation, no API cost). It only updates `Price Range` and `Refreshed Date` — not rating or review count. Use it for free daily price checks. Use Oxylabs when you need structured rating/review data or want to avoid any scraping risk.
+>
+> Console output shows every row: `ok` (unchanged, within 2%), `→` (updated), `BLOCKED` (CAPTCHA), `no price`, or `ERR`. Updated rows also write the previous value to `Old Price`.
+>
+> **Oxylabs:** requests the `amazon_product` realtime API with `parse=true`, so responses are structured JSON (no HTML scraping, no CAPTCHAs). Differences land in `products/products4review.csv`; a dated backup of the CSV is written before any merge.
 > Requires `OXYLABS_USERNAME` / `OXYLABS_PASSWORD` in `.env` (each call has a per-request cost — hence this isn't run from automated QA).
 
 ### Links & Affiliate Tags

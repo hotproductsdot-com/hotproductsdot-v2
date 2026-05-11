@@ -104,6 +104,9 @@ def main():
         deploy_arg = ["--deploy"] if CONFIG["schedule"].get("auto_deploy") else []
         _run("5_publish.py", *deploy_arg)
 
+    # 6. Facebook
+    _run("6_facebook_post.py")
+
     finished = datetime.now(timezone.utc)
     print(f"\n[orchestrator] Done. Total runtime: {(finished - started).total_seconds():.1f}s")
 

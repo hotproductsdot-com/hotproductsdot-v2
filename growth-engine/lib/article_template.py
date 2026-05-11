@@ -49,6 +49,7 @@ def make_guide(
         "description": description.strip(),
         "category": category.strip(),
         "categorySlug": category_slug.strip(),
+        "publishedAt": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
         "sections": sections,
         "_meta": {
             "generatedAt": datetime.now(timezone.utc).isoformat(),

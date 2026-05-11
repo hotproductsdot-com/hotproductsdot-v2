@@ -54,7 +54,7 @@ target_categories:
 
 # Article generation settings
 article:
-  model: "claude-sonnet-4-5-20250929"   # change to 4-6 once SDK confirms id
+  model: "claude-sonnet-4-6"
   target_word_count: 1800
   min_word_count: 1200
   max_word_count: 2500

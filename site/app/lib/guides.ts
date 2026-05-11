@@ -4,6 +4,7 @@ export interface Guide {
   description: string;
   category: string;
   categorySlug: string;
+  publishedAt?: string;
   sections: {
     heading: string;
     body: string;

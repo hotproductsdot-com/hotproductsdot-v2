@@ -68,7 +68,12 @@ export default async function GuidePage({ params }: Props) {
         >
           ← {guide.category}
         </Link>
-        <h1 className="text-3xl font-bold text-white leading-tight mb-3">{guide.title}</h1>
+        <h1 className="text-3xl font-bold text-white leading-tight mb-2">{guide.title}</h1>
+        {guide.publishedAt && (
+          <p className="text-xs text-zinc-500 mb-3">
+            Published {new Date(guide.publishedAt + "T12:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+          </p>
+        )}
         <p className="text-zinc-400 text-lg">{guide.description}</p>
       </div>
 

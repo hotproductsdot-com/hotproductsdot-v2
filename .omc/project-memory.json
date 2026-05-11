@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778443684991,
+  "lastScanned": 1778535707231,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -56,21 +56,21 @@
     "__pycache__": {
       "path": "__pycache__",
       "purpose": null,
-      "fileCount": 8,
-      "lastAccessed": 1778443684770,
+      "fileCount": 11,
+      "lastAccessed": 1778535706884,
       "keyFiles": [
+        "find_bestsellers.cpython-312.pyc",
         "fix_amazon_urls.cpython-312.pyc",
         "oxylabs_refresh.cpython-312.pyc",
         "post_daily.cpython-312.pyc",
-        "test_instagram_post.cpython-312-pytest-9.0.3.pyc",
-        "test_tiktok_refresh.cpython-312-pytest-9.0.3.pyc"
+        "refresh_prices.cpython-312.pyc"
       ]
     },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1778443684778,
+      "lastAccessed": 1778535706941,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
@@ -79,14 +79,14 @@
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778443684795,
+      "lastAccessed": 1778535706949,
       "keyFiles": []
     },
     "growth-engine": {
       "path": "growth-engine",
       "purpose": null,
-      "fileCount": 5,
-      "lastAccessed": 1778443684804,
+      "fileCount": 6,
+      "lastAccessed": 1778535706960,
       "keyFiles": [
         "README.md",
         "config.yaml",
@@ -97,7 +97,7 @@
       "path": "instagram",
       "purpose": null,
       "fileCount": 16,
-      "lastAccessed": 1778443684816,
+      "lastAccessed": 1778535706978,
       "keyFiles": [
         "__init__.py",
         "ad_creative_gen.py",
@@ -110,7 +110,7 @@
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778443684822,
+      "lastAccessed": 1778535706989,
       "keyFiles": [
         "content_calendar.json",
         "post_log.csv"
@@ -120,7 +120,7 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778443684829,
+      "lastAccessed": 1778535707001,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
@@ -130,7 +130,7 @@
       "path": "pinterest-setup",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1778443684837,
+      "lastAccessed": 1778535707018,
       "keyFiles": [
         "BOARDS.csv",
         "CONTENT_CALENDAR.md",
@@ -143,7 +143,7 @@
       "path": "pipeline-ui",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1778443684843,
+      "lastAccessed": 1778535707023,
       "keyFiles": [
         "README.md",
         "jobs.py",
@@ -155,21 +155,21 @@
     "products": {
       "path": "products",
       "purpose": null,
-      "fileCount": 10,
-      "lastAccessed": 1778443684851,
+      "fileCount": 11,
+      "lastAccessed": 1778535707034,
       "keyFiles": [
         "broken-links.csv",
         "check_duplicates.py",
         "duplicates_found.csv",
         "products4review.csv",
-        "top-1000 - Copy.csv"
+        "top-1000 - Copy (2).csv"
       ]
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 14,
-      "lastAccessed": 1778443684856,
+      "lastAccessed": 1778535707039,
       "keyFiles": [
         "_debug_ai_gate.py",
         "_debug_validator.py",
@@ -182,7 +182,7 @@
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1778443684860,
+      "lastAccessed": 1778535707048,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -195,7 +195,7 @@
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1778443684865,
+      "lastAccessed": 1778535707056,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -204,7 +204,7 @@
       "path": "growth-engine/data",
       "purpose": "Data files",
       "fileCount": 5,
-      "lastAccessed": 1778443684892,
+      "lastAccessed": 1778535707102,
       "keyFiles": [
         "ai_visibility.db",
         "backlinks.db",
@@ -214,8 +214,8 @@
     "growth-engine/lib": {
       "path": "growth-engine/lib",
       "purpose": "Library code",
-      "fileCount": 8,
-      "lastAccessed": 1778443684899,
+      "fileCount": 9,
+      "lastAccessed": 1778535707108,
       "keyFiles": [
         "__init__.py",
         "article_template.py",
@@ -225,8 +225,8 @@
     "growth-engine/scripts": {
       "path": "growth-engine/scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 7,
-      "lastAccessed": 1778443684912,
+      "fileCount": 8,
+      "lastAccessed": 1778535707132,
       "keyFiles": [
         "1_keyword_research.py",
         "2_generate_article.py",
@@ -237,7 +237,7 @@
       "path": "pipeline-ui/static",
       "purpose": "Static files",
       "fileCount": 3,
-      "lastAccessed": 1778443684942,
+      "lastAccessed": 1778535707159,
       "keyFiles": [
         "app.js",
         "index.html",
@@ -248,7 +248,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1778443684960,
+      "lastAccessed": 1778535707178,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -258,8 +258,8 @@
     "venv/bin": {
       "path": "venv/bin",
       "purpose": "Executable scripts",
-      "fileCount": 31,
-      "lastAccessed": 1778443684972,
+      "fileCount": 36,
+      "lastAccessed": 1778535707194,
       "keyFiles": [
         "Activate.ps1",
         "activate",
@@ -270,15 +270,51 @@
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1778443684990,
+      "lastAccessed": 1778535707231,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
+      "path": "find_bestsellers.py",
+      "accessCount": 8,
+      "lastAccessed": 1778466653881,
+      "type": "file"
+    },
+    {
+      "path": "scrape_top_affiliates.py",
+      "accessCount": 8,
+      "lastAccessed": 1778466659325,
+      "type": "file"
+    },
+    {
+      "path": "_scrapling_price_test.py",
+      "accessCount": 8,
+      "lastAccessed": 1778466665403,
+      "type": "file"
+    },
+    {
+      "path": "refresh_prices.py",
+      "accessCount": 6,
+      "lastAccessed": 1778466800255,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/windows/install_task.ps1",
+      "accessCount": 6,
+      "lastAccessed": 1778538047109,
+      "type": "file"
+    },
+    {
       "path": "site/app/lib/products.ts",
       "accessCount": 5,
       "lastAccessed": 1778418948448,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/README.md",
+      "accessCount": 5,
+      "lastAccessed": 1778536036121,
       "type": "file"
     },
     {
@@ -294,9 +330,93 @@
       "type": "file"
     },
     {
+      "path": "growth-engine/scripts/run_daily.py",
+      "accessCount": 3,
+      "lastAccessed": 1778535920970,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/.env.example",
+      "accessCount": 3,
+      "lastAccessed": 1778535952693,
+      "type": "file"
+    },
+    {
       "path": "site/app/lib/analytics.ts",
       "accessCount": 2,
       "lastAccessed": 1778347596277,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/lib/article_template.py",
+      "accessCount": 2,
+      "lastAccessed": 1778451140350,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/guides.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778451177372,
+      "type": "file"
+    },
+    {
+      "path": "site/app/guides/[slug]/page.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1778451225409,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 2,
+      "lastAccessed": 1778457783583,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 2,
+      "lastAccessed": 1778466923739,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/lib/facebook.py",
+      "accessCount": 2,
+      "lastAccessed": 1778535921699,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/scripts/6_facebook_post.py",
+      "accessCount": 2,
+      "lastAccessed": 1778535921883,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/windows/run_daily.bat",
+      "accessCount": 2,
+      "lastAccessed": 1778535952635,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/config.yaml",
+      "accessCount": 2,
+      "lastAccessed": 1778535995835,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/lib/publish.py",
+      "accessCount": 1,
+      "lastAccessed": 1778450506344,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/scripts/5_publish.py",
+      "accessCount": 1,
+      "lastAccessed": 1778450519485,
+      "type": "file"
+    },
+    {
+      "path": "growth-engine/lib/tracking.py",
+      "accessCount": 1,
+      "lastAccessed": 1778451043451,
       "type": "file"
     }
   ],

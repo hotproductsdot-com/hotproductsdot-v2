@@ -59,24 +59,14 @@ from dataclasses import dataclass, asdict
 from datetime import date
 from pathlib import Path
 
-import requests
 from bs4 import BeautifulSoup
+from scrapling.fetchers import FetcherSession
 
 logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent
 EXISTING_CSV = REPO_ROOT / "products" / "top-1000.csv"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "products" / "discovery"
-
-# Pool of realistic browser User-Agents. Mirrors add_new_products.py's pool —
-# rotating these across requests lowers the chance of pattern-based blocking.
-USER_AGENTS: tuple[str, ...] = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
-)
 
 # Amazon Best Sellers category slugs. The /gp/bestsellers/ URL pattern accepts
 # these short slugs and Amazon redirects to the canonical /Best-Sellers-X URL.
@@ -127,19 +117,6 @@ class Candidate:
 
 # ─── HTTP fetch ──────────────────────────────────────────────────────────────
 
-def _headers() -> dict[str, str]:
-    """Realistic browser headers with rotated User-Agent."""
-    return {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "DNT": "1",
-        "Connection": "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
-    }
-
-
 def _polite_delay() -> None:
     time.sleep(random.uniform(REQUEST_DELAY_MIN, REQUEST_DELAY_MAX))
 
@@ -155,18 +132,16 @@ def fetch_bestsellers_html(category_slug: str) -> str | None:
     """
     url = f"https://www.amazon.com/gp/bestsellers/{category_slug}"
     try:
-        resp = requests.get(url, headers=_headers(), timeout=REQUEST_TIMEOUT)
-    except requests.RequestException as exc:
+        resp = FetcherSession().get(url, timeout=REQUEST_TIMEOUT)
+    except Exception as exc:
         logger.warning("Fetch failed for %s: %s", category_slug, exc)
         return None
 
-    if resp.status_code != 200:
-        logger.warning("HTTP %s for %s", resp.status_code, category_slug)
+    if resp.status != 200:
+        logger.warning("HTTP %s for %s", resp.status, category_slug)
         return None
 
-    body = resp.text
-    # Quick check for CAPTCHA / robot-check pages — Amazon serves these with
-    # 200 OK but the body is a "Type the characters you see" challenge.
+    body = resp.body.decode(resp.encoding or "utf-8", errors="replace")
     if "Type the characters you see" in body or "Robot Check" in body:
         logger.warning("CAPTCHA challenge for %s — skipping", category_slug)
         return None

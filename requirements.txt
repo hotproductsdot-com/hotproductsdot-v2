@@ -10,3 +10,4 @@ rembg[cpu]>=2.0.75
 # 18 MB binary even though our pip cache directory is hit.
 onnxruntime==1.25.1
 requests>=2.31.0
+scrapling[fetchers]>=0.4.7

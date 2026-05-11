@@ -15,7 +15,8 @@ database, and rsync deploy pipeline.
 | Backlink exchange network     | Outreach prospect finder + email drafter (SQLite)      | `scripts/3_backlink_finder.py`  |
 | AI visibility tracker         | Polls Claude/GPT/Perplexity for brand citations        | `scripts/4_ai_visibility.py`    |
 | Auto-publish to CMS           | `git commit` + optional `npm run deploy:rsync`         | `scripts/5_publish.py`          |
-| Whole thing on autopilot      | Daily orchestrator + Windows Task Scheduler installer  | `scripts/run_daily.py`          |
+| Facebook Page posting         | Posts new article link to Facebook Page feed via Graph API | `scripts/6_facebook_post.py` |
+| Whole thing on autopilot      | 3× daily orchestrator + Windows Task Scheduler installer | `scripts/run_daily.py`        |
 
 ## Architecture
 
@@ -31,7 +32,8 @@ growth-engine/
 │   ├── 3_backlink_finder.py    # adds prospects to SQLite
 │   ├── 4_ai_visibility.py      # logs LLM citations
 │   ├── 5_publish.py            # commit + push + (optional) deploy
-│   └── run_daily.py            # runs all five in sequence
+│   ├── 6_facebook_post.py      # posts new article to Facebook Page feed
+│   └── run_daily.py            # runs all six in sequence
 │
 ├── lib/
 │   ├── claude_client.py        # Anthropic SDK wrapper, with forced tool-use
@@ -39,7 +41,8 @@ growth-engine/
 │   ├── article_template.py     # JSON guide builder (matches site schema)
 │   ├── publish.py              # git operations
 │   ├── tracking.py             # SQLite for visibility + backlink pipeline
-│   └── site_inspector.py       # reads products CSV + existing guide slugs
+│   ├── site_inspector.py       # reads products CSV + existing guide slugs
+│   └── facebook.py             # Facebook Graph API — post link to Page feed
 │
 ├── data/                       # generated, gitignored
 │   ├── content_plan.json
@@ -96,7 +99,7 @@ cd growth-engine\windows
 powershell -ExecutionPolicy Bypass -File .\install_task.ps1
 ```
 
-Each morning at 6 AM the orchestrator runs:
+Three times per day (7 AM, 12 PM, 6 PM) the orchestrator runs:
 
 1. Refresh the content plan if it's older than 30 days.
 2. Generate one new article and write it to `site/content/guides-generated/`.
@@ -104,6 +107,7 @@ Each morning at 6 AM the orchestrator runs:
 4. Find two new backlink prospects.
 5. Commit to git. If `schedule.auto_deploy: true` in `config.yaml`,
    also run `npm run deploy:rsync`.
+6. Post the new article to the Facebook Page feed via `6_facebook_post.py`.
 
 ## Deploying after a new article
 

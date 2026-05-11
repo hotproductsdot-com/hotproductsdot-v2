@@ -44,6 +44,7 @@ from typing import NamedTuple
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from scrapling.fetchers import FetcherSession
 
 # ── Duplicate checking (reuse from add_new_products) ─────────────────────────
 sys.path.insert(0, str(Path(__file__).parent / "products"))
@@ -65,15 +66,6 @@ CSV_FIELDNAMES = [
     "Rating", "BSR", "Affiliate Potential", "Amazon URL",
     "Refreshed Date", "Action Needed",
 ]
-
-# Rotating user-agents
-USER_AGENTS: tuple[str, ...] = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
-)
 
 # ── Commission rates by category ─────────────────────────────────────────────
 # Categories with their Amazon Associates commission rate (%)
@@ -307,18 +299,6 @@ def _request_delay(source: str = "direct") -> None:
     time.sleep(delay)
 
 
-def _get_headers() -> dict[str, str]:
-    return {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "DNT": "1",
-        "Connection": "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
-    }
-
-
 def extract_asin(url_or_text: str) -> str | None:
     match = re.search(r"/dp/([A-Z0-9]{10})", url_or_text)
     return match.group(1) if match else None
@@ -546,27 +526,31 @@ def scrape_via_oxylabs(query: str, max_results: int = 20) -> list[ScrapedProduct
 # ── Direct scraping (fallback) ───────────────────────────────────────────────
 
 def scrape_amazon_search(query: str, max_results: int = 20) -> list[ScrapedProduct]:
-    """Scrape Amazon search results directly. Unreliable due to anti-bot."""
+    """Scrape Amazon search results via Scrapling (TLS fingerprint impersonation)."""
     url = f"https://www.amazon.com/s?k={urllib.parse.quote_plus(query)}"
+    _fetcher = FetcherSession()
 
+    resp = None
     for attempt in range(MAX_RETRIES):
         try:
-            resp = requests.get(url, headers=_get_headers(), timeout=15)
-            if resp.status_code == 503:
+            resp = _fetcher.get(url, timeout=15, retries=1)
+            if resp.status == 503:
                 log.warning(f"    Rate limited (503), retry {attempt + 1}/{MAX_RETRIES}...")
                 time.sleep(10 + random.uniform(5, 15))
+                resp = None
                 continue
-            if resp.status_code != 200:
-                log.warning(f"    HTTP {resp.status_code} for query '{query}'")
+            if resp.status != 200:
+                log.warning(f"    HTTP {resp.status} for query '{query}'")
                 return []
             break
-        except requests.RequestException as e:
+        except Exception as e:
             log.warning(f"    Request error: {e}, retry {attempt + 1}/{MAX_RETRIES}...")
             time.sleep(5)
-    else:
+
+    if resp is None:
         return []
 
-    soup = BeautifulSoup(resp.text, "html.parser")
+    soup = BeautifulSoup(resp.body, "html.parser")
 
     if _is_blocked(soup):
         log.warning("    [!] Amazon returned a CAPTCHA/block page")
