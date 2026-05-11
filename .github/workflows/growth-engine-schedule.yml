@@ -1,0 +1,31 @@
+name: 3x Daily Growth Engine
+
+on:
+  schedule:
+    # Runs at minute 0 past every 8th hour (e.g., 00:00, 08:00, 16:00 UTC)
+    - cron: '0 */8 * * *'
+  workflow_dispatch: # Allows you to trigger it manually from the GitHub Actions tab
+
+jobs:
+  run-growth-engine:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Adjust to match your project
+
+      - name: Install Dependencies
+        working-directory: ./growth-engine
+        run: npm install
+
+      - name: Execute Growth Engine
+        working-directory: ./growth-engine
+        run: npm start # Replace with your actual execution command (e.g., node index.js)
+        env:
+          # Pass any required API keys from GitHub Secrets
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
