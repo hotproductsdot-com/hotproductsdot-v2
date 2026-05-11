@@ -1,0 +1,190 @@
+name: Growth Engine - 3x Daily
+
+on:
+  schedule:
+    - cron: '0 12 * * *'   # 7:00 AM CDT (UTC-5)
+    - cron: '0 17 * * *'   # 12:00 PM CDT
+    - cron: '0 23 * * *'   # 6:00 PM CDT
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "DRY RUN — skip API calls, commits, and Facebook posts"
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  run:
+    name: Generate article + post to site + Facebook
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    env:
+      HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+      HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+      HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+      HOSTINGER_DEST: domains/hotproductsdot.com/public_html/
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install site deps
+        working-directory: site
+        run: npm ci
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: site/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-${{ hashFiles('site/**/*.ts', 'site/**/*.tsx', 'site/**/*.js', 'site/**/*.mjs') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
+            nextjs-${{ runner.os }}-
+
+      - name: Set today's date
+        id: date
+        run: echo "TODAY=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      # Cache the content plan so noon/evening runs reuse morning's plan
+      # instead of regenerating it (saves ~$0.10 and ~90s per re-plan).
+      # Key rotates daily or when config.yaml changes.
+      - name: Restore content plan cache
+        uses: actions/cache@v4
+        with:
+          path: growth-engine/data/content_plan.json
+          key: growth-engine-plan-${{ steps.date.outputs.TODAY }}-${{ hashFiles('growth-engine/config.yaml') }}
+          restore-keys: |
+            growth-engine-plan-${{ hashFiles('growth-engine/config.yaml') }}-
+
+      - name: Ensure data dir exists
+        run: mkdir -p growth-engine/data
+
+      - name: Configure git for orchestrator commits
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      # Runs the full pipeline: keyword research (if plan stale) → generate
+      # article → visibility → backlinks → git commit + push → Facebook post.
+      # auto_deploy: false in config.yaml means 5_publish.py commits only;
+      # this workflow handles the build + rsync separately.
+      - name: Run growth engine
+        env:
+          EVENT_NAME:           ${{ github.event_name }}
+          DRY_RUN_INPUT:        ${{ inputs.dry_run }}
+          ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
+          TAVILY_API_KEY:       ${{ secrets.TAVILY_API_KEY }}
+          OPENAI_API_KEY:       ${{ secrets.OPENAI_API_KEY }}
+          PERPLEXITY_API_KEY:   ${{ secrets.PERPLEXITY_API_KEY }}
+          FB_PAGE_ID:           ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+        run: |
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            echo "Mode: REAL RUN (scheduled cron)"
+            python growth-engine/scripts/run_daily.py
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DRY_RUN_INPUT" = "false" ]; then
+            echo "Mode: REAL RUN (manual dispatch, dry_run=false)"
+            python growth-engine/scripts/run_daily.py
+          else
+            echo "Mode: DRY RUN (event=$EVENT_NAME dry_run_input=$DRY_RUN_INPUT)"
+            python growth-engine/scripts/run_daily.py --dry-run
+          fi
+
+      - name: Build static site
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        working-directory: site
+        run: npm run build
+
+      - name: Set up SSH for Hostinger
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        env:
+          HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          if [ -z "${HOSTINGER_SSH_KEY_B64:-}" ]; then
+            echo "::error::HOSTINGER_SSH_KEY_B64 is not set"; exit 1
+          fi
+          printf '%s' "$HOSTINGER_SSH_KEY_B64" | tr -d '[:space:]' | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null; then
+            echo "::error::SSH key parse failed"; exit 1
+          fi
+          if [ -z "${HOSTINGER_KNOWN_HOSTS:-}" ]; then
+            echo "::error::HOSTINGER_KNOWN_HOSTS is not set"; exit 1
+          fi
+          printf '%s\n' "$HOSTINGER_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<'EOF'
+          Host *
+              ControlMaster auto
+              ControlPath ~/.ssh/cm-%r@%h:%p
+              ControlPersist 10m
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: SSH smoke test
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        run: |
+          set -e
+          attempt=1; max_attempts=4
+          while : ; do
+            if ssh -p "$HOSTINGER_PORT" -i ~/.ssh/id_rsa \
+                -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 \
+                -o ServerAliveInterval=20 -o ServerAliveCountMax=6 \
+                -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts \
+                "$HOSTINGER_USER@$HOSTINGER_HOST" \
+                "echo OK from \$(hostname) && ls -ld $HOSTINGER_DEST"; then
+              echo "Smoke test OK on attempt $attempt"; break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::SSH smoke test failed after $max_attempts attempts"; exit 1
+            fi
+            sleep $((attempt * 15)); attempt=$((attempt + 1))
+          done
+
+      - name: Rsync to Hostinger
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        run: |
+          set -e
+          attempt=1; max_attempts=3
+          while : ; do
+            if rsync -avz --delete --partial --timeout=60 \
+                --exclude='.htaccess' --exclude='.htpasswd' \
+                --exclude='.well-known/' --exclude='cgi-bin/' \
+                --exclude='.user.ini' --exclude='error_log' \
+                --exclude='error_log.*' --exclude='php.ini' \
+                -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa \
+                    -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 \
+                    -o ServerAliveInterval=20 -o ServerAliveCountMax=6 \
+                    -o StrictHostKeyChecking=yes \
+                    -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+                site/out/ \
+                "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"; then
+              echo "Rsync OK on attempt $attempt"; break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::Rsync failed after $max_attempts attempts"; exit 1
+            fi
+            sleep $((attempt * 30)); attempt=$((attempt + 1))
+          done
