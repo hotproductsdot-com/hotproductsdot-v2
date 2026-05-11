@@ -216,12 +216,15 @@ def main():
             _save_plan(plan)
             break
 
-        out = write_guide(guide)
-        written.append(out)
-        brief["status"] = "published"
-        brief["publishedAt"] = datetime.now(timezone.utc).isoformat()
-        brief["outputPath"] = str(out)
-        _save_plan(plan)
+        if is_dry_run():
+            print(f"[generator] [DRY RUN] Would write {guide['slug']} ({sum(len((s.get('body') or '').split()) for s in guide['sections'])} words)")
+        else:
+            out = write_guide(guide)
+            written.append(out)
+            brief["status"] = "published"
+            brief["publishedAt"] = datetime.now(timezone.utc).isoformat()
+            brief["outputPath"] = str(out)
+            _save_plan(plan)
         if args.slug:
             break
 
