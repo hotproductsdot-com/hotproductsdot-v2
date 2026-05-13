@@ -168,8 +168,8 @@ def _parse_deals_page(html: str, category: str, min_discount: int) -> list[Deal]
         if not asin or len(asin) != 10 or asin in seen:
             continue
 
-        # Title
-        title_el = card.select_one("h2 a span, h2 span.a-text-normal, h2 .a-size-base-plus")
+        # Title — h2 contains text directly in a span (no intermediate <a> in current HTML)
+        title_el = card.select_one("h2 span, a.a-link-normal span, [data-cy='title-recipe'] span")
         title = title_el.get_text(strip=True) if title_el else ""
         if not title:
             continue
@@ -241,7 +241,8 @@ def _fetch_category_deals(category: str, delay: float, min_discount: int) -> lis
 
     time.sleep(random.uniform(delay * 0.8, delay * 1.2))
     try:
-        resp = FetcherSession().get(url, timeout=25, retries=1)
+        with FetcherSession() as session:
+            resp = session.get(url, timeout=25, retries=1)
     except Exception as exc:
         print(f"  [deal_finder] ERROR ({category}): {exc}")
         return []
