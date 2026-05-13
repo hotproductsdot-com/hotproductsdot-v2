@@ -107,6 +107,9 @@ def main():
     # 6. Facebook
     _run("6_facebook_post.py")
 
+    # 7. Deals
+    _run("7_deal_finder.py")
+
     finished = datetime.now(timezone.utc)
     print(f"\n[orchestrator] Done. Total runtime: {(finished - started).total_seconds():.1f}s")
 

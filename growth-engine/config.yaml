@@ -110,6 +110,13 @@ backlinks:
   outreach_from_name: "Cyberace"
   outreach_from_email: "dennismcdaniel65@gmail.com"
 
+# Deal finder settings
+deals:
+  min_discount_pct: 20          # ignore deals below this threshold
+  max_deals_per_category: 5     # cap per category per run
+  request_delay_sec: 3.0        # polite delay between Amazon requests
+  post_to_facebook: false       # set true to auto-post top 3 deals each run
+
 # Where artifacts get written. Paths relative to growth-engine/.
 paths:
   data_dir: "data"
