@@ -16,6 +16,7 @@ database, and rsync deploy pipeline.
 | AI visibility tracker         | Polls Claude/GPT/Perplexity for brand citations        | `scripts/4_ai_visibility.py`    |
 | Auto-publish to CMS           | `git commit` + optional `npm run deploy:rsync`         | `scripts/5_publish.py`          |
 | Facebook Page posting         | Posts new article link to Facebook Page feed via Graph API | `scripts/6_facebook_post.py` |
+| Amazon deal finder            | Scrapes Today's Deals by category, ranks by discount %, saves `data/deals.json` | `scripts/7_deal_finder.py` |
 | Whole thing on autopilot      | 3× daily orchestrator + Windows Task Scheduler installer | `scripts/run_daily.py`        |
 
 ## Architecture
@@ -33,7 +34,8 @@ growth-engine/
 │   ├── 4_ai_visibility.py      # logs LLM citations
 │   ├── 5_publish.py            # commit + push + (optional) deploy
 │   ├── 6_facebook_post.py      # posts new article to Facebook Page feed
-│   └── run_daily.py            # runs all six in sequence
+│   ├── 7_deal_finder.py        # scrapes Amazon Today's Deals → data/deals.json
+│   └── run_daily.py            # runs all seven in sequence
 │
 ├── lib/
 │   ├── claude_client.py        # Anthropic SDK wrapper, with forced tool-use
@@ -49,7 +51,8 @@ growth-engine/
 │   ├── ai_visibility.db
 │   ├── backlinks.db
 │   ├── visibility_report.html
-│   └── published.json
+│   ├── published.json
+│   └── deals.json              # latest deal run output (gitignored)
 │
 └── windows/
     ├── run_daily.bat           # entry point for Task Scheduler
@@ -108,6 +111,9 @@ Three times per day (7 AM, 12 PM, 6 PM) the orchestrator runs:
 5. Commit to git. If `schedule.auto_deploy: true` in `config.yaml`,
    also run `npm run deploy:rsync`.
 6. Post the new article to the Facebook Page feed via `6_facebook_post.py`.
+7. Scrape Amazon Today's Deals for each target category and save top deals
+   to `data/deals.json`. Set `deals.post_to_facebook: true` in `config.yaml`
+   to also post the top 3 deals to the Facebook Page.
 
 ## Deploying after a new article
 
@@ -136,6 +142,62 @@ rm -rf .next out
 npm run build
 npm run deploy:rsync
 ```
+
+## Deal finder
+
+Finds Amazon sale items for your target categories by scraping Amazon's public
+Today's Deals search (no API key required). Runs as step 7 in the daily
+orchestrator and saves results to `data/deals.json`.
+
+```bash
+# Run all categories (default config)
+python scripts/7_deal_finder.py
+
+# Specific categories + tighter discount threshold
+python scripts/7_deal_finder.py --categories kitchen,fitness,laptops --min-discount 25
+
+# Preview without saving (fixture data only)
+python scripts/7_deal_finder.py --dry-run
+
+# Post top 3 deals to Facebook Page
+python scripts/7_deal_finder.py --post-facebook
+```
+
+Configure in `config.yaml`:
+
+```yaml
+deals:
+  min_discount_pct: 20          # ignore deals below this threshold
+  max_deals_per_category: 5     # cap per category per run
+  request_delay_sec: 3.0        # polite delay between Amazon requests
+  post_to_facebook: false       # set true to auto-post top 3 deals each run
+```
+
+Output format (`data/deals.json`):
+
+```json
+{
+  "generatedAt": "2026-05-12T22:33:29Z",
+  "count": 5,
+  "deals": [
+    {
+      "asin": "B0764HS4SL",
+      "title": "Fullstar The Original Pro Chopper - Vegetable Chopper",
+      "category": "kitchen",
+      "current_price": "$26.99",
+      "original_price": "$49.99",
+      "discount_pct": 46,
+      "deal_badge": "Limited time deal",
+      "affiliate_url": "https://www.amazon.com/dp/B0764HS4SL?tag=hotproduct033-20",
+      "in_catalog": false,
+      "found_at": "2026-05-12T22:33:29Z"
+    }
+  ]
+}
+```
+
+Results are ranked: catalog products first (ASINs already in `top-1000.csv`),
+then by discount percentage descending.
 
 ## Costs
 
