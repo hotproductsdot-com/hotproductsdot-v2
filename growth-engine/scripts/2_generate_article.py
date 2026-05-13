@@ -98,15 +98,28 @@ def _save_plan(plan: Dict[str, Any]) -> None:
     )
 
 
-def _next_brief(plan: Dict[str, Any], slug: Optional[str]) -> Optional[Dict[str, Any]]:
+def _next_brief(
+    plan: Dict[str, Any],
+    slug: Optional[str],
+    skip_slugs: set,
+) -> Optional[Dict[str, Any]]:
     if slug:
         for b in plan["briefs"]:
             if b["slug"] == slug:
                 return b
         return None
+    reconciled = False
     for b in plan["briefs"]:
-        if b.get("status", "pending") == "pending":
-            return b
+        if b.get("status", "pending") != "pending":
+            continue
+        if b["slug"] in skip_slugs:
+            # File already exists on disk but plan cache is stale — sync it.
+            b["status"] = "published"
+            reconciled = True
+            continue
+        return b
+    if reconciled:
+        _save_plan(plan)
     return None
 
 
@@ -200,9 +213,10 @@ def main():
     args = ap.parse_args()
 
     plan = _load_plan()
+    known_slugs = set(all_known_guide_slugs())
     written: List[Path] = []
     for _ in range(args.count):
-        brief = _next_brief(plan, args.slug)
+        brief = _next_brief(plan, args.slug, known_slugs)
         if not brief:
             print("[generator] No pending briefs.")
             break
