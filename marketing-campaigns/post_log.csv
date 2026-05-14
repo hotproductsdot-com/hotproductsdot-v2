@@ -144,3 +144,4 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-14,instagram,NZXT Player 3 Gaming Desktop,ok,18072301142309327
 2026-05-14,instagram,Marshall Stanmore III Bluetooth Speaker,ok,18179581870391752
 2026-05-14,instagram,Skydio 2+ Drone,quality_blocked,"ai vision: The drone in the image bears DJI branding, contradicting the product title 'Skydio 2+ Drone'."
+2026-05-14,tiktok,Meta Quest 3 Mixed Reality Headset,error,TIKTOK_ACCESS_TOKEN not set
