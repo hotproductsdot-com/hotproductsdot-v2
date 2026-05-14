@@ -29,6 +29,7 @@ Rules:
 - Avoid topics already covered (you'll receive an exclusion list).
 - Mix formats: 60% "best X" listicles, 25% comparisons, 15% how-to/explainers.
 - Distribute briefs evenly across the target_categories.
+- Never plan two articles about the same narrow sub-topic (e.g. "stand mixers") within 5 briefs of each other — interleave categories so no two consecutive briefs share the same product type.
 - target_keyword: the primary commercial query (1-5 words).
 - related_keywords: 3-6 secondary queries.
 - suggested_outline: 4-6 H2 headings, no body text.

@@ -98,6 +98,31 @@ def _save_plan(plan: Dict[str, Any]) -> None:
     )
 
 
+_SLUG_STOPWORDS = {"2026", "best", "vs", "for", "the", "a", "an", "of", "in", "and", "or", "to"}
+
+
+def _slug_tokens(slug: str) -> set:
+    return {t for t in slug.replace("-", " ").split() if t not in _SLUG_STOPWORDS and len(t) > 2}
+
+
+def _recent_published(plan: Dict[str, Any], window: int = 3) -> List[Dict[str, Any]]:
+    published = [b for b in plan["briefs"] if b.get("status") == "published"]
+    published.sort(key=lambda b: b.get("publishedAt", ""), reverse=True)
+    return published[:window]
+
+
+def _too_similar(brief: Dict[str, Any], recent: List[Dict[str, Any]]) -> bool:
+    """Return True if this brief's category or slug tokens overlap with any recent article."""
+    cat = brief.get("target_category_slug", "")
+    tokens = _slug_tokens(brief["slug"])
+    for r in recent:
+        if r.get("target_category_slug", "") == cat:
+            return True
+        if tokens & _slug_tokens(r["slug"]):
+            return True
+    return False
+
+
 def _next_brief(
     plan: Dict[str, Any],
     slug: Optional[str],
@@ -108,19 +133,31 @@ def _next_brief(
             if b["slug"] == slug:
                 return b
         return None
+
     reconciled = False
+    pending: List[Dict[str, Any]] = []
     for b in plan["briefs"]:
         if b.get("status", "pending") != "pending":
             continue
         if b["slug"] in skip_slugs:
-            # File already exists on disk but plan cache is stale — sync it.
             b["status"] = "published"
             reconciled = True
             continue
-        return b
+        pending.append(b)
     if reconciled:
         _save_plan(plan)
-    return None
+
+    if not pending:
+        return None
+
+    recent = _recent_published(plan)
+    # Prefer a brief that isn't topically close to recent articles.
+    for b in pending:
+        if not _too_similar(b, recent):
+            return b
+    # All pending briefs are similar to recent ones — fall back to first pending.
+    print(f"[generator] Warning: all {len(pending)} pending briefs overlap with recent articles; picking first anyway.")
+    return pending[0]
 
 
 def _stub_article(brief: Dict[str, Any], available_slugs: List[str]) -> Dict[str, Any]:
