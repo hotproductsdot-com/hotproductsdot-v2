@@ -150,3 +150,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-15,instagram,All-Clad D3 Stainless Steel 10-Piece Cookware Set,ok,18115220914744882
 2026-05-15,instagram,Anker Soundcore Motion X600 Speaker,ok,18424227583121526
 2026-05-15,tiktok,Head Radical MP Tennis Racket,error,TIKTOK_ACCESS_TOKEN not set
+2026-05-16,instagram,Dremel 4300-9/64 Variable Speed Rotary Tool,ok,18409346128182280
+2026-05-16,instagram,DEWALT DWST08201 TSTAK Wall Control Panel,ok,18029076590815046
+2026-05-16,instagram,Alienware Area-51 Gaming Desktop,ok,17850220857693004
+2026-05-16,instagram,Anker PowerCore 26800mAh Portable Charger,ok,18097531151152556
+2026-05-16,instagram,Kasa Smart Plug HS103P4 4-Pack,quality_blocked,"ai vision: Check 1 fails because four duplicate instances of the same single smart plug unit are displayed separately, which counts as product duplication even though the listing is a 4-pack."
