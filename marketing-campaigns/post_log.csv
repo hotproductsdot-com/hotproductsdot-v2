@@ -190,3 +190,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-23,instagram,Klein Tools 1000V Insulated Electrician's Kit,ok,17998951079949296
 2026-05-23,instagram,JBL PartyBox 310 Bluetooth Party Speaker,ok,18100035527121846
 2026-05-23,tiktok,"Graco Modes Nest Travel System, 3-in1 Modular Carseat Stroller Combo",error,TIKTOK_ACCESS_TOKEN not set
+2026-05-24,instagram,GoveeLife Smart Purifier,ok,17972482011049911
+2026-05-24,instagram,Rogue Ohio Power Bar,ok,18072900353661955
+2026-05-24,instagram,ASUS ProArt Station PD5 Desktop PC,ok,18082595390407868
+2026-05-24,instagram,Klipsch R-41M Bookshelf Speakers,quality_blocked,"ai vision: Two duplicate individual speaker units are shown side by side, which fails the single-product check."
+2026-05-24,instagram,VASAGLE Industrial Ladder Shelf,quality_blocked,"ai vision: Multiple unrelated lifestyle objects (plants, candle, vases, books, storage boxes, reed diffuser, decorative bottles) clutter the scene and are not bundled accessories of the VASAGLE Industrial Ladder Shelf."
