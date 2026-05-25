@@ -195,3 +195,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-24,instagram,ASUS ProArt Station PD5 Desktop PC,ok,18082595390407868
 2026-05-24,instagram,Klipsch R-41M Bookshelf Speakers,quality_blocked,"ai vision: Two duplicate individual speaker units are shown side by side, which fails the single-product check."
 2026-05-24,instagram,VASAGLE Industrial Ladder Shelf,quality_blocked,"ai vision: Multiple unrelated lifestyle objects (plants, candle, vases, books, storage boxes, reed diffuser, decorative bottles) clutter the scene and are not bundled accessories of the VASAGLE Industrial Ladder Shelf."
+2026-05-25,instagram,Jackery Explorer 2000 Portable Power Station,ok,18083653202391810
+2026-05-25,instagram,Rawlings Select Pro Lite Baseball Glove,ok,17870930979674544
+2026-05-25,instagram,Profoto B10 Plus Head,ok,18083807684421493
+2026-05-25,instagram,Sunday Riley Good Genes Glycolic Acid Treatment,quality_blocked,"ai vision: The product title calls this a 'Glycolic Acid Treatment' but the on-bottle label reads 'Lactic Acid Treatment', creating a factual brand/product mismatch."
+2026-05-25,tiktok,"AMOREPACIFIC Treatment Enzyme Peel Cleansing Powder | Korean Gentle Daily Exfoliator with Hyaluronic Acid and Green Tea Enzymes, 1.9 oz.",error,TIKTOK_ACCESS_TOKEN not set
