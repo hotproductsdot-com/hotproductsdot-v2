@@ -200,3 +200,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-25,instagram,Profoto B10 Plus Head,ok,18083807684421493
 2026-05-25,instagram,Sunday Riley Good Genes Glycolic Acid Treatment,quality_blocked,"ai vision: The product title calls this a 'Glycolic Acid Treatment' but the on-bottle label reads 'Lactic Acid Treatment', creating a factual brand/product mismatch."
 2026-05-25,tiktok,"AMOREPACIFIC Treatment Enzyme Peel Cleansing Powder | Korean Gentle Daily Exfoliator with Hyaluronic Acid and Green Tea Enzymes, 1.9 oz.",error,TIKTOK_ACCESS_TOKEN not set
+2026-05-26,instagram,"eos Shea Better Body Lotion Vanilla Cashmere, 24-Hour Moisture Skin Care, Lightweight & Non-Greasy, Natural Shea, Vegan, Vanilla Body Lotion, 16 fl oz",ok,17892407481352003
+2026-05-26,instagram,Native Instruments Komplete Kontrol A49 MIDI Keyboard,ok,18105857578985042
+2026-05-26,instagram,Polk Audio T15 Bookshelf Speakers,quality_blocked,"ai vision: Two individual copies of the same speaker are shown as separate hero images rather than a natural stereo pair product shot, constituting a duplicate product display."
+2026-05-26,instagram,Samsung Galaxy Tab A9+,quality_blocked,"ai vision: Product title is 'Samsung Galaxy Tab A9+' but the banner reads 'Samsung Galaxy Tab A9', which is a different model and a title mismatch hard reject."
+2026-05-26,tiktok,HyperX Quadcast S RGB Microphone,error,TIKTOK_ACCESS_TOKEN not set
