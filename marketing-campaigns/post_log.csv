@@ -210,3 +210,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-27,instagram,Outward Hound Fun Feeder Slow Feed Bowl,quality_blocked,"ai vision: A white rectangular background patch remains behind the product cutout, indicating an incomplete background removal artifact."
 2026-05-27,instagram,Nanit Pro Smart Baby Monitor,ok,18126349048534604
 2026-05-27,tiktok,Lowepro ProTactic 450 AW II Camera Bag,error,TIKTOK_ACCESS_TOKEN not set
+2026-05-28,instagram,Atomic Habits: An Easy & Proven Way to Build Good Habits,ok,18311009170263529
+2026-05-28,instagram,PetFusion Ultimate Cat Scratcher Lounge,quality_blocked,ai vision: Two cats appear in the image as unrelated living subjects that constitute scene clutter not associated with the named product.
+2026-05-28,instagram,ASUS ROG Swift PG32UCDM OLED Monitor,ok,18083376002629845
+2026-05-28,instagram,Sony SRS-XB43 Wireless Speaker,ok,17893430760471857
+2026-05-28,instagram,Cuisinart Chef's Knife Set,quality_blocked,"ai vision: Product branding on the knives and packaging reads 'PAUDIN', directly contradicting the listed brand name 'Cuisinart'."
