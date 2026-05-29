@@ -215,3 +215,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-28,instagram,ASUS ROG Swift PG32UCDM OLED Monitor,ok,18083376002629845
 2026-05-28,instagram,Sony SRS-XB43 Wireless Speaker,ok,17893430760471857
 2026-05-28,instagram,Cuisinart Chef's Knife Set,quality_blocked,"ai vision: Product branding on the knives and packaging reads 'PAUDIN', directly contradicting the listed brand name 'Cuisinart'."
+2026-05-29,instagram,Meta Quest 3 Mixed Reality Headset,ok,18112939255883100
+2026-05-29,instagram,Amazon Echo Clock 2nd Gen,quality_blocked,"ai vision: The product title 'Amazon Echo Clock 2nd Gen' does not match the device shown, which is the Amazon Echo Spot 2nd Gen, creating a brand/product identity mismatch."
+2026-05-29,instagram,Vego Garden 17-Inch Tall 9 in 1 Modular Metal Raised Bed,quality_blocked,"ai vision: The product image contains staged plants and vegetables (tomatoes, peppers, carrots, herbs, etc.) that are unrelated to the named Vego Garden Metal Raised Bed product, constituting scene clutter."
+2026-05-29,instagram,Spalding NBA Outdoor Basketball Size 7,ok,18321852649287401
+2026-05-29,instagram,Urban Decay All Nighter Long-Lasting Makeup Setting Spray,quality_blocked,"ai vision: The product displayed is the Urban Decay All Nighter Face Primer, not the All Nighter Long-Lasting Makeup Setting Spray named in the title, creating a product mismatch."
