@@ -220,3 +220,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-29,instagram,Vego Garden 17-Inch Tall 9 in 1 Modular Metal Raised Bed,quality_blocked,"ai vision: The product image contains staged plants and vegetables (tomatoes, peppers, carrots, herbs, etc.) that are unrelated to the named Vego Garden Metal Raised Bed product, constituting scene clutter."
 2026-05-29,instagram,Spalding NBA Outdoor Basketball Size 7,ok,18321852649287401
 2026-05-29,instagram,Urban Decay All Nighter Long-Lasting Makeup Setting Spray,quality_blocked,"ai vision: The product displayed is the Urban Decay All Nighter Face Primer, not the All Nighter Long-Lasting Makeup Setting Spray named in the title, creating a product mismatch."
+2026-05-30,instagram,Moroccanoil Treatment Original,ok,18313353223274831
+2026-05-30,instagram,EGO Power+ LB6002 600 CFM Blower,ok,18106020238785301
+2026-05-30,instagram,DOSS SoundBox Touch Wireless Speaker,ok,17942218524227095
+2026-05-30,instagram,Head Radical MP Tennis Racket,ok,18228487558315181
+2026-05-30,instagram,HP Dragonfly Pro Chromebook,quality_blocked,"ai vision: The product title claims 'HP Dragonfly Pro Chromebook' but the laptop depicted is visually inconsistent with that model, constituting a product identity mismatch."
