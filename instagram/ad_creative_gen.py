@@ -45,9 +45,10 @@ from instagram.banner_compose import (
 logger = logging.getLogger(__name__)
 
 # Gemini image generation model. The original "nano-banana-pro-preview" alias
-# was a tutorial placeholder that stopped working ~2026-05-26. The stable
-# production model for image output is gemini-2.0-flash-preview-image-generation.
-GEMINI_MODEL = os.environ.get("GEMINI_AD_MODEL", "gemini-2.0-flash-preview-image-generation")
+# was a tutorial placeholder that stopped working ~2026-05-26. Use the stable
+# gemini-2.5-flash-image model (confirmed live from Google AI docs 2026-05-31).
+# Override via GEMINI_AD_MODEL env var if Google releases a newer model.
+GEMINI_MODEL = os.environ.get("GEMINI_AD_MODEL", "gemini-2.5-flash-image")
 GEMINI_ENDPOINT_TEMPLATE = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 )
