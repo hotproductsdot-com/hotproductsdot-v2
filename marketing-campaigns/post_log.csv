@@ -230,3 +230,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-31,instagram,Bestier 95 inch L-Shaped Gaming Desk,quality_blocked,ai vision: Unrelated decorative objects (Christmas tree and snow globe) constitute scene clutter unrelated to the gaming desk product.
 2026-05-31,instagram,Pat McGrath Labs Skin Fetish Foundation,quality_blocked,"ai vision: A ghost rectangular artifact is visible to the left of the product bottle, indicating an incomplete or erroneous image cutout."
 2026-05-31,tiktok,Anker 313 Car Charger 24W Dual USB,error,TIKTOK_ACCESS_TOKEN not set
+2026-05-31,instagram,Anker 313 Car Charger 24W Dual USB,ok,17975200568882172
+2026-05-31,instagram,Ninja BN701 Professional Bender,quality_blocked,ai vision: Product title contains a typo — 'Ninja BN701 Professional Bender' should read 'Blender'.
+2026-05-31,instagram,Apple AirTag 4-Pack,ok,18393094183095505
+2026-05-31,instagram,Sauder Barrister Lane Bookcase,ok,17916225639186140
+2026-05-31,instagram,Amazon Smart Plug,quality_blocked,"ai vision: Four identical units of the product are displayed, violating the single-product rule."
