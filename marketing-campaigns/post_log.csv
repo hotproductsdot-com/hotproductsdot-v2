@@ -225,3 +225,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-05-30,instagram,DOSS SoundBox Touch Wireless Speaker,ok,17942218524227095
 2026-05-30,instagram,Head Radical MP Tennis Racket,ok,18228487558315181
 2026-05-30,instagram,HP Dragonfly Pro Chromebook,quality_blocked,"ai vision: The product title claims 'HP Dragonfly Pro Chromebook' but the laptop depicted is visually inconsistent with that model, constituting a product identity mismatch."
+2026-05-31,instagram,Orbital by Samantha Harvey,ok,18094875742986705
+2026-05-31,instagram,Corona ClassicCUT Forged Bypass Pruner,quality_blocked,source image: source aspect 0.26 composes to a strip
+2026-05-31,instagram,Bestier 95 inch L-Shaped Gaming Desk,quality_blocked,ai vision: Unrelated decorative objects (Christmas tree and snow globe) constitute scene clutter unrelated to the gaming desk product.
+2026-05-31,instagram,Pat McGrath Labs Skin Fetish Foundation,quality_blocked,"ai vision: A ghost rectangular artifact is visible to the left of the product bottle, indicating an incomplete or erroneous image cutout."
+2026-05-31,tiktok,Anker 313 Car Charger 24W Dual USB,error,TIKTOK_ACCESS_TOKEN not set
