@@ -245,3 +245,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-02,instagram,Amazon Fire 7 2022 Tablet,ok,18539788756075406
 2026-06-02,instagram,Augustinus Bader The Rich Cream,ok,18593100835014872
 2026-06-02,tiktok,MSR PocketRocket 2 Stove,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-03,instagram,"Clean Skin Club Clean Towels XL®, 100% USDA Biobased Face Towel, Disposable Face Towelette, Eczema Association Accepted, Makeup Remover Dry Wipes, Ultra Soft, 1 Pack, 50 Ct",ok,17965020722928926
+2026-06-03,instagram,Nordic Naturals Ultimate Omega Fish Oil,quality_blocked,"ai vision: The product appears as two distinct standalone units (bottle + box), which counts as duplicate instances of the same named product."
+2026-06-03,instagram,Greenworks 40V 4-Piece Combo Kit,ok,17862649149634058
+2026-06-03,instagram,Infantino Flip 4-in-1 Convertible Baby Carrier,ok,18155416684481377
+2026-06-03,instagram,Samsung Galaxy Tab S10+,quality_blocked,"ai vision: Banner headline displays 'Samsung Galaxy Tab S10' but the correct product title is 'Samsung Galaxy Tab S10+', omitting the '+' model designation."
