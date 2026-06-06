@@ -109,8 +109,10 @@ if (isNoOp) {
 const prebuildStatus = run("node", ["prebuild.js"]);
 if (prebuildStatus !== 0) process.exit(prebuildStatus);
 
-const nextArgs = mode === "turbopack" ? ["build", "--turbopack"] : ["build", "--webpack"];
-const buildStatus = run("next", nextArgs);
+// Next.js 16 doesn't support --webpack or --turbopack flags.
+// Bundler selection is controlled via next.config.ts (bundler option).
+// Just run next build without bundler flags.
+const buildStatus = run("next", ["build"]);
 if (buildStatus !== 0) process.exit(buildStatus);
 
 writeState(inputHash);
