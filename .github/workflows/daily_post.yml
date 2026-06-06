@@ -251,6 +251,23 @@ jobs:
         working-directory: site
         run: npm run build
 
+      - name: Verify SSH secrets are configured
+        run: |
+          [ -z "$HOSTINGER_HOST" ] && echo "::error::HOSTINGER_HOST secret not set" || echo "✓ HOSTINGER_HOST configured"
+          [ -z "$HOSTINGER_USER" ] && echo "::error::HOSTINGER_USER secret not set" || echo "✓ HOSTINGER_USER configured"
+          [ -z "$HOSTINGER_PORT" ] && echo "::error::HOSTINGER_PORT secret not set" || echo "✓ HOSTINGER_PORT configured"
+          [ -z "$HOSTINGER_SSH_KEY_B64" ] && echo "::error::HOSTINGER_SSH_KEY_B64 secret not set" || echo "✓ HOSTINGER_SSH_KEY_B64 configured (length: ${#HOSTINGER_SSH_KEY_B64})"
+          [ -z "$HOSTINGER_KNOWN_HOSTS" ] && echo "::error::HOSTINGER_KNOWN_HOSTS secret not set" || echo "✓ HOSTINGER_KNOWN_HOSTS configured"
+          if [ -z "$HOSTINGER_HOST" ] || [ -z "$HOSTINGER_USER" ] || [ -z "$HOSTINGER_PORT" ] || [ -z "$HOSTINGER_SSH_KEY_B64" ] || [ -z "$HOSTINGER_KNOWN_HOSTS" ]; then
+            exit 1
+          fi
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+
       - name: Set up SSH for Hostinger
         env:
           HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
