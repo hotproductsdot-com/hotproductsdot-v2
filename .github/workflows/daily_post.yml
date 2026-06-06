@@ -199,7 +199,7 @@ jobs:
             echo "TikTok: dry-run mode — skipping"
             exit 0
           fi
-          python post_daily.py --platform tiktok --ad-creative $DRY_RUN_FLAG \
+          python post_daily.py --platform tiktok --ad-creative \
             && echo "TikTok: posted OK" \
             || echo "::warning::TikTok post failed (non-fatal — IG deploy continues)"
 
