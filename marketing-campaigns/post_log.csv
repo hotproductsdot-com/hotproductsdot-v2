@@ -266,3 +266,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-06,instagram,Weber Spirit II E-310 Gas Grill,ok,18108847981940869
 2026-06-06,tiktok,Hbada Ergonomic Reclining Office Chair,error,TIKTOK_ACCESS_TOKEN not set
 2026-06-06,tiktok,Hbada Ergonomic Reclining Office Chair,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-07,instagram,"Graco Modes Nest Travel System, 3-in1 Modular Carseat Stroller Combo",ok,18068813969380921
+2026-06-07,instagram,Ninja Crispi 4-in-1 Glass Air Fryer | 450°F,quality_blocked,"ai vision: Check 2 fails because styled food props (broccoli, cooked chicken pieces displayed in and around the glass containers) are unrelated lifestyle objects not bundled with the named product."
+2026-06-07,instagram,Fiskars 36-Inch Long-Handled Bypass Lopper,quality_blocked,"ai vision: The lopper is displayed upside-down with the cutting head at the bottom and handle pointing up, which misrepresents the product's intended orientation and appearance."
+2026-06-07,instagram,BLACK+DECKER 4V Max Screwdriver BCF611CK,ok,17996454518786679
+2026-06-07,tiktok,Lancôme La Vie Est Belle Eau de Parfum - Long Lasting Fragrance with Notes of Iris,error,TIKTOK_ACCESS_TOKEN not set
