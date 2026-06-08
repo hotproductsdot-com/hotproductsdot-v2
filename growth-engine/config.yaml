@@ -51,6 +51,13 @@ target_categories:
       - "best laptop 2026"
       - "macbook air vs dell xps"
       - "best laptop for students"
+  - slug: office-supplies
+    name: Office Supplies
+    seed_keywords:
+      - "amazon office supplies best sellers"
+      - "best office supplies 2026"
+      - "amazon best sellers office products"
+      - "best desk accessories for home office"
 
 # Article generation settings
 article:
@@ -66,10 +73,10 @@ article:
 
 # Daily orchestrator schedule
 schedule:
-  articles_per_day: 1
+  articles_per_day: 2
   refresh_plan_after_days: 30
-  visibility_queries_per_day: 5
-  backlink_targets_per_day: 2
+  visibility_queries_per_day: 10
+  backlink_targets_per_day: 4
   auto_deploy: false   # set true to rsync after each commit (uses SSH keys)
 
 # AI visibility tracking — which LLMs to query
@@ -115,7 +122,7 @@ deals:
   min_discount_pct: 20          # ignore deals below this threshold
   max_deals_per_category: 5     # cap per category per run
   request_delay_sec: 3.0        # polite delay between Amazon requests
-  post_to_facebook: false       # set true to auto-post top 3 deals each run
+  post_to_facebook: true       # set true to auto-post top 3 deals each run
 
 # Where artifacts get written. Paths relative to growth-engine/.
 paths:
