@@ -271,3 +271,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-07,instagram,Fiskars 36-Inch Long-Handled Bypass Lopper,quality_blocked,"ai vision: The lopper is displayed upside-down with the cutting head at the bottom and handle pointing up, which misrepresents the product's intended orientation and appearance."
 2026-06-07,instagram,BLACK+DECKER 4V Max Screwdriver BCF611CK,ok,17996454518786679
 2026-06-07,tiktok,Lancôme La Vie Est Belle Eau de Parfum - Long Lasting Fragrance with Notes of Iris,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-08,instagram,Tamron 28-75mm f/2.8 Di III VXD G2 Lens,ok,18441923647190674
+2026-06-08,instagram,COSRX Advanced Snail 96 Mucin Power Essence,ok,17972843235102105
+2026-06-08,instagram,Tribit StormBox Blast Portable Speaker,ok,18135039418565196
+2026-06-08,instagram,HP Victus 16 Gaming Laptop,ok,17860345353639629
+2026-06-08,instagram,TP-Link Tapo P115 Mini Smart Plug 4-Pack,quality_blocked,"ai vision: Check 1 fails because the banner displays 4 separate individual plug units as distinct copies rather than a single hero product shot, even though this is a 4-pack listing."
