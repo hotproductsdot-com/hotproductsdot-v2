@@ -281,3 +281,8 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-09,instagram,Chefman Air Fryer 8 Qt | TurboFry® 4-in-1 with 450°F Hi-Fry Option for Crispier Results,ok,18075235349657382
 2026-06-09,instagram,Aroma Housewares 20-Cup Digital Rice Cooker,ok,17884559937591317
 2026-06-09,tiktok,HP Pavilion Gaming Desktop TG01,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-10,instagram,HyperX Quadcast S RGB Microphone,ok,18000654698949520
+2026-06-10,instagram,Petzl Actik Core Headlamp,ok,18094047941200741
+2026-06-10,instagram,It Cosmetics CC+ Cream SPF 50+,quality_blocked,"ai vision: The banner headline reads 'SPF 50' while the product itself displays 'SPF 50+', creating a specification mismatch that must be corrected."
+2026-06-10,instagram,Travelon Anti-Theft Classic Backpack,ok,18114601999842645
+2026-06-10,tiktok,Graco Pack 'n Play On The Go Playard,error,TIKTOK_ACCESS_TOKEN not set
