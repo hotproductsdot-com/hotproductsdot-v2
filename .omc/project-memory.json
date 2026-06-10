@@ -344,15 +344,15 @@
   },
   "hotPaths": [
     {
-      "path": "marketing-campaigns/post_log.csv",
-      "accessCount": 1,
-      "lastAccessed": 1781123385360,
+      "path": "post_daily.py",
+      "accessCount": 2,
+      "lastAccessed": 1781123895249,
       "type": "file"
     },
     {
-      "path": "post_daily.py",
+      "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
-      "lastAccessed": 1781123389766,
+      "lastAccessed": 1781123385360,
       "type": "file"
     }
   ],
