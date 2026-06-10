@@ -374,6 +374,12 @@
       "type": "file"
     },
     {
+      "path": "instagram/ad_creative_gen.py",
+      "accessCount": 3,
+      "lastAccessed": 1781134402233,
+      "type": "file"
+    },
+    {
       "path": ".env",
       "accessCount": 2,
       "lastAccessed": 1781129765236,
@@ -413,6 +419,12 @@
       "path": "oxylabs-amazon-product.sh",
       "accessCount": 1,
       "lastAccessed": 1781132844819,
+      "type": "file"
+    },
+    {
+      "path": "instagram/banner_compose.py",
+      "accessCount": 1,
+      "lastAccessed": 1781134378311,
       "type": "file"
     }
   ],
