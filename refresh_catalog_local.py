@@ -129,10 +129,9 @@ def _backup_csv() -> Path:
 
 
 def _append_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
-    new_file = not path.exists()
     with path.open("a", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
-        if new_file:
+        if f.tell() == 0:  # atomic with the open — no exists() TOCTOU race
             writer.writerow(header)
         writer.writerows(rows)
 
@@ -178,14 +177,15 @@ def main() -> int:
 
     done = 0
 
-    def job(idx: int, asin: str) -> tuple[int, ProductData]:
+    # Workers never touch `rows` — the product name is captured at submit
+    # time and all catalog writes happen after the pool is fully drained.
+    def job(idx: int, asin: str, name: str) -> tuple[int, ProductData]:
         nonlocal done
         time.sleep(random.uniform(args.delay * 0.8, args.delay * 1.4))
         product = fetch_product(asin, base_delay=max(args.delay, 1.0))
         with _print_lock:
             done += 1
             n = done
-        name = rows[idx].get("Product Name", "")[:48]
         if product.page_status == "ok":
             _log(f"  [{n:>4}/{total}] {asin}  ${product.price!s:<9} ★{product.rating!s:<4} "
                  f"({product.reviews_count!s:>7} rev)  {name}")
@@ -195,12 +195,16 @@ def main() -> int:
 
     results: dict[int, ProductData] = {}
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = [pool.submit(job, idx, asin) for idx, asin in work]
+        futures = [
+            pool.submit(job, idx, asin, rows[idx].get("Product Name", "")[:48])
+            for idx, asin in work
+        ]
         for fut in as_completed(futures):
             idx, product = fut.result()
             results[idx] = product
 
-    today = f"{date.today().month}/{date.today().day}/{date.today().year}"
+    _now = date.today()
+    today = f"{_now.month}/{_now.day}/{_now.year}"
     review_rows: list[list[str]] = []
     broken_rows: list[list[str]] = []
     updated = suspicious = unavailable = failed = unchanged = 0
@@ -224,8 +228,14 @@ def main() -> int:
 
         decision = decide_update(row, live)
         if decision.suspicious_price:
+            # Unverified price: send to the review file and leave the row
+            # completely untouched — stamping Refreshed Date here would mark
+            # a stale price as freshly verified.
             suspicious += 1
             _log(f"  SUSPICIOUS price skipped {live.asin}: CSV={row.get('Price Range')} live={live.price}")
+            review_rows.append([live.asin, name, "Price (SUSPICIOUS >25% drift)",
+                                str(row.get("Price Range", "")), f"{live.price:.2f}"])
+            continue
         for fname, old, new in decision.diffs:
             review_rows.append([live.asin, name, fname, old, new])
         if decision.fields:
@@ -255,7 +265,8 @@ def main() -> int:
         print(f"  Broken/unavailable logged: {BROKEN_PATH.name} ({len(broken_rows)} rows)")
 
     tmp = CSV_PATH.with_suffix(".csv.tmp")
-    with tmp.open("w", encoding="utf-8", newline="") as f:
+    # utf-8-sig preserves the BOM the catalog is read with (Excel-friendly).
+    with tmp.open("w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)

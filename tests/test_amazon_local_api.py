@@ -257,6 +257,16 @@ class TestParseProduct:
         sparse = parse_product(full_page(TITLE_HTML), asin="B0TEST00AA")
         assert sparse.is_complete() is False
 
+    def test_twister_json_prefers_new_offer_over_used(self):
+        used_first = full_page(TITLE_HTML, """
+<div id="twister-plus-buying-options-price-data" class="aok-hidden">
+{"desktop_buybox_group_1":[{"displayPrice":"$99.00","priceAmount":99.00,"buyingOptionType":"USED"}],
+ "desktop_buybox_group_2":[{"displayPrice":"$150.00","priceAmount":150.00,"buyingOptionType":"NEW"}]}
+</div>
+""")
+        p = parse_product(used_first, asin="B0TEST00AA")
+        assert p.price == 150.0
+
     def test_no_buybox_offer_is_definitive(self):
         page = full_page(TITLE_HTML, NO_OFFER_HTML, RATING_HTML, REVIEWS_ARIA_HTML)
         p = parse_product(page, asin="B0TEST00AA")

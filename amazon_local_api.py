@@ -175,12 +175,20 @@ def _price_from_twister_json(body: str) -> float | None:
                     data = json.loads(html_lib.unescape(window[start:i + 1]))
                 except (ValueError, TypeError):
                     return None
+                fallback: float | None = None
                 for group in data.values():
-                    if isinstance(group, list) and group:
-                        amount = group[0].get("priceAmount")
-                        if isinstance(amount, (int, float)) and amount > 0:
-                            return float(amount)
-                return None
+                    if not (isinstance(group, list) and group):
+                        continue
+                    amount = group[0].get("priceAmount")
+                    if not (isinstance(amount, (int, float)) and amount > 0):
+                        continue
+                    # Prefer the NEW-condition offer; a used/renewed offer can
+                    # appear first when the new buy box is empty.
+                    if group[0].get("buyingOptionType", "NEW") == "NEW":
+                        return float(amount)
+                    if fallback is None:
+                        fallback = float(amount)
+                return fallback
     return None
 
 
@@ -215,6 +223,8 @@ def _price_from_parts(soup: BeautifulSoup) -> float | None:
     span is empty on many current Amazon pages)."""
     for sel in _PRICE_PARTS_CONTAINERS:
         for container in soup.select(sel):
+            if _in_trap_container(container):
+                continue
             whole = container.select_one(".a-price-whole")
             if not whole:
                 continue
@@ -365,6 +375,12 @@ def _run_engine(name: str, url: str, timeout: int) -> tuple[str, int]:
     raise ValueError(f"unknown engine: {name}")
 
 
+def _backoff(base_delay: float, attempt: int) -> float:
+    """Jittered linear backoff, capped so a fully-blocked ASIN can't stall
+    a batch for minutes."""
+    return min(random.uniform(base_delay, base_delay * 2) * attempt, 8.0)
+
+
 def fetch_product(
     asin: str,
     *,
@@ -389,7 +405,7 @@ def fetch_product(
                 page_status="error", error=f"{engine}: {str(exc)[:120]}",
                 engine=engine, attempts=attempt,
             )
-            time.sleep(random.uniform(base_delay, base_delay * 2) * attempt)
+            time.sleep(_backoff(base_delay, attempt))
             continue
 
         verdict = classify_page(body, status)
@@ -411,7 +427,7 @@ def fetch_product(
                 page_status=verdict, engine=engine, attempts=attempt,
                 error=f"{engine}: {verdict} (HTTP {status})",
             )
-        time.sleep(random.uniform(base_delay, base_delay * 2) * attempt)
+        time.sleep(_backoff(base_delay, attempt))
     return last
 
 
