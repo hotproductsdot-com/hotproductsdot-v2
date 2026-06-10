@@ -178,6 +178,11 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 
 | Command | Description |
 |---------|-------------|
+| `python refresh_catalog_local.py` | **Recommended.** Pull live price / rating / review count / availability for every product via the **local scraper** (`amazon_local_api.py` — free, no API key) and merge into `products/top-1000.csv`. Same backup / diff / merge behavior as the Oxylabs script |
+| `python refresh_catalog_local.py --limit 50` | Only process the first 50 products (quick sample) |
+| `python refresh_catalog_local.py --offset 500 --limit 100` | Resume / process a slice |
+| `python refresh_catalog_local.py --dry-run` | Preview changes without writing any file |
+| `python amazon_local_api.py B0DW1X5YCQ --pretty` | Scrape one or more ASINs and print structured JSON (title, price, rating, reviews, availability, BSR) — local equivalent of the Oxylabs `amazon_product` source |
 | `python refresh_prices.py` | Fetch live prices for all products via Scrapling (free, no API key required) and write changes back to `top-1000.csv` |
 | `python refresh_prices.py --workers 4` | Concurrent fetch workers (default: 4) |
 | `python refresh_prices.py --delay 3.0` | Per-worker request delay in seconds (default: 2.0) |
@@ -189,6 +194,8 @@ curl 'https://realtime.oxylabs.io/v1/queries' \
 | `./oxylabs-amazon-product.sh --check-links` | Audit every Amazon link for dead (404) / removed / unavailable listings. Writes offenders to `products/broken-links.csv`; skips the price/rating/review merge |
 | `./oxylabs-amazon-product.sh --check-links --limit 100` | Audit only the first 100 links |
 
+> **`refresh_catalog_local.py` (local scraper):** the free replacement for the Oxylabs workflow. `amazon_local_api.py` fetches each product page with a ladder of engines (curl_cffi Chrome TLS impersonation → curl_cffi Safari → Scrapling), detects CAPTCHAs/soft-blocks and rotates engines with backoff, and parses price from the embedded buy-box JSON first (DOM selectors as fallback — note: Amazon's buy-box `.a-offscreen` span is often **empty** now, so selector-only scrapers miss prices). Every ASIN ends in a definitive verdict: data, `listing_removed`, or `unavailable`. Differences land in `products/products4review.csv`, dead listings in `products/broken-links.csv`, and a dated CSV backup is written before any merge — identical surfaces to the Oxylabs script. Exit code is non-zero if any product failed to reach a verdict. Unit tests: `venv/bin/python -m pytest tests/`.
+>
 > **`refresh_prices.py` vs Oxylabs:** `refresh_prices.py` scrapes Amazon directly via Scrapling (TLS fingerprint impersonation, no API cost). It only updates `Price Range` and `Refreshed Date` — not rating or review count. Use it for free daily price checks. Use Oxylabs when you need structured rating/review data or want to avoid any scraping risk.
 >
 > Console output shows every row: `ok` (unchanged, within 2%), `→` (updated), `BLOCKED` (CAPTCHA), `no price`, or `ERR`. Updated rows also write the previous value to `Old Price`.

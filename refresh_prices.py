@@ -65,7 +65,10 @@ def fetch_live_price(asin: str, delay: float) -> str:
     url = f"https://www.amazon.com/dp/{asin}"
     time.sleep(random.uniform(delay * 0.8, delay * 1.2))
     try:
-        resp = FetcherSession().get(url, timeout=25, retries=1)
+        # FetcherSession is a context manager in scrapling 0.4.x — calling
+        # .get() on the unentered object raises AttributeError.
+        with FetcherSession() as session:
+            resp = session.get(url, timeout=25, retries=1)
     except Exception as e:
         return f"ERR:{e}"
 

@@ -344,9 +344,33 @@
   },
   "hotPaths": [
     {
+      "path": "amazon_local_api.py",
+      "accessCount": 10,
+      "lastAccessed": 1781133834803,
+      "type": "file"
+    },
+    {
       "path": "post_daily.py",
       "accessCount": 6,
       "lastAccessed": 1781129582342,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 4,
+      "lastAccessed": 1781133387885,
+      "type": "file"
+    },
+    {
+      "path": "refresh_catalog_local.py",
+      "accessCount": 4,
+      "lastAccessed": 1781133835179,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_amazon_local_api.py",
+      "accessCount": 4,
+      "lastAccessed": 1781133839438,
       "type": "file"
     },
     {
@@ -356,15 +380,39 @@
       "type": "file"
     },
     {
+      "path": "refresh_prices.py",
+      "accessCount": 2,
+      "lastAccessed": 1781133502665,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_refresh_catalog_local.py",
+      "accessCount": 2,
+      "lastAccessed": 1781133839734,
+      "type": "file"
+    },
+    {
       "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
       "lastAccessed": 1781123385360,
       "type": "file"
     },
     {
-      "path": "README.md",
+      "path": "oxylabs_refresh.py",
       "accessCount": 1,
-      "lastAccessed": 1781125000653,
+      "lastAccessed": 1781132843607,
+      "type": "file"
+    },
+    {
+      "path": "_scrapling_price_test.py",
+      "accessCount": 1,
+      "lastAccessed": 1781132844519,
+      "type": "file"
+    },
+    {
+      "path": "oxylabs-amazon-product.sh",
+      "accessCount": 1,
+      "lastAccessed": 1781132844819,
       "type": "file"
     }
   ],

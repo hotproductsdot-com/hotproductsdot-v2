@@ -1,88 +1,286 @@
-ASIN,Product Name,Field,CSV Value,Live Value
-"B0GR6BVYS5","Apple 2026 MacBook Neo 13-inch Laptop with A18 Pro chip","Review Count","220","615"
-"B0DW1X5YCQ","ASUS ROG Strix G16 Gaming Laptop","Price","2551.79","2570"
-"B0DW1X5YCQ","ASUS ROG Strix G16 Gaming Laptop","Review Count","152","172"
-"B0DYLB2QRF","Razer Blade 14 Gaming Laptop","Price","2299.99","2349.99"
-"B0DYLB2QRF","Razer Blade 14 Gaming Laptop","Rating","4.3","4.4"
-"B0DYLB2QRF","Razer Blade 14 Gaming Laptop","Review Count","43","44"
-"B0DGLSB5NC","Samsung Galaxy Book5 Pro 360","Price","1478","1849"
-"B0DGLSB5NC","Samsung Galaxy Book5 Pro 360","Review Count","315","165"
-"B0CXKXNNPX","Microsoft Surface Pro 11th Edition","Price","1099.99","1325.79"
-"B0CXKXNNPX","Microsoft Surface Pro 11th Edition","Rating","4.3","4.4"
-"B0CXKXNNPX","Microsoft Surface Pro 11th Edition","Review Count","159","174"
-"B0FCPP5K2R","ASUS ROG Zephyrus G14 Gaming","Price","2559.99","3155"
-"B0FCPP5K2R","ASUS ROG Zephyrus G14 Gaming","Rating","5","4.6"
-"B0FCPP5K2R","ASUS ROG Zephyrus G14 Gaming","Review Count","3","4"
-"B0D2RYV5ZG","Lenovo ThinkPad X1 Carbon Gen 12","Price","1499.99","1699.99"
-"B0D2RYV5ZG","Lenovo ThinkPad X1 Carbon Gen 12","Rating","4.5","4.6"
-"B0D2RYV5ZG","Lenovo ThinkPad X1 Carbon Gen 12","Review Count","12","15"
-"B0DGJBQSJY","Apple AirPods Max","Price","449.99","4.6"
-"B0DGJBQSJY","Apple AirPods Max","Rating","4.6","16685"
-"B0CBLLJTTN","Beats Studio3 Wireless","Price","91.22","87.52"
-"B0CBLLJTTN","Beats Studio3 Wireless","Review Count","2390","2508"
-"B0CHWRXH8B","Apple AirPods Pro 2nd Gen","Price","258.3","263.86"
-"B0CHWRXH8B","Apple AirPods Pro 2nd Gen","Review Count","28624","28802"
-"B09XS7JWHH","Sony WH-1000XM5 Headphones","Price","298","278"
-"B09XS7JWHH","Sony WH-1000XM5 Headphones","Review Count","19172","19622"
-"B0GBWYX9VW","Bose QuietComfort Ultra Headphones","Review Count","18","23"
-"B0CVL1K7DX","Bose SoundLink Max Speaker","Rating","4.6","4.5"
-"B0CVL1K7DX","Bose SoundLink Max Speaker","Review Count","2116","2282"
-"B0F1H9CTPQ","JBL Boombox 4","Rating","4.7","4.8"
-"B0F1H9CTPQ","JBL Boombox 4","Review Count","407","604"
-"B0F9S5NFJT","Sony ULT Field 7 Speaker","Price","348","4.8"
-"B0F9S5NFJT","Sony ULT Field 7 Speaker","Rating","4.8","10"
-"B0FDRBB72D","Samsung HW-Q930D Soundbar","Price","1149","1278.98"
-"B0FDRBB72D","Samsung HW-Q930D Soundbar","Rating","1","3.1"
-"B0FDRBB72D","Samsung HW-Q930D Soundbar","Review Count","1","2"
-"B0F57R276D","Samsung HW-Q800D Soundbar","Price","747.99","797.99"
-"B09GPYL7BJ","Sonos Beam Gen 2","Price","499","369"
-"B09GPYL7BJ","Sonos Beam Gen 2","Review Count","1788","1887"
-"B0CZSGWLD5","Alienware 27 AW2725DM Monitor","Price","649.99","619.51"
-"B0CZSGWLD5","Alienware 27 AW2725DM Monitor","Rating","4.2","4.3"
-"B0CZSGWLD5","Alienware 27 AW2725DM Monitor","Review Count","345","393"
-"B0DD2ZB3DZ","Dell SE2726HG Monitor","Price","799.49","994.99"
-"B0DD2ZB3DZ","Dell SE2726HG Monitor","Rating","4","4.1"
-"B0DD2ZB3DZ","Dell SE2726HG Monitor","Review Count","89","105"
-"B0DYG9DKX8","SANSUI 27-inch 240Hz Monitor","Price","1696.99","1899.99"
-"B0DYG9DKX8","SANSUI 27-inch 240Hz Monitor","Rating","4.2","4.4"
-"B0DYG9DKX8","SANSUI 27-inch 240Hz Monitor","Review Count","364","498"
-"B08K2NT2G7","ASUS PA247CV Professional Monitor","Price","219","193.49"
-"B08K2NT2G7","ASUS PA247CV Professional Monitor","Review Count","566","577"
-"B0DVMWCLR9","Gaming PC - RTX 5090 System","Price","6499.99","6999.99"
-"B0FC92QYNT","Gaming PC - RTX 5060 System","Price","2029.99","1999.99"
-"B0FDMDJQSW","Gaming PC - RTX 5070 Ti System","Price","1379.99","1439.99"
-"B0FDMDJQSW","Gaming PC - RTX 5070 Ti System","Rating","4.6","4.7"
-"B0FDMDJQSW","Gaming PC - RTX 5070 Ti System","Review Count","3","5"
-"B0CW25XR5R","Razer Viper V3 Pro Mouse","Price","119.99","129"
-"B0CW25XR5R","Razer Viper V3 Pro Mouse","Rating","4.6","4.7"
-"B0CW25XR5R","Razer Viper V3 Pro Mouse","Review Count","2018","2223"
-"B07GBZ4Q68","Logitech G502 HERO Mouse","Price","34.99","31.95"
-"B07GBZ4Q68","Logitech G502 HERO Mouse","Review Count","57699","58142"
-"B0BYJ7N7LX","Logitech G Pro X Mouse","Price","29.89","26.89"
-"B0BYJ7N7LX","Logitech G Pro X Mouse","Rating","4.3","4.4"
-"B0BYJ7N7LX","Logitech G Pro X Mouse","Review Count","1219","1264"
-"B0F6BDV5Q8","SteelSeries Rival 650","Review Count","174","207"
-"B0CSP61VR4","Razer DeathAdder V3 Mouse","Review Count","1606","1819"
-"B0FH5XX7GP","SteelSeries Arctis Nova Pro Headset","Price","139.99","149"
-"B0FH5XX7GP","SteelSeries Arctis Nova Pro Headset","Review Count","447","533"
-"B0CYSWTLZY","HyperX Cloud III Headset","Price","379.99","329.99"
-"B0CYSWTLZY","HyperX Cloud III Headset","Rating","3.7","3.8"
-"B0CYSWTLZY","HyperX Cloud III Headset","Review Count","242","277"
-"B0DWD3GVJL","Razer BlackShark V2 X Headset","Price","228.99","230.52"
-"B0DWD3GVJL","Razer BlackShark V2 X Headset","Review Count","226","281"
-"B0GC529BMZ","Logitech G435 Wireless Headset","Price","33.99","32.29"
-"B0GC529BMZ","Logitech G435 Wireless Headset","Review Count","191","295"
-"B0D9BB41X3","HOROW Black Smart Toilet with Pump and Bidet Built In","Rating","4.6","4.2"
-"B0D9BB41X3","HOROW Black Smart Toilet with Pump and Bidet Built In","Review Count","189","53"
-"B0DFWF728F","HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization","Rating","4.6","4.5"
-"B0DFWF728F","HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization","Review Count","189","219"
-"B0DRXJB8Y6","3D Face Recognition Smart Lock","Price","348.3","349"
-"B0DRXJB8Y6","3D Face Recognition Smart Lock","Review Count","316","343"
-"B081HT5LD6","Moen Flo Smart Water Monitor","Rating","3.9","4"
-"B081HT5LD6","Moen Flo Smart Water Monitor","Review Count","2162","2224"
-"B0DC96PPZK","Amazon Echo Show 10 4th Gen","Rating","4.3","4.4"
-"B0DC96PPZK","Amazon Echo Show 10 4th Gen","Review Count","3538","5038"
-"B07L6KVGXV","Google Nest Hub Max 2nd Gen","Price","285","219.99"
-"B07L6KVGXV","Google Nest Hub Max 2nd Gen","Review Count","205","213"
-"B0FK8JL74Q","Apple HomePod mini 2nd Gen","Price","139","149"
-"B0FK8JL74Q","Apple HomePod mini 2nd Gen","Review Count","191","269"
+ASIN,Product Name,Field,CSV Value,Live Value,Change
+B0GR6BVYS5,Apple 2026 MacBook Neo 13-inch Laptop with A18 Pro chip,Review Count,220,615,395
+B0DW1X5YCQ,ASUS ROG Strix G16 Gaming Laptop,Price,2551.79,2570,18.21
+B0DW1X5YCQ,ASUS ROG Strix G16 Gaming Laptop,Review Count,152,172,20
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Price,2299.99,2349.99,50
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Rating,4.3,4.4,0.1
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Review Count,43,44,1
+B0DGLSB5NC,Samsung Galaxy Book5 Pro 360,Price,1478,1849,371
+B0DGLSB5NC,Samsung Galaxy Book5 Pro 360,Review Count,315,165,-150
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Price,1099.99,1325.79,225.8
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Rating,4.3,4.4,0.1
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Review Count,159,174,15
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Price,2559.99,3155,595.01
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Rating,5,4.6,-0.4
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Review Count,3,4,1
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Price,1499.99,1699.99,200
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Rating,4.5,4.6,0.1
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Review Count,12,15,3
+B0DGJBQSJY,Apple AirPods Max,Price,449.99,4.6,-445.39
+B0DGJBQSJY,Apple AirPods Max,Rating,4.6,16685,16680.4
+B0CBLLJTTN,Beats Studio3 Wireless,Price,91.22,87.52,-3.7
+B0CBLLJTTN,Beats Studio3 Wireless,Review Count,2390,2508,118
+B0CHWRXH8B,Apple AirPods Pro 2nd Gen,Price,258.3,263.86,5.56
+B0CHWRXH8B,Apple AirPods Pro 2nd Gen,Review Count,28624,28802,178
+B09XS7JWHH,Sony WH-1000XM5 Headphones,Price,298,278,-20
+B09XS7JWHH,Sony WH-1000XM5 Headphones,Review Count,19172,19622,450
+B0GBWYX9VW,Bose QuietComfort Ultra Headphones,Review Count,18,23,5
+B0CVL1K7DX,Bose SoundLink Max Speaker,Rating,4.6,4.5,-0.1
+B0CVL1K7DX,Bose SoundLink Max Speaker,Review Count,2116,2282,166
+B0F1H9CTPQ,JBL Boombox 4,Rating,4.7,4.8,0.1
+B0F1H9CTPQ,JBL Boombox 4,Review Count,407,604,197
+B0F9S5NFJT,Sony ULT Field 7 Speaker,Price,348,4.8,-343.2
+B0F9S5NFJT,Sony ULT Field 7 Speaker,Rating,4.8,10,5.2
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Price,1149,1278.98,129.98
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Rating,1,3.1,2.1
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Review Count,1,2,1
+B0F57R276D,Samsung HW-Q800D Soundbar,Price,747.99,797.99,50
+B09GPYL7BJ,Sonos Beam Gen 2,Price,499,369,-130
+B09GPYL7BJ,Sonos Beam Gen 2,Review Count,1788,1887,99
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Price,649.99,619.51,-30.48
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Rating,4.2,4.3,0.1
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Review Count,345,393,48
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Price,799.49,994.99,195.5
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Rating,4,4.1,0.1
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Review Count,89,105,16
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Price,1696.99,1899.99,203
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Rating,4.2,4.4,0.2
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Review Count,364,498,134
+B08K2NT2G7,ASUS PA247CV Professional Monitor,Price,219,193.49,-25.51
+B08K2NT2G7,ASUS PA247CV Professional Monitor,Review Count,566,577,11
+B0DVMWCLR9,Gaming PC - RTX 5090 System,Price,6499.99,6999.99,500
+B0FC92QYNT,Gaming PC - RTX 5060 System,Price,2029.99,1999.99,-30
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Price,1379.99,1439.99,60
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Rating,4.6,4.7,0.1
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Review Count,3,5,2
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Price,119.99,129,9.01
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Rating,4.6,4.7,0.1
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Review Count,2018,2223,205
+B07GBZ4Q68,Logitech G502 HERO Mouse,Price,34.99,31.95,-3.04
+B07GBZ4Q68,Logitech G502 HERO Mouse,Review Count,57699,58142,443
+B0BYJ7N7LX,Logitech G Pro X Mouse,Price,29.89,26.89,-3
+B0BYJ7N7LX,Logitech G Pro X Mouse,Rating,4.3,4.4,0.1
+B0BYJ7N7LX,Logitech G Pro X Mouse,Review Count,1219,1264,45
+B0F6BDV5Q8,SteelSeries Rival 650,Review Count,174,207,33
+B0CSP61VR4,Razer DeathAdder V3 Mouse,Review Count,1606,1819,213
+B0FH5XX7GP,SteelSeries Arctis Nova Pro Headset,Price,139.99,149,9.01
+B0FH5XX7GP,SteelSeries Arctis Nova Pro Headset,Review Count,447,533,86
+B0CYSWTLZY,HyperX Cloud III Headset,Price,379.99,329.99,-50
+B0CYSWTLZY,HyperX Cloud III Headset,Rating,3.7,3.8,0.1
+B0CYSWTLZY,HyperX Cloud III Headset,Review Count,242,277,35
+B0DWD3GVJL,Razer BlackShark V2 X Headset,Price,228.99,230.52,1.53
+B0DWD3GVJL,Razer BlackShark V2 X Headset,Review Count,226,281,55
+B0GC529BMZ,Logitech G435 Wireless Headset,Price,33.99,32.29,-1.7
+B0GC529BMZ,Logitech G435 Wireless Headset,Review Count,191,295,104
+B0D9BB41X3,HOROW Black Smart Toilet with Pump and Bidet Built In,Rating,4.6,4.2,-0.4
+B0D9BB41X3,HOROW Black Smart Toilet with Pump and Bidet Built In,Review Count,189,53,-136
+B0DFWF728F,"HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization",Rating,4.6,4.5,-0.1
+B0DFWF728F,"HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization",Review Count,189,219,30
+B0DRXJB8Y6,3D Face Recognition Smart Lock,Price,348.3,349,0.7
+B0DRXJB8Y6,3D Face Recognition Smart Lock,Review Count,316,343,27
+B081HT5LD6,Moen Flo Smart Water Monitor,Rating,3.9,4,0.1
+B081HT5LD6,Moen Flo Smart Water Monitor,Review Count,2162,2224,62
+B0DC96PPZK,Amazon Echo Show 10 4th Gen,Rating,4.3,4.4,0.1
+B0DC96PPZK,Amazon Echo Show 10 4th Gen,Review Count,3538,5038,1500
+B07L6KVGXV,Google Nest Hub Max 2nd Gen,Price,285,219.99,-65.01
+B07L6KVGXV,Google Nest Hub Max 2nd Gen,Review Count,205,213,8
+B0FK8JL74Q,Apple HomePod mini 2nd Gen,Price,139,149,10
+B0FK8JL74Q,Apple HomePod mini 2nd Gen,Review Count,191,269,78
+B0GR6BVYS5,Apple 2026 MacBook Neo 13-inch Laptop with A18 Pro chip,Review Count,220,615,395
+B0DW1X5YCQ,ASUS ROG Strix G16 Gaming Laptop,Price,2551.79,2570,18.21
+B0DW1X5YCQ,ASUS ROG Strix G16 Gaming Laptop,Review Count,152,172,20
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Price,2299.99,2349.99,50
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Rating,4.3,4.4,0.1
+B0DYLB2QRF,Razer Blade 14 Gaming Laptop,Review Count,43,44,1
+B0DGLSB5NC,Samsung Galaxy Book5 Pro 360,Price,1478,1849,371
+B0DGLSB5NC,Samsung Galaxy Book5 Pro 360,Review Count,315,165,-150
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Price,1099.99,1325.79,225.8
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Rating,4.3,4.4,0.1
+B0CXKXNNPX,Microsoft Surface Pro 11th Edition,Review Count,159,174,15
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Price,2559.99,3155,595.01
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Rating,5,4.6,-0.4
+B0FCPP5K2R,ASUS ROG Zephyrus G14 Gaming,Review Count,3,4,1
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Price,1499.99,1699.99,200
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Rating,4.5,4.6,0.1
+B0D2RYV5ZG,Lenovo ThinkPad X1 Carbon Gen 12,Review Count,12,15,3
+B0DGJBQSJY,Apple AirPods Max,Price,449.99,4.6,-445.39
+B0DGJBQSJY,Apple AirPods Max,Rating,4.6,16685,16680.4
+B0CBLLJTTN,Beats Studio3 Wireless,Price,91.22,87.52,-3.7
+B0CBLLJTTN,Beats Studio3 Wireless,Review Count,2390,2508,118
+B0CHWRXH8B,Apple AirPods Pro 2nd Gen,Price,258.3,263.86,5.56
+B0CHWRXH8B,Apple AirPods Pro 2nd Gen,Review Count,28624,28802,178
+B09XS7JWHH,Sony WH-1000XM5 Headphones,Price,298,278,-20
+B09XS7JWHH,Sony WH-1000XM5 Headphones,Review Count,19172,19622,450
+B0GBWYX9VW,Bose QuietComfort Ultra Headphones,Review Count,18,23,5
+B0CVL1K7DX,Bose SoundLink Max Speaker,Rating,4.6,4.5,-0.1
+B0CVL1K7DX,Bose SoundLink Max Speaker,Review Count,2116,2282,166
+B0F1H9CTPQ,JBL Boombox 4,Rating,4.7,4.8,0.1
+B0F1H9CTPQ,JBL Boombox 4,Review Count,407,604,197
+B0F9S5NFJT,Sony ULT Field 7 Speaker,Price,348,4.8,-343.2
+B0F9S5NFJT,Sony ULT Field 7 Speaker,Rating,4.8,10,5.2
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Price,1149,1278.98,129.98
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Rating,1,3.1,2.1
+B0FDRBB72D,Samsung HW-Q930D Soundbar,Review Count,1,2,1
+B0F57R276D,Samsung HW-Q800D Soundbar,Price,747.99,797.99,50
+B09GPYL7BJ,Sonos Beam Gen 2,Price,499,369,-130
+B09GPYL7BJ,Sonos Beam Gen 2,Review Count,1788,1887,99
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Price,649.99,619.51,-30.48
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Rating,4.2,4.3,0.1
+B0CZSGWLD5,Alienware 27 AW2725DM Monitor,Review Count,345,393,48
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Price,799.49,994.99,195.5
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Rating,4,4.1,0.1
+B0DD2ZB3DZ,Dell SE2726HG Monitor,Review Count,89,105,16
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Price,1696.99,1899.99,203
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Rating,4.2,4.4,0.2
+B0DYG9DKX8,SANSUI 27-inch 240Hz Monitor,Review Count,364,498,134
+B08K2NT2G7,ASUS PA247CV Professional Monitor,Price,219,193.49,-25.51
+B08K2NT2G7,ASUS PA247CV Professional Monitor,Review Count,566,577,11
+B0DVMWCLR9,Gaming PC - RTX 5090 System,Price,6499.99,6999.99,500
+B0FC92QYNT,Gaming PC - RTX 5060 System,Price,2029.99,1999.99,-30
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Price,1379.99,1439.99,60
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Rating,4.6,4.7,0.1
+B0FDMDJQSW,Gaming PC - RTX 5070 Ti System,Review Count,3,5,2
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Price,119.99,129,9.01
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Rating,4.6,4.7,0.1
+B0CW25XR5R,Razer Viper V3 Pro Mouse,Review Count,2018,2223,205
+B07GBZ4Q68,Logitech G502 HERO Mouse,Price,34.99,31.95,-3.04
+B07GBZ4Q68,Logitech G502 HERO Mouse,Review Count,57699,58142,443
+B0BYJ7N7LX,Logitech G Pro X Mouse,Price,29.89,26.89,-3
+B0BYJ7N7LX,Logitech G Pro X Mouse,Rating,4.3,4.4,0.1
+B0BYJ7N7LX,Logitech G Pro X Mouse,Review Count,1219,1264,45
+B0F6BDV5Q8,SteelSeries Rival 650,Review Count,174,207,33
+B0CSP61VR4,Razer DeathAdder V3 Mouse,Review Count,1606,1819,213
+B0FH5XX7GP,SteelSeries Arctis Nova Pro Headset,Price,139.99,149,9.01
+B0FH5XX7GP,SteelSeries Arctis Nova Pro Headset,Review Count,447,533,86
+B0CYSWTLZY,HyperX Cloud III Headset,Price,379.99,329.99,-50
+B0CYSWTLZY,HyperX Cloud III Headset,Rating,3.7,3.8,0.1
+B0CYSWTLZY,HyperX Cloud III Headset,Review Count,242,277,35
+B0DWD3GVJL,Razer BlackShark V2 X Headset,Price,228.99,230.52,1.53
+B0DWD3GVJL,Razer BlackShark V2 X Headset,Review Count,226,281,55
+B0GC529BMZ,Logitech G435 Wireless Headset,Price,33.99,32.29,-1.7
+B0GC529BMZ,Logitech G435 Wireless Headset,Review Count,191,295,104
+B0D9BB41X3,HOROW Black Smart Toilet with Pump and Bidet Built In,Rating,4.6,4.2,-0.4
+B0D9BB41X3,HOROW Black Smart Toilet with Pump and Bidet Built In,Review Count,189,53,-136
+B0DFWF728F,"HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization",Rating,4.6,4.5,-0.1
+B0DFWF728F,"HOROW T38 Artistic Smart Toilet, Bidet Toilet with Powerful Flush, Auto Open/Close Lid, Instant Warm Water, Elongated Heated Seat, Dryer, Night Light, Deodorization",Review Count,189,219,30
+B0DRXJB8Y6,3D Face Recognition Smart Lock,Price,348.3,349,0.7
+B0DRXJB8Y6,3D Face Recognition Smart Lock,Review Count,316,343,27
+B081HT5LD6,Moen Flo Smart Water Monitor,Rating,3.9,4,0.1
+B081HT5LD6,Moen Flo Smart Water Monitor,Review Count,2162,2224,62
+B0DC96PPZK,Amazon Echo Show 10 4th Gen,Rating,4.3,4.4,0.1
+B0DC96PPZK,Amazon Echo Show 10 4th Gen,Review Count,3538,5038,1500
+B07L6KVGXV,Google Nest Hub Max 2nd Gen,Price,285,219.99,-65.01
+B07L6KVGXV,Google Nest Hub Max 2nd Gen,Review Count,205,213,8
+B0FK8JL74Q,Apple HomePod mini 2nd Gen,Price,139,149,10
+B0FK8JL74Q,Apple HomePod mini 2nd Gen,Review Count,191,270,79
+B07GG3XXNX,Ring Video Doorbell Pro 2,Price,120.26,129.99,9.73
+B07GG3XXNX,Ring Video Doorbell Pro 2,Rating,4,4.2,0.2
+B07GG3XXNX,Ring Video Doorbell Pro 2,Review Count,19492,18852,-640
+B0C683F516,Arlo Ultra 2 Floodlight,Price,48.51,69,20.49
+B0C683F516,Arlo Ultra 2 Floodlight,Rating,4.2,4.3,0.1
+B0C683F516,Arlo Ultra 2 Floodlight,Review Count,2642,1308,-1334
+B0D5BBYRJM,Nest Learning Thermostat,Price,254.99,229.99,-25
+B0D5BBYRJM,Nest Learning Thermostat,Rating,4.3,4.4,0.1
+B0D5BBYRJM,Nest Learning Thermostat,Review Count,2099,2276,177
+B09XXTQPXC,Ecobee Smart Thermostat Premium,Price,169.99,199.99,30
+B09XXTQPXC,Ecobee Smart Thermostat Premium,Review Count,3477,3555,78
+B0DMQ1QMVV,Amazon Echo Studio 2025,Rating,3.8,4.1,0.3
+B0DMQ1QMVV,Amazon Echo Studio 2025,Review Count,693,883,190
+B07D37VDM3,Aqara Camera Hub G5 Pro,Review Count,7287,7409,122
+B0F9W85LWF,SwitchBot Curtain 3,Price,144.49,148.99,4.5
+B0F9W85LWF,SwitchBot Curtain 3,Rating,4.4,4.5,0.1
+B0F9W85LWF,SwitchBot Curtain 3,Review Count,76,102,26
+B0D65VQMZR,Dreo 44 in Smart Ceiling Fan,Price,188.09,197.98,9.89
+B0D65VQMZR,Dreo 44 in Smart Ceiling Fan,Review Count,386,435,49
+B08C68F2DX,Canon EOS R5 Camera,Price,2799,2999,200
+B08C68F2DX,Canon EOS R5 Camera,Review Count,776,780,4
+B0BKLQFFSF,Sony A7R V Camera,Rating,4.6,4.5,-0.1
+B0BKLQFFSF,Sony A7R V Camera,Review Count,273,282,9
+B07FVZFX73,DJI Air 3S Drone,Review Count,988,1119,131
+B0F6XN1J7K,DJI Mini 4 Pro Drone,Rating,4.6,4.5,-0.1
+B0F6XN1J7K,DJI Mini 4 Pro Drone,Review Count,370,523,153
+B0C1S95YZQ,Anker Nebula Mars 3 Projector,Review Count,320,332,12
+B00CH9QWOU,Breville Espresso Machine,Price,664.49,689.99,25.5
+B00CH9QWOU,Breville Espresso Machine,Rating,4.4,4.5,0.1
+B00CH9QWOU,Breville Espresso Machine,Review Count,27373,27530,157
+B0D365PHCD,Instant Pot Pro Max,Review Count,1429,1476,47
+B0D5NKX2HF,Ninja AF400 Air Fryer,Price,79.99,84.99,5
+B0D5NKX2HF,Ninja AF400 Air Fryer,Review Count,2090,2527,437
+B0G318V8TR,Dyson V15 Detect Vacuum,Price,599,449,-150
+B0G318V8TR,Dyson V15 Detect Vacuum,Rating,4.2,4,-0.2
+B0G318V8TR,Dyson V15 Detect Vacuum,Review Count,27,94,67
+B0F1N21NKM,Shark Stratos Vacuum,Review Count,4318,5567,1249
+B09VY5LQ9G,Nuwave OxyPure Air Purifier,Price,449.99,499.99,50
+B09VY5LQ9G,Nuwave OxyPure Air Purifier,Review Count,1489,1503,14
+B0C3QQMMRJ,GoveeLife Smart Purifier,Price,34.99,39.99,5
+B0C3QQMMRJ,GoveeLife Smart Purifier,Rating,4.6,4.7,0.1
+B0C3QQMMRJ,GoveeLife Smart Purifier,Review Count,3349,3589,240
+B0C7HL4GHP,NuWave Precision Induction Cooktop,Price,125.99,107.99,-18
+B0C7HL4GHP,NuWave Precision Induction Cooktop,Review Count,1119,1145,26
+B09TV5FFTS,Smeg Retro Toaster,Rating,4.5,4.4,-0.1
+B09TV5FFTS,Smeg Retro Toaster,Review Count,"2,995",3038,43
+B01K31X4HG,Herman Miller Aeron Chair,Price,632,3.5,-628.5
+B01K31X4HG,Herman Miller Aeron Chair,Rating,3.6,326,322.4
+B0DFW9D66S,Autonomous Standing Desk,Price,169.99,159.98,-10.01
+B0DFW9D66S,Autonomous Standing Desk,Review Count,461,472,11
+B0DT93JWJP,Flexispot Standing Desk Pro,Price,279.99,299.99,20
+B0DT93JWJP,Flexispot Standing Desk Pro,Review Count,318,363,45
+B0B4N2T7GL,Fitbit Sense 2,Price,199.95,199.94,-0.01
+B0B4N2T7GL,Fitbit Sense 2,Review Count,9733,9968,235
+B0FLQNCDJK,Peloton Bike+,Price,2095,2695,600
+B0FLQNCDJK,Peloton Bike+,Rating,3.9,4.4,0.5
+B0FLQNCDJK,Peloton Bike+,Review Count,12,1179,1167
+B0CNS894RH,Theragun Pro Massage,Price,159.99,139.99,-20
+B0CNS894RH,Theragun Pro Massage,Review Count,2383,2471,88
+B0CHZ5WBTH,GoPro Hero 12 Black,Price,434.95,499.95,65
+B0CHZ5WBTH,GoPro Hero 12 Black,Review Count,782,797,15
+B0FRMBRH3J,Rode Wireless GO II Microphone,Price,54.99,59.99,5
+B0FRMBRH3J,Rode Wireless GO II Microphone,Rating,4.3,4.2,-0.1
+B0FRMBRH3J,Rode Wireless GO II Microphone,Review Count,223,330,107
+B0FNNH6Y4G,BenQ SW240 Monitor,Rating,4.9,4.8,-0.1
+B0FNNH6Y4G,BenQ SW240 Monitor,Review Count,13,35,22
+B07Y47P31Y,Zhiyun Crane 4S Stabilizer,Price,279,224,-55
+B07Y47P31Y,Zhiyun Crane 4S Stabilizer,Rating,4.3,4.4,0.1
+B0CH8ZT8Y1,Profoto B10 Plus Head,Price,30,2499,2469
+B0CRSTJ3SJ,Sony FE 24-70mm f/2.8 GM,Review Count,4,6,2
+B0FKD5HXDJ,Canon RF 70-200mm f/2.8,Price,3099,3222.96,123.96
+B0FKD5HXDJ,Canon RF 70-200mm f/2.8,Rating,4.7,5,0.3
+B0FKD5HXDJ,Canon RF 70-200mm f/2.8,Review Count,1200,1,-1199
+B09QF4TSZF,"Leica M11 Monochrom Digital Rangefinder Camera, Black",Price,6299.99,3.5,-6296.49
+B09QF4TSZF,"Leica M11 Monochrom Digital Rangefinder Camera, Black",Rating,3.4,6,2.6
+B0FGJYQHK3,Hasselblad X2D 100C 100MP Medium Format Mirrorless Camera with XCD 75mm f/3.4 P Lens,Price,9099,7841.4,-1257.6
+B0F59K7M9N,Zeiss Otus 85mm f/1.4,Price,2499,2498.99,-0.01
+B09QF1H3VF,Dell XPS 17 Laptop,Price,6843,4.4,-6838.6
+B09QF1H3VF,Dell XPS 17 Laptop,Rating,4.3,3,-1.3
+B09CV6NMK1,Samsung 65 QLED Frame TV,Rating,3.5,3.6,0.1
+B0F3BXY5M1,iRobot Roomba i7+,Price,319.97,359.99,40.02
+B0F3BXY5M1,iRobot Roomba i7+,Review Count,88,147,59
+B0BL7ZVY78,Canon EOS R6 II Camera,Review Count,594,619,25
+B0DXMXY3SC,Samsung Neo QLED TV 55,Price,595.56,44.99,-550.57
+B0DXMXY3SC,Samsung Neo QLED TV 55,Rating,4.4,4.5,0.1
+B0DXMXY3SC,Samsung Neo QLED TV 55,Review Count,410,495,85
+B073TYYM91,Breville Oracle Touch,Rating,3.2,3.4,0.2
+B073TYYM91,Breville Oracle Touch,Review Count,583,591,8
+B0BDGJ24QQ,GoPro Hero11 Black,Price,484.95,4.5,-480.45
+B0BDGJ24QQ,GoPro Hero11 Black,Rating,4.4,953,948.6
+B08V226T8Q,Sony A1 Camera,Price,6198,5698,-500
+B08V226T8Q,Sony A1 Camera,Review Count,86,87,1
+B0DHG4G5L2,DJI Mavic 3 Pro Drone,Review Count,9198,9208,10
+B09KHC4XCT,Nikon Z9 II,Price,5296.95,4996.95,-300
+B09KHC4XCT,Nikon Z9 II,Review Count,106,107,1
+B0CGZ38M6B,Leica Q3,Price,7024.5,6735,-289.5
+B0CGZ38M6B,Leica Q3,Rating,4,4.1,0.1
+B0FLPYQ693,Bose Headphones 700,Price,123.49,129.99,6.5
+B0FLPYQ693,Bose Headphones 700,Review Count,471,506,35
+B09JL41N9C,Beats Fit Pro,Price,144.99,149.99,5
+B09JL41N9C,Beats Fit Pro,Rating,4.1,4.2,0.1
+B09JL41N9C,Beats Fit Pro,Review Count,32076,32196,120
+B0D3J98W75,Apple iPad Pro 13-Inch (M4),Price,976.59,1148.15,171.56
+B0D3J98W75,Apple iPad Pro 13-Inch (M4),Review Count,1375,1415,40
+B0CKRYL4X4,Samsung Galaxy Tab S9 Ultra,Price,539,4.3,-534.7
+B0CKRYL4X4,Samsung Galaxy Tab S9 Ultra,Rating,4.5,55,50.5
+B0FCV1259W,ASUS ZenBook Duo 14,Price,3029.99,3649.99,620
+B0FCV1259W,ASUS ZenBook Duo 14,Rating,4.2,3.9,-0.3
+B0FCV1259W,ASUS ZenBook Duo 14,Review Count,8,11,3
+B0CZ1RTYQY,Dell UltraSharp 32 Monitor,Price,119.59,4.5,-115.09
+B0CZ1RTYQY,Dell UltraSharp 32 Monitor,Rating,4.6,1478,1473.4
