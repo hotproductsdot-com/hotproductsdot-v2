@@ -286,3 +286,5 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-10,instagram,It Cosmetics CC+ Cream SPF 50+,quality_blocked,"ai vision: The banner headline reads 'SPF 50' while the product itself displays 'SPF 50+', creating a specification mismatch that must be corrected."
 2026-06-10,instagram,Travelon Anti-Theft Classic Backpack,ok,18114601999842645
 2026-06-10,tiktok,Graco Pack 'n Play On The Go Playard,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-10,instagram,Graco Pack 'n Play On The Go Playard,ok,18111248266925672
+2026-06-10,instagram,Canon EOS R10 Mirrorless Camera,quality_blocked,"ai vision: A prominent third-party brand logo (SanDisk) is visibly displayed on bundled accessories, conflicting with the Canon brand identity of the named product."
