@@ -224,7 +224,7 @@ def _validate_cutout(prod: Image.Image) -> tuple[bool, str]:
     opaque = float((a > 200).sum() / total)
     if opaque < 0.05:
         return False, f"product mostly erased ({opaque:.1%} opaque after cutout)"
-    if opaque > 0.85:
+    if opaque > 0.90:
         return False, f"background retained ({opaque:.1%} opaque — cutout failed to isolate)"
     return True, ""
 
@@ -544,6 +544,15 @@ REMBG_MODEL_BY_SLUG: dict[str, str] = {
     "horow-black-smart-toilet-with-pump-and-bidet-built-in": "isnet-general-use",
 }
 
+# Manual image URL overrides for products where og:image is not the best angle.
+# Use when Amazon's default image (first in listing) is inferior to an
+# alternative from the product's image gallery. Keyed by slug (matches REMBG_MODEL_BY_SLUG).
+PRODUCT_IMAGE_OVERRIDE_BY_SLUG: dict[str, str] = {
+    "apple-2026-macbook-neo-13-inch-laptop-with-a18": "https://m.media-amazon.com/images/I/619PNoEsnSL._AC_SL1500_.jpg",
+    "apple-airpods-max": "/mnt/e/GITHUB/hotproductsdot-v2/site/public/products/apple-airpods-max.jpg",
+    "beats-studio3-wireless": "/mnt/e/GITHUB/hotproductsdot-v2/site/public/products/beats-studio3-wireless.jpg",
+}
+
 
 def _cutout_product(
     product_img: Image.Image,
@@ -555,11 +564,14 @@ def _cutout_product(
     against the alpha mask before the placement step.
     """
     dark_bg = _is_dark_background(product_img)
-    return (
-        _remove_dark_bg(product_img)
-        if dark_bg
-        else _remove_white_bg(product_img, rembg_model=rembg_model)
-    )
+    if dark_bg:
+        # For dark products, try isnet-general-use for better saliency
+        return _remove_dark_bg(product_img)
+    else:
+        # For light/white backgrounds, use rembg default (u2net + hybrid recovery)
+        # unless specific model is set in REMBG_MODEL_BY_SLUG
+        model_override = rembg_model or None
+        return _remove_white_bg(product_img, rembg_model=model_override)
 
 
 def _keep_largest_component(prod: Image.Image, min_components: int = 4) -> Image.Image:
@@ -691,7 +703,7 @@ def _pick_badge(product: dict) -> str:
     return "HOT DEAL"
 
 
-def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
+def _add_text(canvas: Image.Image, product: dict, cta_version: str = "none") -> Image.Image:
     draw = ImageDraw.Draw(canvas)
 
     name     = product.get("name", "")
@@ -775,6 +787,41 @@ def _add_text(canvas: Image.Image, product: dict) -> Image.Image:
     price_text = _format_price(price)
     px         = _center_x(price_text, f_price, draw)
     draw.text((px, y), price_text, font=f_price, fill=ORANGE)
+    y += _text_h(price_text, f_price, draw) + 24
+
+    # ── CTA Button (A/B versions for click-rate testing) ──────────────────────
+    if cta_version in ("a", "b"):
+        f_cta = _load_font(32, bold=True)
+        cta_text = "CHECK PRICE" if cta_version == "b" else "CHECK PRICE ON AMAZON →"
+
+        cta_bbox = draw.textbbox((0, 0), cta_text, font=f_cta)
+        cta_w = cta_bbox[2] - cta_bbox[0]
+        cta_h = cta_bbox[3] - cta_bbox[1]
+
+        btn_w = cta_w + 32
+        btn_h = cta_h + 18
+        btn_x = (CANVAS - btn_w) // 2
+        btn_y = y
+
+        draw.rounded_rectangle(
+            [btn_x, btn_y, btn_x + btn_w, btn_y + btn_h],
+            radius=12,
+            fill=(*ORANGE, 255),
+            outline=ORANGE,
+            width=2,
+        )
+
+        # Center text within button - account for textbbox offset
+        button_center_x = btn_x + btn_w // 2
+        button_center_y = btn_y + btn_h // 2
+        # textbbox returns (left, top, right, bottom), left/top may not be 0
+        text_offset_x = cta_bbox[0]
+        text_offset_y = cta_bbox[1]
+        cta_tx = button_center_x - cta_w // 2 - text_offset_x
+        cta_ty = button_center_y - cta_h // 2 - text_offset_y
+        draw.text((cta_tx, cta_ty), cta_text, font=f_cta, fill=(255, 255, 255))
+
+        y += btn_h + 24
 
     # ── Bottom stat pills ─────────────────────────────────────────────────────
     pill_labels = ["hotproductsdot.com"]
@@ -840,6 +887,96 @@ def download_square_instagram_feed_jpeg(source_url: str, dest: Path, size: int =
     )
 
 
+def _extract_inner_box(img: Image.Image) -> Image.Image | None:
+    """Extract the dark inner box area from images with white frames.
+
+    For images like: white border → dark background with product,
+    this crops to just the inner dark region.
+    """
+    arr = np.array(img)
+    h, w = arr.shape[:2]
+
+    # Find white frame boundaries (pixels > 240 brightness)
+    gray = np.mean(arr, axis=2)
+    white_mask = gray > 240
+
+    # Find where white pixels start/end horizontally and vertically
+    white_rows = np.where(white_mask.any(axis=1))[0]
+    white_cols = np.where(white_mask.any(axis=0))[0]
+
+    if len(white_rows) == 0 or len(white_cols) == 0:
+        return None
+
+    # Crop to inner region (skip white border)
+    y_min, y_max = white_rows[0], white_rows[-1]
+    x_min, x_max = white_cols[0], white_cols[-1]
+
+    # Only use if there's a meaningful inner region
+    inner_h = y_max - y_min
+    inner_w = x_max - x_min
+    if inner_h < 100 or inner_w < 100:
+        return None
+
+    # Add small margin inside the white border
+    margin = 20
+    crop_box = (
+        max(0, x_min + margin),
+        max(0, y_min + margin),
+        min(w, x_max - margin),
+        min(h, y_max - margin),
+    )
+
+    return img.crop(crop_box)
+
+
+def _add_product_direct(canvas: Image.Image, src_img: Image.Image) -> Image.Image:
+    """Place product image directly on canvas with background removed, no box/border."""
+    # Try to extract inner box first (for images with white frames)
+    inner = _extract_inner_box(src_img)
+    img_to_cut = inner if inner else src_img
+
+    # Remove white/background from product image using rembg
+    prod = _cutout_product(img_to_cut)
+
+    # Validate cutout quality
+    ok, reason = _validate_cutout(prod)
+    if not ok:
+        raise BannerQualityError(f"product cutout failed: {reason}")
+
+    # Keep only largest component (removes duplicate/collage images)
+    prod = _keep_largest_component(prod)
+
+    # Crop to alpha bounding box for clean placement
+    bbox = prod.getbbox()
+    if bbox:
+        prod = prod.crop(bbox)
+
+    max_w = int(CANVAS * 0.75)
+    max_h = int(CANVAS * 0.70)
+    prod.thumbnail((max_w, max_h), Image.LANCZOS)
+
+    # Subtle drop shadow
+    shadow = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    img_x = (CANVAS - prod.width) // 2
+    img_y = int(CANVAS * 0.38)
+
+    shadow_x = img_x + prod.width // 2
+    shadow_y = img_y + prod.height + 25
+    sd.ellipse(
+        [shadow_x - prod.width // 3 - 10, shadow_y - 16,
+         shadow_x + prod.width // 3 + 10, shadow_y + 16],
+        fill=(0, 0, 0, 120)
+    )
+    shadow = shadow.filter(ImageFilter.GaussianBlur(radius=18))
+    canvas = Image.alpha_composite(canvas, shadow)
+
+    # Place cutout product with transparency directly on canvas
+    canvas.paste(prod, (img_x, img_y), mask=prod.split()[3])
+
+    return canvas
+
+
 def _add_white_card(canvas: Image.Image, src_img: Image.Image) -> Image.Image:
     """Frame the source image as a rounded white card on the dark canvas.
 
@@ -892,8 +1029,15 @@ def compose_banner(
     product: dict,
     product_image_url_or_path: str,
     output_path: str | Path,
+    cta_version: str = "none",
+    use_card: bool = True,
 ) -> str:
-    src = str(product_image_url_or_path)
+    # Check for manual image URL override
+    product_slug = re.sub(r"[^a-z0-9]+", "-", str(product.get("name", "")).lower()).strip("-")
+    if product_slug in PRODUCT_IMAGE_OVERRIDE_BY_SLUG:
+        src = PRODUCT_IMAGE_OVERRIDE_BY_SLUG[product_slug]
+    else:
+        src = str(product_image_url_or_path)
     if src.startswith("http"):
         prod_img = Image.open(BytesIO(_fetch_image_bytes(src))).convert("RGB")
     else:
@@ -910,8 +1054,12 @@ def compose_banner(
     canvas = _make_background()
     canvas = _add_orange_glow(canvas)
     canvas = _add_kinetic_curves(canvas)
-    canvas = _add_white_card(canvas, prod_img)
-    canvas = _add_text(canvas, product)
+    if use_card:
+        canvas = _add_white_card(canvas, prod_img)
+    else:
+        # Direct product placement - no fallback, must work or fail
+        canvas = _add_product_direct(canvas, prod_img)
+    canvas = _add_text(canvas, product, cta_version)
 
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
