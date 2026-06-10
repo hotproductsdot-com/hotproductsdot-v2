@@ -1,0 +1,99 @@
+{
+  "name": "hotproducts-instagram-ad-creative",
+  "title": "HotProducts Instagram Ad Creative",
+  "is_public": false,
+  "contents": {
+    "name": "workflow",
+    "version": "1",
+    "nodes": {
+      "node-prompt": {
+        "id": "node-prompt",
+        "type": "run",
+        "depends": ["input"],
+        "app": "openrouter/router",
+        "input": {
+          "model": "anthropic/claude-haiku-4.5",
+          "max_tokens": 500,
+          "temperature": 0.35,
+          "system_prompt": "You are an e-commerce ad creative director for @hotproductsdot.official on Instagram. Given an Instagram post caption (hook, product name, category, rating, price, CTA), write ONE photorealistic image-to-image prompt for FLUX. The prompt must restyle the attached Amazon product photo into a premium square marketing asset. Rules: reproduce the product faithfully (exact shape, color, branding, proportions); square 1:1 framing with hero product centered; premium studio look with soft shadow and clean dark charcoal backdrop plus subtle warm orange (#FF6B00) glow; photorealistic only; NO text, logos, watermarks, or captions in the image; leave ~30% breathing room for post-processing headline and CTA. Output ONLY the prompt text, no preamble or quotes.",
+          "prompt": "$input.instagram_post"
+        },
+        "metadata": {
+          "position": { "x": 320, "y": 120 }
+        }
+      },
+      "node-img2img": {
+        "id": "node-img2img",
+        "type": "run",
+        "depends": ["node-prompt"],
+        "app": "fal-ai/flux/dev/image-to-image",
+        "input": {
+          "image_url": "$input.amazon_image_url",
+          "prompt": "$node-prompt.output",
+          "strength": 0.35,
+          "num_inference_steps": 28,
+          "guidance_scale": 3.5,
+          "num_images": 1,
+          "output_format": "jpeg",
+          "enable_safety_checker": true
+        },
+        "metadata": {
+          "position": { "x": 640, "y": 120 }
+        }
+      },
+      "output": {
+        "id": "output",
+        "type": "display",
+        "depends": ["node-img2img", "node-prompt"],
+        "input": {},
+        "fields": {
+          "image": "$node-img2img.images.0.url",
+          "prompt": "$node-prompt.output"
+        },
+        "metadata": {
+          "position": { "x": 960, "y": 120 }
+        }
+      }
+    },
+    "output": {
+      "image": "$node-img2img.images.0.url",
+      "prompt": "$node-prompt.output"
+    },
+    "schema": {
+      "input": {
+        "instagram_post": {
+          "name": "instagram_post",
+          "label": "Instagram Post Caption",
+          "type": "string",
+          "description": "Full @hotproductsdot.official caption used to derive the img2img prompt",
+          "required": true,
+          "modelId": "node-prompt"
+        },
+        "amazon_image_url": {
+          "name": "amazon_image_url",
+          "label": "Amazon Product Image URL",
+          "type": "string",
+          "description": "m.media-amazon.com product photo passed as the img2img base image",
+          "required": true,
+          "modelId": "node-img2img"
+        }
+      },
+      "output": {
+        "image": {
+          "name": "image",
+          "label": "Generated Banner",
+          "type": "string"
+        },
+        "prompt": {
+          "name": "prompt",
+          "label": "Generated Prompt",
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "description": "Turns @hotproductsdot.official Instagram captions into FLUX img2img prompts, using each product's Amazon photo as the base image.",
+      "input": { "position": { "x": 0, "y": 120 } }
+    }
+  }
+}

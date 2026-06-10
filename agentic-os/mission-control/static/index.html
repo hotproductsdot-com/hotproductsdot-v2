@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mission Control — Agentic OS</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="brand">⚡ Mission Control</div>
+    <p class="brand-sub">Agentic OS</p>
+    <ul class="nav">
+      <li><a href="/" data-route="/">Overview</a></li>
+      <li><a href="/command" data-route="/command">Command</a></li>
+      <li><a href="/projects" data-route="/projects">Projects</a></li>
+      <li><a href="/hermes" data-route="/hermes">Hermes</a></li>
+      <li><a href="/pantheon" data-route="/pantheon">Pantheon</a></li>
+      <li><a href="/bridge" data-route="/bridge">Claude OS Bridge</a></li>
+      <li><a href="/memory" data-route="/memory">Memory</a></li>
+      <li><a href="/growth" data-route="/growth">Growth Engine</a></li>
+      <li><a href="/cron" data-route="/cron">Cron Jobs</a></li>
+      <li><a href="/skills" data-route="/skills">Skills</a></li>
+    </ul>
+    <div class="nav-external" id="nav-external">
+      <p class="nav-label">External</p>
+      <a href="http://127.0.0.1:9119" target="_blank" rel="noopener" data-svc="hermes_dashboard"><span class="svc-dot"></span>Hermes Dashboard ↗</a>
+      <a href="#" data-svc="hermes_desktop" data-kind="desktop"><span class="svc-dot"></span>Hermes Desktop ▶</a>
+      <a href="http://127.0.0.1:7878" target="_blank" rel="noopener" data-svc="pipeline_ui"><span class="svc-dot"></span>Pipeline UI ↗</a>
+      <a href="http://127.0.0.1:5050" target="_blank" rel="noopener" data-svc="deal_poster"><span class="svc-dot"></span>Deal Poster ↗</a>
+    </div>
+    <button class="refresh-btn" onclick="App.refresh()">↻ Refresh</button>
+  </nav>
+  <div class="content">
+    <header class="page-header">
+      <h1 id="page-title">Overview</h1>
+      <p class="sub" id="page-sub">Loading...</p>
+    </header>
+    <main id="app"><p class="loading">Loading...</p></main>
+  </div>
+</div>
+
+<div id="command-panel" class="command-panel" aria-label="Hermes command entry">
+  <div class="command-panel-header">
+    <button type="button" class="command-toggle" id="command-toggle" title="Expand/collapse">▲</button>
+    <span class="command-title">Hermes</span>
+    <span class="command-session muted" id="command-session"></span>
+    <div class="command-quick">
+      <button type="button" data-cmd="Give me a morning brief: growth-engine status and top 2 suggestions.">Brief</button>
+      <button type="button" data-cmd="Check growth-engine status: content plan, deals, last publish.">Growth</button>
+      <button type="button" data-cmd="Refresh the Claude OS bridge and summarize what I worked on recently.">Bridge</button>
+    </div>
+  </div>
+  <div class="command-panel-body" id="command-body">
+    <div class="command-messages" id="command-messages"></div>
+    <form class="command-form" id="command-form">
+      <select id="command-persona" title="Pantheon persona">
+        <option value="">Default</option>
+      </select>
+      <textarea id="command-input" rows="2" placeholder="Ask Hermes to do something… (Enter to send, Shift+Enter for newline)" autocomplete="off"></textarea>
+      <div class="command-actions">
+        <button type="submit" id="command-send">Send</button>
+        <button type="button" id="command-new" title="Start new session">New</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
