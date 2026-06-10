@@ -350,6 +350,12 @@
       "type": "file"
     },
     {
+      "path": ".env",
+      "accessCount": 2,
+      "lastAccessed": 1781129765236,
+      "type": "file"
+    },
+    {
       "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
       "lastAccessed": 1781123385360,
