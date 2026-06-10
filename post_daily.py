@@ -214,6 +214,10 @@ def load_top_products(n: int | None = None) -> list[dict]:
             except ValueError:
                 potential = 7
 
+            refreshed_date = (row.get("Refreshed Date") or "").strip()
+            if not refreshed_date:
+                continue  # skip: no refresh date means data hasn't been validated
+
             price_num = _parse_price(row.get("Price Range") or "")
             bsr       = _parse_bsr(row.get("BSR") or "")
 
@@ -229,6 +233,7 @@ def load_top_products(n: int | None = None) -> list[dict]:
                 "potential":    potential,
                 "bsr":          bsr,
                 "amazon_url":   amazon_url,
+                "refreshed_date": refreshed_date,
             }
             product["_score"] = _score_product(product)
             products.append(product)
