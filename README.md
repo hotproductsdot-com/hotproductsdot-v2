@@ -14,6 +14,8 @@ hotproductsdot-v2/
 │   └── products4review.csv      # Oxylabs CSV vs live diffs (created/updated by script)
 ├── growth-engine/               # AI SEO autopilot — see growth-engine/README.md
 ├── oxylabs-amazon-product.sh    # Batch Oxylabs check; backs up & updates top-1000.csv
+├── fetch_daily_deals.py         # Daily Limited Time Sale pipeline (discover → verify → CSV swap)
+├── run_daily_deals.sh           # Cron wrapper: runs fetch_daily_deals.py in a git worktree, commits + pushes
 ├── site/public/products/        # Downloaded product images (.jpg)
 ├── site/content/guides-generated/   # JSON guides written by growth-engine
 ├── perform_qualityassurance.sh  # Full QA pipeline
@@ -261,6 +263,17 @@ pip install -r requirements.txt
 | `python fix_amazon_urls.py --apply --workers 2` | Use 2 parallel workers (max 3 recommended) |
 | `python fix_amazon_urls.py --threshold 0.5` | Require stronger word-overlap before accepting a match (default: 0.40) |
 
+### Daily Deals
+
+| Command | Description |
+|---------|-------------|
+| `python fetch_daily_deals.py --dry-run` | Discover + verify + rank today's deals; print results without writing any file |
+| `python fetch_daily_deals.py` | Full run: discover, verify via Oxylabs, swap deal rows in `top-1000.csv`, download images |
+| `python fetch_daily_deals.py --max-verify 30` | Limit Oxylabs calls to 30 (reduces API cost for a quick check) |
+| `python fetch_daily_deals.py --min-discount 20` | Only keep deals with ≥ 20% off |
+| `python fetch_daily_deals.py --deal-count 10` | Keep only the top 10 deals instead of 25 |
+| `./run_daily_deals.sh` | Cron wrapper — runs `fetch_daily_deals.py` in a detached git worktree, commits + pushes to `main` |
+
 ### Social Media
 
 | Command | Description |
@@ -298,6 +311,7 @@ pip install -r requirements.txt
 | `--banner-only` | flag | off | Skip AI image variants (banner, studio_dark, etc.); compose and post the banner only |
 | `--use-local-flux` | flag | off | Use local FLUX.1 [schnell] instead of Gemini (requires `pip install -r requirements-flux.txt`) |
 | `--on-empty-ai-images` | choice | catalog | When AI generation fails: `catalog` (use site image) or `abort` (exit with error) |
+| `--ignore-deals` | flag | off | Skip the limited-time deals pool; use the normal rotation even when a fresh daily-deal batch exists |
 
 **Logging:**
 
@@ -551,6 +565,85 @@ The section only renders when at least one product is tagged. To remove a produc
 | `site/app/lib/products.ts` — `getILovedProducts()` | Filters the catalog for `iLoved === true` |
 | `site/prebuild.js` | Parses `Action Needed` and writes `iLoved` into `products.json` |
 | `site/app/page.tsx` — "Products I LOVE" section | Renders the grid, only shown when products exist |
+
+---
+
+## Limited Time Sale (Daily Deals)
+
+A homepage section that shows today's top on-sale Amazon products — verified discounts, ranked by sales velocity. Refreshed every morning at 8 am Central by a cron job, and consumed by `post_daily.py` so the daily Instagram post also features a real deal.
+
+### How it works
+
+| Phase | What happens |
+|-------|-------------|
+| **1 — Discover** | `fetch_daily_deals.py` scrapes Amazon Best Sellers pages (free, reuses `find_bestsellers.py`) and collects candidates that pass a loose pre-filter (≥4.5 stars, ≥500 reviews, $15–$500, BSR ≤ 100) |
+| **2 — Verify** | Each candidate ASIN is checked via the Oxylabs `amazon_product` API (paid, capped by `--max-verify`) to get the real current price, strikethrough list price, and the "N+ bought in past month" velocity badge |
+| **3 — Rank** | `deal_score = sales_velocity × discount%`. Velocity = badge number if present, else `review_count / 10` as a cumulative-sales proxy |
+| **4 — Swap** | `products/top-1000.csv` is atomically updated: yesterday's `Temporary=daily-deal` rows are dropped, deal columns on permanent rows are cleared, and today's top 25 are written (as new rows, or merged in-place when the ASIN already exists as a permanent product) |
+| **5 — Images** | Product JPGs are downloaded to `site/public/products/` for any new slug (same job `autofix-images.js` does for manual adds — no Node dependency) |
+
+### New CSV columns
+
+These columns are appended to `top-1000.csv` by `fetch_daily_deals.py`. They are empty on permanent catalog rows.
+
+| Column | Description |
+|--------|-------------|
+| `Temporary` | `daily-deal` on batch rows; `""` on permanent rows |
+| `Deal Date` | ISO date the deal was verified (e.g. `2026-06-10`) |
+| `List Price` | Strikethrough / was-price from Oxylabs |
+| `Discount %` | Whole-percent markdown |
+| `Bought Past Month` | Parsed "N+ bought in past month" badge number; 0 when absent |
+
+### Cron setup
+
+Add this line to your `crontab -e` (runs at 8 am Central on the machine where the repo lives):
+
+```cron
+0 8 * * * /mnt/e/GITHUB/hotproductsdot-v2/run_daily_deals.sh >> /mnt/e/GITHUB/hotproductsdot-v2/logs/daily_deals.log 2>&1
+```
+
+`run_daily_deals.sh` runs `fetch_daily_deals.py` inside a **detached git worktree** (`/mnt/e/GITHUB/.hotproducts-deals-worktree`) so the developer checkout (which may be on a feature branch or have uncommitted changes) is never touched. After a successful run it commits the updated catalog + images and pushes to `main` with `[skip ci]` in the message. If no qualifying deals are found (exit code 2), yesterday's batch is kept live and nothing is pushed.
+
+### Running manually
+
+```bash
+# Dry run: discover + verify + rank, print results, do not touch CSV
+python fetch_daily_deals.py --dry-run -v
+
+# Full run with custom options
+python fetch_daily_deals.py --deal-count 25 --max-verify 60 --min-discount 10
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--deal-count N` | 25 | How many deals to keep in the catalog |
+| `--max-verify N` | 60 | Oxylabs verification budget (paid calls) |
+| `--min-discount PCT` | 10 | Minimum discount % to qualify |
+| `--dry-run` | off | Print ranked deals without writing any file |
+| `-v` | off | Verbose / debug logging |
+
+### How `post_daily.py` uses deals
+
+When a fresh deal batch exists in the catalog (`Temporary=daily-deal`, `Deal Date` within 2 days), `post_daily.py` automatically uses the **deal pool** instead of the normal rotation. Posts are ranked by `deal_score` so the top 4 deals are posted each day. The Instagram caption gains a `⏰ LIMITED-TIME DEAL: N% OFF (was $X)` line at the top. Pass `--ignore-deals` to skip the deal pool and fall back to the normal rotation.
+
+### How the site renders deals
+
+| Piece | Role |
+|-------|------|
+| `fetch_daily_deals.py` | Writes deal rows + 5 new CSV columns to `products/top-1000.csv` |
+| `site/prebuild.js` | Parses deal columns into `products.json` at build time |
+| `site/app/lib/products.ts` — `getLimitedTimeDeals()` | Filters for `limitedDeal=true`, staleness ≤ 2 days, sorted by velocity × discount |
+| `site/app/lib/products.ts` — `getSaleProducts()` | Excludes `limitedDeal` rows so they don't double-appear in the Hot Deals section |
+| `site/app/components/LimitedDealCard.tsx` | Red-accented card: discount badge, velocity badge, strikethrough price, "Grab the Deal →" CTA |
+| `site/app/page.tsx` — "Limited Time Sale" section | Rendered above Hot Deals; hidden when the batch is stale or empty |
+
+### Tests
+
+```bash
+python -m pytest tests/test_fetch_daily_deals.py -v   # 20 unit tests
+```
+
+Covers: badge parsing, discount math, deal scoring, catalog row swap (swap-out of yesterday's batch, merge-in-place for existing ASINs, legacy fieldname extension, stale column clearing), `post_daily.select_deal_pool` freshness window + ranking, and Instagram caption deal line.
 
 ---
 

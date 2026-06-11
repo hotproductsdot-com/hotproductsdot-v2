@@ -344,15 +344,15 @@
   },
   "hotPaths": [
     {
-      "path": "amazon_local_api.py",
-      "accessCount": 12,
-      "lastAccessed": 1781134120252,
+      "path": "post_daily.py",
+      "accessCount": 20,
+      "lastAccessed": 1781141612931,
       "type": "file"
     },
     {
-      "path": "post_daily.py",
-      "accessCount": 11,
-      "lastAccessed": 1781136755156,
+      "path": "amazon_local_api.py",
+      "accessCount": 12,
+      "lastAccessed": 1781134120252,
       "type": "file"
     },
     {
@@ -368,21 +368,69 @@
       "type": "file"
     },
     {
+      "path": "README.md",
+      "accessCount": 9,
+      "lastAccessed": 1781143146466,
+      "type": "file"
+    },
+    {
+      "path": "site/app/lib/products.ts",
+      "accessCount": 7,
+      "lastAccessed": 1781141852158,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_fetch_daily_deals.py",
+      "accessCount": 6,
+      "lastAccessed": 1781142174188,
+      "type": "file"
+    },
+    {
       "path": "tests/test_amazon_local_api.py",
       "accessCount": 5,
       "lastAccessed": 1781134167346,
       "type": "file"
     },
     {
-      "path": "README.md",
-      "accessCount": 4,
-      "lastAccessed": 1781133387885,
+      "path": "site/app/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1781141856297,
       "type": "file"
     },
     {
       "path": "instagram/image_gen_fal.py",
       "accessCount": 3,
       "lastAccessed": 1781136713985,
+      "type": "file"
+    },
+    {
+      "path": "oxylabs_refresh.py",
+      "accessCount": 3,
+      "lastAccessed": 1781141239303,
+      "type": "file"
+    },
+    {
+      "path": "fetch_daily_deals.py",
+      "accessCount": 3,
+      "lastAccessed": 1781141846366,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/LimitedDealCard.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781141847477,
+      "type": "file"
+    },
+    {
+      "path": "run_daily_deals.sh",
+      "accessCount": 3,
+      "lastAccessed": 1781141852808,
+      "type": "file"
+    },
+    {
+      "path": "find_bestsellers.py",
+      "accessCount": 3,
+      "lastAccessed": 1781143202887,
       "type": "file"
     },
     {
@@ -422,12 +470,6 @@
       "type": "file"
     },
     {
-      "path": "oxylabs_refresh.py",
-      "accessCount": 1,
-      "lastAccessed": 1781132843607,
-      "type": "file"
-    },
-    {
       "path": "_scrapling_price_test.py",
       "accessCount": 1,
       "lastAccessed": 1781132844519,
@@ -455,6 +497,24 @@
       "path": "instagram/test_ad_creative_fallback.py",
       "accessCount": 1,
       "lastAccessed": 1781136627277,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/2026-06-10/breville-espresso-machine/banner.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1781141226611,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/DealCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781141241531,
+      "type": "file"
+    },
+    {
+      "path": ".smoke_artifact/render-smoke-27317590484/2026-06-11/breville-espresso-machine/banner.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1781141322693,
       "type": "file"
     }
   ],

@@ -221,6 +221,17 @@ def load_top_products(n: int | None = None) -> list[dict]:
             price_num = _parse_price(row.get("Price Range") or "")
             bsr       = _parse_bsr(row.get("BSR") or "")
 
+            # Limited-time deal columns (written by fetch_daily_deals.py;
+            # empty on permanent catalog rows).
+            try:
+                discount_pct = int((row.get("Discount %") or "0").strip() or "0")
+            except ValueError:
+                discount_pct = 0
+            try:
+                bought_past_month = int((row.get("Bought Past Month") or "0").strip() or "0")
+            except ValueError:
+                bought_past_month = 0
+
             product = {
                 "name":         name,
                 "slug":         slugify(name),
@@ -234,12 +245,53 @@ def load_top_products(n: int | None = None) -> list[dict]:
                 "bsr":          bsr,
                 "amazon_url":   amazon_url,
                 "refreshed_date": refreshed_date,
+                "temporary":    (row.get("Temporary") or "").strip(),
+                "deal_date":    (row.get("Deal Date") or "").strip(),
+                "list_price":   (row.get("List Price") or "").strip(),
+                "discount_pct": discount_pct,
+                "bought_past_month": bought_past_month,
             }
             product["_score"] = _score_product(product)
             products.append(product)
 
     products.sort(key=lambda x: x["_score"], reverse=True)
     return products[:n] if n is not None else products
+
+
+# Deal rows older than this many days are stale (the 8am cron likely missed a
+# run) — fall back to the normal rotation instead of re-posting old "deals".
+DEAL_FRESHNESS_DAYS = 2
+
+
+def _deal_velocity_score(p: dict) -> float:
+    """Sales-velocity × discount. 'Bought in past month' badge when present;
+    review count / 10 as the cumulative-sales fallback (matches
+    fetch_daily_deals.deal_score)."""
+    velocity = p.get("bought_past_month") or max(p.get("review_count", 0), 1) / 10
+    return velocity * p.get("discount_pct", 0)
+
+
+def select_deal_pool(products: list[dict], today: date | None = None) -> list[dict]:
+    """Fresh limited-time deal rows (Temporary=daily-deal, Deal Date within
+    DEAL_FRESHNESS_DAYS), ranked by sales-velocity × discount descending.
+
+    Returns [] when there is no fresh batch, signalling the caller to use the
+    normal rotation pool.
+    """
+    today = today or date.today()
+    pool: list[dict] = []
+    for p in products:
+        if p.get("temporary") != "daily-deal" or p.get("discount_pct", 0) <= 0:
+            continue
+        try:
+            deal_day = date.fromisoformat(p.get("deal_date") or "")
+        except ValueError:
+            continue
+        if not (0 <= (today - deal_day).days <= DEAL_FRESHNESS_DAYS):
+            continue
+        pool.append(p)
+    pool.sort(key=_deal_velocity_score, reverse=True)
+    return pool
 
 
 def count_today_ok_posts(platform: str) -> int:
@@ -811,9 +863,19 @@ def instagram_body(product: dict, *, ai_hook: str | None = None, ai_cta: str | N
 
     hook = (ai_hook or _render_hook(product)).strip()
 
+    # Limited-time deal rows (fetch_daily_deals.py) carry a real discount —
+    # lead with it, it's the whole reason this product was picked today.
+    deal_line = None
+    if product.get("discount_pct"):
+        was = _fmt_price(product.get("list_price") or "")
+        deal_line = f"⏰ LIMITED-TIME DEAL: {product['discount_pct']}% OFF"
+        if was and was != "Check price":
+            deal_line += f" (was {was})"
+
     lines = [
         hook,
         "",
+        *( [deal_line] if deal_line else [] ),
         f"{stars} {product['rating']}/5 · {review_str} reviews",
         f"💰 {price}",
         "",
@@ -1268,6 +1330,12 @@ def main() -> None:
         help="When GEMINI_API_KEY is set and generation yields no variants: 'catalog' (default) uses site image; "
              "'abort' exits with an error.",
     )
+    parser.add_argument(
+        "--ignore-deals",
+        action="store_true",
+        help="Skip the limited-time deals pool and use the normal rotation "
+             "even when fresh daily-deal rows exist in the catalog.",
+    )
     log_group = parser.add_mutually_exclusive_group()
     log_group.add_argument("-v", "--verbose", action="store_true", help="Debug logging to stderr")
     log_group.add_argument("-q", "--quiet", action="store_true", help="Only warnings and errors on stderr")
@@ -1332,7 +1400,19 @@ def main() -> None:
             products = filtered[:ROTATION_POOL]
             print(f"Category filter  : {args.category} ({len(products)} product(s) in pool)")
         else:
-            products = all_products[:ROTATION_POOL]
+            # Limited-time deals take over the rotation when a fresh batch
+            # exists (fetch_daily_deals.py cron, 8am Central). The pool is
+            # ranked by sales-velocity × discount, so the 4 daily IG posts
+            # are the top 4 deals. Stale/absent batch → normal rotation.
+            deal_pool = [] if args.ignore_deals else select_deal_pool(all_products)
+            if deal_pool:
+                products = deal_pool
+                print(f"Deals pool       : {len(products)} fresh limited-time deal(s) — "
+                      f"posting exclusively from today's sale batch")
+                logger.info("deals pool active size=%d top=%r",
+                            len(products), products[0]["name"])
+            else:
+                products = all_products[:ROTATION_POOL]
 
         try:
             product = pick_next_product(

@@ -132,7 +132,10 @@ def fetch_bestsellers_html(category_slug: str) -> str | None:
     """
     url = f"https://www.amazon.com/gp/bestsellers/{category_slug}"
     try:
-        resp = FetcherSession().get(url, timeout=REQUEST_TIMEOUT)
+        # FetcherSession is a context manager in scrapling 0.4.x — must enter
+        # before calling .get() or AttributeError is raised.
+        with FetcherSession() as session:
+            resp = session.get(url, timeout=REQUEST_TIMEOUT)
     except Exception as exc:
         logger.warning("Fetch failed for %s: %s", category_slug, exc)
         return None

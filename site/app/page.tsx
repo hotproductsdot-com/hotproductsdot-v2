@@ -6,10 +6,12 @@ import {
   getFeaturedProducts,
   getInstagramPostedProducts,
   getILovedProducts,
+  getLimitedTimeDeals,
   getSaleProducts,
 } from "./lib/products";
 import ProductGrid from "./components/ProductGrid";
 import DealCard from "./components/DealCard";
+import LimitedDealCard from "./components/LimitedDealCard";
 import { getCategoryIcon } from "./components/CategoryIcon";
 import { SITE_NAME, SITE_URL } from "./lib/constants";
 
@@ -30,6 +32,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   const featured = getFeaturedProducts(8);
+  const limitedDeals = getLimitedTimeDeals();
   const deals = getSaleProducts(6);
   const recentlyPosted = getInstagramPostedProducts(8);
   const lovedProducts = getILovedProducts();
@@ -100,6 +103,41 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Limited Time Sale — today's verified on-sale batch, refreshed every
+          morning by the fetch_daily_deals.py cron. Hidden when the batch is
+          stale (>2 days) or empty. */}
+      {limitedDeals.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-red-400 text-xs font-bold uppercase tracking-widest">
+                  Limited Time Sale
+                </span>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Today&apos;s Top {limitedDeals.length} On-Sale Finds</h2>
+              <p className="text-zinc-500 text-sm mt-1">
+                Verified discounts on Amazon&apos;s fastest sellers — refreshed every morning, gone when the sale ends
+              </p>
+            </div>
+            <a
+              href="https://www.amazon.com/deals?tag=hotproduct033-20"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="text-sm text-red-400 hover:text-red-300 font-medium whitespace-nowrap"
+            >
+              All Amazon Deals →
+            </a>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {limitedDeals.map((product) => (
+              <LimitedDealCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Products I LOVE */}
       {lovedProducts.length > 0 && (

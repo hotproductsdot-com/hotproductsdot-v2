@@ -23,6 +23,12 @@ export interface Product {
   refreshedDate?: string;
   refreshedTs?: number;
   iLoved?: boolean;
+  /** Limited-time deal fields — set by fetch_daily_deals.py on the daily sale batch. */
+  limitedDeal?: boolean;
+  dealDateTs?: number;
+  listPrice?: number;
+  discountPct?: number;
+  boughtPastMonth?: number;
 }
 
 /** Parse "M/D/YYYY" or "YYYY-MM-DD" → epoch ms; 0 if unparseable. */
@@ -214,6 +220,16 @@ export function getAllProducts(): Product[] {
     const actionNeeded = (row["Action Needed"] || "").trim().toLowerCase();
     const iLoved = actionNeeded.includes("loved");
 
+    // Limited-time deal columns (fetch_daily_deals.py); empty on permanent rows.
+    const discountPct = parseInt(row["Discount %"] || "0", 10) || 0;
+    const limitedDeal =
+      ((row["Temporary"] || "").trim() === "daily-deal" ||
+        (row["Deal Date"] || "").trim() !== "") &&
+      discountPct > 0;
+    const dealDateTs = parseRefreshedDate((row["Deal Date"] || "").trim());
+    const listPrice = parseFloat(row["List Price"] || "") || 0;
+    const boughtPastMonth = parseInt(row["Bought Past Month"] || "0", 10) || 0;
+
     products.push({
       name,
       slug,
@@ -233,6 +249,11 @@ export function getAllProducts(): Product[] {
       refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
       refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
       iLoved: iLoved || undefined,
+      limitedDeal: limitedDeal || undefined,
+      dealDateTs: dealDateTs > 0 ? dealDateTs : undefined,
+      listPrice: listPrice > 0 ? listPrice : undefined,
+      discountPct: discountPct > 0 ? discountPct : undefined,
+      boughtPastMonth: boughtPastMonth > 0 ? boughtPastMonth : undefined,
     });
   }
 
@@ -306,8 +327,33 @@ export function getFeaturedProducts(count = 12): Product[] {
  */
 export function getSaleProducts(count = 6): Product[] {
   return getAllProducts()
-    .filter((p) => p.affiliatePotential >= 8)
+    // Exclude limited-time deals — they have their own homepage section.
+    .filter((p) => p.affiliatePotential >= 8 && !p.limitedDeal)
     .sort((a, b) => b.affiliatePotential - a.affiliatePotential || a.bsrRank - b.bsrRank)
+    .slice(0, count);
+}
+
+/** Deal batches older than this are stale (cron missed a run) — hide them. */
+const LIMITED_DEAL_MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000;
+
+/**
+ * "Limited Time Sale" section: today's on-sale batch from fetch_daily_deals.py,
+ * ranked by sales velocity ("bought in past month" badge, review-count
+ * fallback) × discount %. Empty when the batch is stale or absent.
+ */
+export function getLimitedTimeDeals(count = 25): Product[] {
+  const now = Date.now();
+  const velocity = (p: Product) =>
+    (p.boughtPastMonth || Math.max(p.reviewCount, 1) / 10) * (p.discountPct ?? 0);
+  return getAllProducts()
+    .filter(
+      (p) =>
+        p.limitedDeal &&
+        (p.discountPct ?? 0) > 0 &&
+        (p.dealDateTs ?? 0) > 0 &&
+        now - (p.dealDateTs ?? 0) <= LIMITED_DEAL_MAX_AGE_MS,
+    )
+    .sort((a, b) => velocity(b) - velocity(a))
     .slice(0, count);
 }
 

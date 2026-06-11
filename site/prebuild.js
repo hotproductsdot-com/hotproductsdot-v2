@@ -136,6 +136,15 @@ for (const row of result.data) {
   const refreshedTs = parseRefreshedDate(refreshedRaw);
   const iLoved = (row['Action Needed'] || '').trim().toLowerCase().includes('loved') || undefined;
 
+  // Limited-time deal columns (fetch_daily_deals.py); empty on permanent rows.
+  const limitedDeal = (row['Temporary'] || '').trim() === 'daily-deal' ||
+    ((row['Deal Date'] || '').trim() !== '' && parseInt(row['Discount %'] || '0', 10) > 0);
+  const dealDateRaw = (row['Deal Date'] || '').trim();
+  const dealDateTs = parseRefreshedDate(dealDateRaw);
+  const listPrice = parseFloat(row['List Price'] || '') || 0;
+  const discountPct = parseInt(row['Discount %'] || '0', 10) || 0;
+  const boughtPastMonth = parseInt(row['Bought Past Month'] || '0', 10) || 0;
+
   products.push({
     name, slug, category, categorySlug: slugify(category),
     priceRange: price.display, priceMin: price.min, priceMax: price.max,
@@ -145,6 +154,11 @@ for (const row of result.data) {
     refreshedDate: refreshedTs > 0 ? refreshedRaw : undefined,
     refreshedTs: refreshedTs > 0 ? refreshedTs : undefined,
     iLoved: iLoved || undefined,
+    limitedDeal: (limitedDeal && discountPct > 0) || undefined,
+    dealDateTs: dealDateTs > 0 ? dealDateTs : undefined,
+    listPrice: listPrice > 0 ? listPrice : undefined,
+    discountPct: discountPct > 0 ? discountPct : undefined,
+    boughtPastMonth: boughtPastMonth > 0 ? boughtPastMonth : undefined,
   });
 }
 
