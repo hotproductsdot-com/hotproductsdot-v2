@@ -1,0 +1,6 @@
+# post_log.csv is append-only: both sides of any merge only ever add lines.
+# The union driver keeps lines from both sides so concurrent workflow runs
+# (daily_post, manual dispatch) never conflict on the log and never lose
+# each other's entries — losing entries breaks post_daily.py's dedup and
+# causes double posts.
+marketing-campaigns/post_log.csv merge=union
