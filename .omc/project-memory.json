@@ -350,6 +350,12 @@
       "type": "file"
     },
     {
+      "path": "instagram/ad_creative_gen.py",
+      "accessCount": 16,
+      "lastAccessed": 1781145698213,
+      "type": "file"
+    },
+    {
       "path": "amazon_local_api.py",
       "accessCount": 12,
       "lastAccessed": 1781134120252,
@@ -359,12 +365,6 @@
       "path": "refresh_catalog_local.py",
       "accessCount": 10,
       "lastAccessed": 1781134099344,
-      "type": "file"
-    },
-    {
-      "path": "instagram/ad_creative_gen.py",
-      "accessCount": 9,
-      "lastAccessed": 1781136718152,
       "type": "file"
     },
     {
@@ -386,6 +386,12 @@
       "type": "file"
     },
     {
+      "path": "instagram/image_gen_fal.py",
+      "accessCount": 7,
+      "lastAccessed": 1781145218966,
+      "type": "file"
+    },
+    {
       "path": "tests/test_amazon_local_api.py",
       "accessCount": 5,
       "lastAccessed": 1781134167346,
@@ -395,12 +401,6 @@
       "path": "site/app/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1781141856297,
-      "type": "file"
-    },
-    {
-      "path": "instagram/image_gen_fal.py",
-      "accessCount": 3,
-      "lastAccessed": 1781136713985,
       "type": "file"
     },
     {
@@ -464,6 +464,12 @@
       "type": "file"
     },
     {
+      "path": "instagram/test_ad_creative_fallback.py",
+      "accessCount": 2,
+      "lastAccessed": 1781145187832,
+      "type": "file"
+    },
+    {
       "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
       "lastAccessed": 1781123385360,
@@ -494,12 +500,6 @@
       "type": "file"
     },
     {
-      "path": "instagram/test_ad_creative_fallback.py",
-      "accessCount": 1,
-      "lastAccessed": 1781136627277,
-      "type": "file"
-    },
-    {
       "path": "generated_images/2026-06-10/breville-espresso-machine/banner.jpg",
       "accessCount": 1,
       "lastAccessed": 1781141226611,
@@ -521,6 +521,12 @@
       "path": "generated_images/composite_sample/breville-composite.jpg",
       "accessCount": 1,
       "lastAccessed": 1781144341408,
+      "type": "file"
+    },
+    {
+      "path": "instagram/fal_test_manifest.py",
+      "accessCount": 1,
+      "lastAccessed": 1781145181023,
       "type": "file"
     }
   ],
