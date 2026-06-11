@@ -1,0 +1,75 @@
+name: 🧪 Ad-Creative Render Smoke Test
+
+# Manual-only evidence run for the --ad-creative banner pipeline.
+# Exercises the EXACT production code path (post_daily.py --platform
+# instagram --ad-creative) in --dry-run mode: FAL render + text overlay +
+# Cloudinary upload + BANNER_AI_GATE=enforce all run for real, but nothing
+# is posted and no logs are committed. The composed banner is uploaded as
+# a workflow artifact for visual inspection.
+#
+# Added 2026-06-10 after the "white box" bug: the daily workflow silently
+# fell back to the white-card banner because fal-client/FAL_KEY were
+# missing in CI. This workflow proves the render works ON THE RUNNER.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  render-smoke:
+    name: pytest + 1 real FAL render (dry-run, no posting)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Regression tests (white-box failure policy)
+        run: python -m pytest instagram/test_ad_creative_fallback.py -v
+
+      - name: Compose one ad-creative banner via production path
+        env:
+          BANNER_AI_GATE: enforce
+          FAL_KEY:           ${{ secrets.FAL_KEY }}
+          TAVILY_API_KEY:    ${{ secrets.TAVILY_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLOUDINARY_URL:    ${{ secrets.CLOUDINARY_URL }}
+        run: |
+          # Exit-code contract: 3 = dry-run completed without posting (the
+          # expected outcome here), 0 = posted (impossible with --dry-run),
+          # 2 = AI gate rejected the banner, anything else = pipeline error.
+          python post_daily.py --platform instagram --ad-creative --dry-run && rc=0 || rc=$?
+          echo "post_daily.py exit code: $rc"
+          if [ "$rc" != "3" ] && [ "$rc" != "0" ]; then
+            echo "::error::Render pipeline failed (rc=$rc)"
+            exit 1
+          fi
+
+      - name: Assert a banner was actually rendered
+        run: |
+          banner=$(find generated_images -name banner.jpg | head -1)
+          if [ -z "$banner" ]; then
+            echo "::error::No banner.jpg produced — FAL render did not run"
+            exit 1
+          fi
+          echo "Rendered: $banner ($(stat -c%s "$banner") bytes)"
+
+      - name: Upload rendered banner as evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-smoke-${{ github.run_id }}
+          path: generated_images/**/banner.jpg
+          if-no-files-found: error
+          retention-days: 14
