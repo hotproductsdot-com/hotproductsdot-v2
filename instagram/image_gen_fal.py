@@ -38,20 +38,33 @@ FAL_IMG2IMG_RESOLUTION = os.environ.get("FAL_IMG2IMG_RESOLUTION", "2K")
 FAL_FALLBACK_TIMEOUT = 120
 REFERENCE_MAX_DIM = 1024
 
-_PROMPT_BANNER = (
-    "Premium affiliate marketing photo of {name} on a dark charcoal gradient background "
-    "(near-black #0f0f0f edges, #2c2c2c center glow). "
-    "Soft orange (#FF6B00) glow light behind the product, cinematic rim lighting. "
-    "Product sharp, centered, floating with a soft drop shadow. "
-    "Keep the product shape, color, and branding 100% identical. "
-    "Square 1:1 framing, photorealistic only. No text, no watermarks."
-)
-_PROMPT_FALLBACK = (
-    "Premium affiliate marketing photo of {name} on a dark charcoal gradient background "
-    "(near-black edges, lighter gray center glow). "
-    "Soft orange (#FF6B00) backlight glow, product centered and sharp. "
-    "No text, no watermarks. Square 1:1."
-)
+_PROMPT_BANNER = """You are a professional product photographer. Produce a single 1080x1080 square \
+affiliate marketing image for the product "{name}".
+
+The FIRST attached image is the real product. Reproduce it faithfully — exact \
+shape, color, branding, and proportions. Do not invent details.
+
+The remaining attached images are lifestyle/marketing references showing visual \
+language (lighting, framing, mood, backdrop) of high-performing affiliate ads. \
+Match that visual language. Do NOT include any other products or scenes from \
+the references — only the hero product.
+
+Requirements:
+- Square 1:1 framing, hero product front and center, sharp focus
+- Premium studio look: soft shadow under the product, clean dark backdrop with \
+a subtle warm orange glow behind the product
+- Photorealistic only — no cartoon, illustration, 3D render, or text overlays
+- No logos, watermarks, captions, or written words anywhere — text is added in \
+post-processing
+- Roughly 30% breathing room around the product so text can fit above and below
+"""
+
+_PROMPT_FALLBACK = """You are a professional product photographer. Create a 1080x1080 square image of {name}.
+
+The image shows the real product on a clean dark background with soft orange \
+accent lighting. Product is sharp, centered, and isolated — no other items, no \
+text, no watermarks. Square 1:1 framing, photorealistic only.
+"""
 
 
 def _load_image_bytes(path_or_url: str) -> bytes | None:
