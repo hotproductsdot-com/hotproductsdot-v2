@@ -114,16 +114,28 @@ def _fal_subscribe(application: str, arguments: dict) -> dict | None:
         return None
 
 
-def _fal_img2img(prompt: str, base_pil: Image.Image) -> bytes | None:
+def _fal_img2img(
+    prompt: str,
+    base_pil: Image.Image,
+    ref_pils: tuple[Image.Image, ...] = (),
+) -> bytes | None:
     image_url = _publish_to_fal(base_pil)
     if not image_url:
         logger.warning("FAL upload failed; img2img skipped")
         return None
+    # First URL is the product photo; the rest are lifestyle/marketing
+    # references. The prompt describes this ordering — a reference that
+    # fails to upload is dropped rather than failing the generation.
+    image_urls = [image_url]
+    for ref in ref_pils:
+        ref_url = _publish_to_fal(ref)
+        if ref_url:
+            image_urls.append(ref_url)
     result = _fal_subscribe(
         FAL_MODEL,
         {
             "prompt": prompt,
-            "image_urls": [image_url],
+            "image_urls": image_urls,
             "aspect_ratio": "1:1",
             "num_images": 1,
         },
@@ -147,11 +159,23 @@ def _fal_text2img(prompt: str) -> bytes | None:
     return _download_result(result)
 
 
-def _fal_generate_image(prompt: str, base_image_bytes: bytes | None) -> bytes | None:
-    """Dispatch img2img when we have a product photo; else text2img."""
+def _fal_generate_image(
+    prompt: str,
+    base_image_bytes: bytes | None,
+    reference_images: tuple[bytes, ...] | list[bytes] = (),
+) -> bytes | None:
+    """Dispatch img2img when we have a product photo; else text2img.
+
+    ``reference_images`` are optional lifestyle/marketing JPEGs that ground
+    the generation (Tavily / Facebook Ad Library). Unreadable entries are
+    skipped.
+    """
     pil = _to_pil(base_image_bytes) if base_image_bytes is not None else None
     if pil is not None:
-        out = _fal_img2img(prompt, pil)
+        ref_pils = tuple(
+            p for p in (_to_pil(b) for b in reference_images) if p is not None
+        )
+        out = _fal_img2img(prompt, pil, ref_pils)
         if out:
             return out
         logger.warning("img2img failed; falling back to text2img")

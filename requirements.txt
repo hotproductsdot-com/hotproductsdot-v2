@@ -1,4 +1,8 @@
 anthropic>=0.28.0
+# FAL.AI client powers the --ad-creative banner (instagram/image_gen_fal.py).
+# Without it every daily post silently degraded to the white-card banner
+# (the 2026-06-10 "white box" bug) — keep this installed in CI.
+fal-client>=1.0.0
 pyyaml>=6.0
 beautifulsoup4==4.12.2
 google-genai>=1.0.0
