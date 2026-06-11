@@ -30,6 +30,11 @@ logger = logging.getLogger(__name__)
 
 FAL_MODEL = os.environ.get("FAL_MODEL_IMG2IMG", "fal-ai/nano-banana-2/edit")
 FAL_MODEL_T2I = os.environ.get("FAL_MODEL_T2I", "fal-ai/flux/dev")
+# Render at 2K and let _resize_to_canvas downsample to 1080 — small printed
+# text on products (button labels, dials) comes out legible instead of the
+# garbled glyphs 1K produced (Breville panel, 2026-06-10). Allowed values
+# per the nano-banana-2 API: 0.5K, 1K, 2K, 4K.
+FAL_IMG2IMG_RESOLUTION = os.environ.get("FAL_IMG2IMG_RESOLUTION", "2K")
 FAL_FALLBACK_TIMEOUT = 120
 REFERENCE_MAX_DIM = 1024
 
@@ -137,6 +142,7 @@ def _fal_img2img(
             "prompt": prompt,
             "image_urls": image_urls,
             "aspect_ratio": "1:1",
+            "resolution": FAL_IMG2IMG_RESOLUTION,
             "num_images": 1,
         },
     )

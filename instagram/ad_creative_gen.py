@@ -90,6 +90,9 @@ def _fallback_or_raise(
 TAVILY_ENDPOINT = "https://api.tavily.com/search"
 N_REFERENCES = 4
 REFERENCE_MAX_DIM = 1024
+# The hero product photo gets more pixels than the style references so the
+# model can read (and faithfully reproduce) small printed labels.
+PRODUCT_MAX_DIM = 1536
 
 PROMPT_TEMPLATE = """You are an e-commerce ad creative director. Produce a single 1080x1080 square \
 marketing image for the product "{name}" in the {category} category.
@@ -217,7 +220,7 @@ def compose_ad_creative_banner(
     if src_raw is None:
         return _fallback_or_raise(product, src, out, "could not load product image")
 
-    src_jpeg = _normalize_to_jpeg(src_raw)
+    src_jpeg = _normalize_to_jpeg(src_raw, max_dim=PRODUCT_MAX_DIM)
     if src_jpeg is None:
         return _fallback_or_raise(product, src, out, "product image unreadable")
 
