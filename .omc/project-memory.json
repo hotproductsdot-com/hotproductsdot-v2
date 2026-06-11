@@ -345,8 +345,8 @@
   "hotPaths": [
     {
       "path": "post_daily.py",
-      "accessCount": 20,
-      "lastAccessed": 1781141612931,
+      "accessCount": 25,
+      "lastAccessed": 1781144150001,
       "type": "file"
     },
     {
@@ -374,15 +374,15 @@
       "type": "file"
     },
     {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 7,
-      "lastAccessed": 1781141852158,
+      "path": "tests/test_fetch_daily_deals.py",
+      "accessCount": 8,
+      "lastAccessed": 1781144173117,
       "type": "file"
     },
     {
-      "path": "tests/test_fetch_daily_deals.py",
-      "accessCount": 6,
-      "lastAccessed": 1781142174188,
+      "path": "site/app/lib/products.ts",
+      "accessCount": 7,
+      "lastAccessed": 1781141852158,
       "type": "file"
     },
     {
@@ -515,6 +515,12 @@
       "path": ".smoke_artifact/render-smoke-27317590484/2026-06-11/breville-espresso-machine/banner.jpg",
       "accessCount": 1,
       "lastAccessed": 1781141322693,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/composite_sample/breville-composite.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1781144341408,
       "type": "file"
     }
   ],

@@ -207,6 +207,38 @@ def test_instagram_body_includes_deal_line():
 
 
 @pytest.mark.unit
+def test_deal_pool_dedup_excludes_already_posted():
+    """Simulates the main() dedup: select_deal_pool returns all fresh deals
+    (it has no access to post_log), but filtering against posted_names
+    removes any deal that was already posted in a prior run."""
+    today = date(2026, 6, 10)
+    already_posted = _pool_product("Hot", deal_date="2026-06-10", discount=40, bought=10_000)
+    not_posted = _pool_product("Mild", deal_date="2026-06-10", discount=10, bought=100)
+
+    pool = post_daily.select_deal_pool([already_posted, not_posted], today=today)
+    assert len(pool) == 2  # select_deal_pool sees both (no post_log access)
+
+    # Replicate the main() dedup step
+    posted_names = {"Hot"}
+    fresh = [p for p in pool if p["name"] not in posted_names]
+    assert [p["name"] for p in fresh] == ["Mild"]
+
+
+@pytest.mark.unit
+def test_deal_pool_dedup_all_posted_returns_empty():
+    """When every deal in the pool is already posted, fresh_deals is empty
+    and main() falls back to the regular rotation."""
+    today = date(2026, 6, 10)
+    p1 = _pool_product("Alpha", deal_date="2026-06-10", discount=30, bought=5_000)
+    p2 = _pool_product("Beta", deal_date="2026-06-10", discount=20, bought=3_000)
+
+    pool = post_daily.select_deal_pool([p1, p2], today=today)
+    posted_names = {"Alpha", "Beta"}
+    fresh = [p for p in pool if p["name"] not in posted_names]
+    assert fresh == []
+
+
+@pytest.mark.unit
 def test_instagram_body_no_deal_line_for_regular_products():
     product = {
         "name": "Regular Thing", "slug": "regular-thing", "category": "Kitchen",

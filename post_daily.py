@@ -1406,11 +1406,28 @@ def main() -> None:
             # are the top 4 deals. Stale/absent batch → normal rotation.
             deal_pool = [] if args.ignore_deals else select_deal_pool(all_products)
             if deal_pool:
-                products = deal_pool
-                print(f"Deals pool       : {len(products)} fresh limited-time deal(s) — "
-                      f"posting exclusively from today's sale batch")
-                logger.info("deals pool active size=%d top=%r",
-                            len(products), products[0]["name"])
+                # Explicitly remove already-posted deals before selection so
+                # the same product is never re-posted even when it re-appears
+                # in tomorrow's batch within the 2-day freshness window.
+                posted_names = load_posted_products(cooldown_days=args.cooldown_days)
+                fresh_deals = [p for p in deal_pool if p["name"] not in posted_names]
+                skipped_deals = len(deal_pool) - len(fresh_deals)
+                if skipped_deals:
+                    skipped_names = [p["name"] for p in deal_pool if p["name"] in posted_names]
+                    print(f"Deals pool       : {skipped_deals} deal(s) already posted — skipping: "
+                          + ", ".join(skipped_names[:3])
+                          + (" …" if len(skipped_names) > 3 else ""))
+                if fresh_deals:
+                    products = fresh_deals
+                    print(f"Deals pool       : {len(products)} unposted deal(s) — "
+                          f"posting exclusively from today's sale batch")
+                    logger.info("deals pool active size=%d top=%r",
+                                len(products), products[0]["name"])
+                else:
+                    # All deals already posted today — fall back to regular rotation
+                    print("Deals pool       : all deals already posted — falling back to regular rotation")
+                    logger.info("deals pool exhausted; falling back to rotation pool")
+                    products = all_products[:ROTATION_POOL]
             else:
                 products = all_products[:ROTATION_POOL]
 
