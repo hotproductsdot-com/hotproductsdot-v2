@@ -350,15 +350,21 @@
       "type": "file"
     },
     {
+      "path": "post_daily.py",
+      "accessCount": 11,
+      "lastAccessed": 1781136755156,
+      "type": "file"
+    },
+    {
       "path": "refresh_catalog_local.py",
       "accessCount": 10,
       "lastAccessed": 1781134099344,
       "type": "file"
     },
     {
-      "path": "post_daily.py",
-      "accessCount": 6,
-      "lastAccessed": 1781129582342,
+      "path": "instagram/ad_creative_gen.py",
+      "accessCount": 9,
+      "lastAccessed": 1781136718152,
       "type": "file"
     },
     {
@@ -374,9 +380,9 @@
       "type": "file"
     },
     {
-      "path": "instagram/ad_creative_gen.py",
+      "path": "instagram/image_gen_fal.py",
       "accessCount": 3,
-      "lastAccessed": 1781134402233,
+      "lastAccessed": 1781136713985,
       "type": "file"
     },
     {
@@ -395,6 +401,18 @@
       "path": "tests/test_refresh_catalog_local.py",
       "accessCount": 2,
       "lastAccessed": 1781133839734,
+      "type": "file"
+    },
+    {
+      "path": "instagram/banner_compose.py",
+      "accessCount": 2,
+      "lastAccessed": 1781136110220,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 2,
+      "lastAccessed": 1781136803030,
       "type": "file"
     },
     {
@@ -422,9 +440,21 @@
       "type": "file"
     },
     {
-      "path": "instagram/banner_compose.py",
+      "path": "generated_images/2026-06-10/amorepacific-treatment-enzyme-peel-cleansing-powder-korean-gentle-daily-exfoliator-with-hyaluronic-acid-and-green-tea-enzymes-1-9-oz/banner.jpg",
       "accessCount": 1,
-      "lastAccessed": 1781134378311,
+      "lastAccessed": 1781136132848,
+      "type": "file"
+    },
+    {
+      "path": "instagram/generate_fal_products.py",
+      "accessCount": 1,
+      "lastAccessed": 1781136298789,
+      "type": "file"
+    },
+    {
+      "path": "instagram/test_ad_creative_fallback.py",
+      "accessCount": 1,
+      "lastAccessed": 1781136627277,
       "type": "file"
     }
   ],
