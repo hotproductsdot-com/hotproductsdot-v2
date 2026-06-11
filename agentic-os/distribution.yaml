@@ -1,0 +1,13 @@
+name: hotproducts-agentic-os
+version: 1.0.0
+description: >
+  Jack Roberts-style Agentic OS for hotproductsdot-v2 — Pantheon personas,
+  Claude OS bridge, Mission Control dashboard, and growth-engine automation.
+author: hotproductsdot
+license: MIT
+requirements:
+  hermes: ">=0.13.0"
+  node: ">=20"
+profiles:
+  - name: default
+    description: Primary orchestrator for hotproductsdot affiliate site ops

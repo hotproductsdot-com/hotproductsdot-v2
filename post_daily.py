@@ -214,6 +214,10 @@ def load_top_products(n: int | None = None) -> list[dict]:
             except ValueError:
                 potential = 7
 
+            refreshed_date = (row.get("Refreshed Date") or "").strip()
+            if not refreshed_date:
+                continue  # skip: no refresh date means data hasn't been validated
+
             price_num = _parse_price(row.get("Price Range") or "")
             bsr       = _parse_bsr(row.get("BSR") or "")
 
@@ -229,6 +233,7 @@ def load_top_products(n: int | None = None) -> list[dict]:
                 "potential":    potential,
                 "bsr":          bsr,
                 "amazon_url":   amazon_url,
+                "refreshed_date": refreshed_date,
             }
             product["_score"] = _score_product(product)
             products.append(product)
@@ -1224,10 +1229,12 @@ def main() -> None:
         "--ad-creative",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="AI-generated ad creative banner (Gemini Nano Banana Pro grounded "
-             "on Tavily reference images). Default: ON. Use --no-ad-creative "
-             "to force the white-card pipeline. The AI path falls back to the "
-             "white-card pipeline automatically on Tavily/Gemini failure.",
+        help="AI-generated ad creative banner (FAL.AI nano-banana img2img "
+             "grounded on Tavily reference images; requires fal-client + "
+             "FAL_KEY). Default: ON. Use --no-ad-creative to force the "
+             "white-card pipeline. On FAL failure the post is skipped "
+             "(AdCreativeError) unless AD_CREATIVE_FALLBACK=white-card "
+             "explicitly opts into the legacy white-card fallback.",
     )
     parser.add_argument(
         "--competitor-brand",
@@ -1553,6 +1560,15 @@ def main() -> None:
                 chosen_image_url = None
                 logger.warning("Cloudinary upload returned no URL")
                 print("   [!] Cloudinary upload failed — Instagram post will be skipped")
+        except ad_creative_gen.AdCreativeError as exc:
+            # Transient infrastructure failure (FAL key/package missing or
+            # API outage) — the product is fine, so skip today's post
+            # WITHOUT quarantining. Quarantine here would slowly poison the
+            # catalog during a FAL outage.
+            chosen_image_url = None
+            logger.error("Ad-creative generation unavailable: %s", exc.reason)
+            print(f"   [!] Ad-creative generation failed: {exc.reason} — Instagram post will be skipped")
+            print("       (product NOT quarantined; set AD_CREATIVE_FALLBACK=white-card to post the legacy white-card banner instead)")
         except banner_compose.BannerQualityError as exc:
             # Permanent quarantine: a row with status="quality_blocked" is
             # written so load_posted_products will skip this product on every

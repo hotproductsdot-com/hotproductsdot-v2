@@ -1,0 +1,27 @@
+---
+description: Portfolio-wide agent rules — secrets, delegation, git safety, harness context
+alwaysApply: true
+---
+
+# Portfolio Harness (Agentic OS)
+
+This project uses the shared portfolio harness from `hotproductsdot-v2/agentic-os`.
+
+## Delegation model
+
+- **You (Cursor):** implement and review code in this repo
+- **Hermes:** orchestrate cron, cross-project research, morning briefs — not primary coder
+- **Oracle:** synthesis across Cursor sessions, Claude Code, and Obsidian
+
+## Non-negotiables
+
+- Secrets in repo-root `.env` only — never commit
+- No force-push to main; confirm destructive git/deploy operations
+- Use `--dry-run` for publish/deploy automation unless user explicitly approves
+- Minimize diff scope — match existing conventions in this repo
+
+## When stuck
+
+1. Check this repo's `AGENTS.md` for commands and verification steps
+2. For cross-project context: `hotproductsdot-v2/agentic-os/bridge/context/latest.json`
+3. Delegate research to Hermes Pantheon **Labyrinth**; strategy to **Philosopher**

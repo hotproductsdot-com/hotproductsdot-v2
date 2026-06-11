@@ -107,8 +107,13 @@ jobs:
           # dropped (commits 82cf6ab0, 7dbbb8d1) because Meta blocks i.ibb.co.
           CLOUDINARY_URL:      ${{ secrets.CLOUDINARY_URL }}
           GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          # FAL_KEY drives the --ad-creative banner render (FAL.AI
+          # nano-banana img2img). Without it the run used to silently fall
+          # back to the white-card banner (2026-06-10 "white box" bug); now
+          # the post is skipped with a loud AdCreativeError instead.
+          FAL_KEY:             ${{ secrets.FAL_KEY }}
           # TAVILY grounds the --ad-creative banner in real-world reference
-          # images. Missing key only degrades quality (Gemini still runs
+          # images. Missing key only degrades quality (FAL still runs
           # without references) — the pipeline does not error out.
           TAVILY_API_KEY:      ${{ secrets.TAVILY_API_KEY }}
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
@@ -147,11 +152,12 @@ jobs:
           else
             for i in 1 2 3 4; do
               echo "::group::Post $i/4"
-              # --ad-creative: AI-generated ad-creative banner (Gemini Nano Banana
-              # Pro grounded on Tavily reference imagery). The white-card pipeline
-              # replaced rembg cutouts, so the historical reason for forcing
-              # --catalog-image-only is gone. Stochastic flakiness now lands in
-              # quality_blocked (rc=2) rather than corrupting banners.
+              # --ad-creative: AI-generated ad-creative banner (FAL.AI nano-banana
+              # img2img grounded on Tavily reference imagery; needs FAL_KEY +
+              # fal-client). On FAL failure the post is SKIPPED (rc=1) — the
+              # white-card fallback is opt-in via AD_CREATIVE_FALLBACK=white-card
+              # because it shipped the 2026-06-10 "white box" posts. Stochastic
+              # quality flakiness still lands in quality_blocked (rc=2).
               python post_daily.py --platform instagram --ad-creative && rc=0 || rc=$?
               case "$rc" in
                 0) posts_ok=$((posts_ok + 1)); echo "Post $i: posted (rc=0)" ;;
@@ -186,6 +192,7 @@ jobs:
           TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
           CLOUDINARY_URL:      ${{ secrets.CLOUDINARY_URL }}
           GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          FAL_KEY:             ${{ secrets.FAL_KEY }}
           TAVILY_API_KEY:      ${{ secrets.TAVILY_API_KEY }}
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
         run: |

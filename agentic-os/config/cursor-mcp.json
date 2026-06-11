@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "hermes-orchestrator": {
+      "command": "wsl",
+      "args": [
+        "-e",
+        "bash",
+        "-lc",
+        "hermes mcp serve --transport stdio --name hermes-orchestrator"
+      ],
+      "description": "Hermes Agent — persistent orchestrator with Pantheon, memory, cron, and growth-engine skills"
+    }
+  }
+}

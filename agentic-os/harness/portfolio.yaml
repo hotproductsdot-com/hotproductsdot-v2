@@ -1,0 +1,98 @@
+# Portfolio harness — shared config for all repos under E:\GITHUB
+version: 1.0.0
+
+paths:
+  portfolio_root_wsl: /mnt/e/GITHUB
+  portfolio_root_windows: E:\GITHUB
+  obsidian_vault: /mnt/e/GITHUB/Claude-Code-OBVault
+  agentic_os: /mnt/e/GITHUB/hotproductsdot-v2/agentic-os
+  secrets_file: .env  # repo-root only — never commit
+
+mission_control:
+  port: 9120
+  registry: agentic-os/mission-control/data/projects.json
+
+hermes:
+  home: ~/.hermes
+  pantheon: [mercury, labyrinth, philosopher, oracle]
+
+# Detection order matters — first match wins
+archetypes:
+  fullstack-mixed:
+    match: all
+    markers:
+      - site/package.json
+      - requirements.txt
+    description: Next.js site + Python automation in one repo
+  node-monorepo:
+    match: any
+    markers:
+      - pnpm-workspace.yaml
+    description: pnpm/turbo monorepo
+  nextjs-vercel:
+    match: any
+    markers:
+      - next.config.ts
+      - next.config.js
+      - site/next.config.ts
+      - site/next.config.js
+    description: Next.js app (often Vercel-deployed)
+  python-app:
+    match: any
+    markers:
+      - requirements.txt
+      - pyproject.toml
+    description: Python scripts, APIs, or data pipelines
+  node-app:
+    match: any
+    markers:
+      - package.json
+    description: Node/Express/React/Vite standalone app
+  generic:
+    match: any
+    markers: []
+    description: Fallback — portfolio rules only
+
+# Optional per-project overrides (slug = directory name under portfolio root)
+projects:
+  hotproductsdot-v2:
+    archetype: fullstack-mixed
+    primary: true
+    notes: Affiliate site + growth-engine + agentic-os control plane
+  hotproductsdot-v3:
+    archetype: fullstack-mixed
+  farm-website:
+    archetype: nextjs-vercel
+  fowlgoatfarm-website:
+    archetype: nextjs-vercel
+  france2026:
+    archetype: nextjs-vercel
+  paperclip:
+    archetype: node-monorepo
+  clawdbot:
+    archetype: node-monorepo
+  eliza:
+    archetype: node-monorepo
+  TradingAgents:
+    archetype: python-app
+  market-analysis-dashboard:
+    archetype: python-app
+  Hyperliquid-Data-Layer-API:
+    archetype: python-app
+  hermes-agent:
+    archetype: node-app
+  everything-claude-code:
+    archetype: node-app
+    skip_harness: true  # has its own ECC harness
+  Claude-Code-OBVault:
+    skip_harness: true  # PKM vault, not a code project
+
+global_rules:
+  - Secrets live in repo-root .env only — never commit credentials
+  - Never force-push to main/master; confirm before destructive git operations
+  - Delegate production code changes to Cursor or Claude Code when available
+  - Hermes orchestrates; it does not rewrite app code unless explicitly asked
+  - Use --dry-run for publish/deploy pipelines unless the user explicitly approves
+  - WSL paths for Hermes/cron; Windows paths for Cursor — both are valid
+  - Cross-project context lives in agentic-os/bridge/context/latest.json (Oracle reads this)
+  - Obsidian vault is shared PKM across the portfolio

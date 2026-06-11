@@ -366,6 +366,44 @@ STAGES: list[Stage] = [
                 cmd=["python", "-m", "pytest", "-x", "-q"],
                 long_running=True,
             ),
+            Activity(
+                id="facebook_cookbook_demo",
+                title="Build Facebook Cookbook (demo)",
+                description=(
+                    "Create a cookbook from Facebook saved recipes (sibling repo at ../facebook-cookbook). "
+                    "For a real export: use --export path/to/facebook.zip."
+                ),
+                cmd=["python", "scripts/build_cookbook.py", "--demo"],
+                cwd="../facebook-cookbook",
+                params=[
+                    Param(
+                        name="dry_run",
+                        label="Dry run (no Claude API)",
+                        kind="bool",
+                        default=True,
+                        flag="--dry-run",
+                    ),
+                    Param(
+                        name="export_path",
+                        label="Facebook export .zip or folder (overrides demo)",
+                        flag="--export",
+                        placeholder="C:/Users/you/Downloads/facebook-export.zip",
+                    ),
+                    Param(
+                        name="title",
+                        label="Cookbook title",
+                        flag="--title",
+                        default="My Facebook Recipe Cookbook",
+                    ),
+                    Param(
+                        name="limit",
+                        label="Max recipes (0 = all)",
+                        flag="--limit",
+                        default="0",
+                    ),
+                ],
+                long_running=True,
+            ),
         ],
     ),
 ]

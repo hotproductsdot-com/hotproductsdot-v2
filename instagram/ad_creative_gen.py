@@ -1,26 +1,33 @@
-"""AI-generated ad-creative banner via Gemini Nano Banana Pro, grounded on
+"""AI-generated ad-creative banner via FAL.AI, grounded on
 Tavily-fetched real-world reference images.
 
 Optional alternative to banner_compose.compose_banner. Activated via the
 --ad-creative CLI flag on post_daily.py. Default behavior (white-card
 pipeline) is unchanged.
 
-Pipeline (adapted from Samin Yasar's "Claude Just Changed Marketing
-Forever" tutorial):
-  1. Tavily web search for the product → real-world lifestyle/marketing
+Pipeline:
+  1. Tavily web search for the product -> real-world lifestyle/marketing
      image URLs to ground the generation in real-world references.
-  2. Send catalog photo + N reference images to Gemini Nano Banana Pro
-     (multimodal input → image output).
+  2. Compose a HotProducts-style prompt from the product photo + N reference
+     images and dispatch it through image_gen_fal.py (FAL.AI).
   3. Resize to canvas, overlay the existing _add_text headline/price/pill
      stack, save JPEG.
   4. Run the AI vision gate as the final QA pass.
 
-Falls back to compose_banner (white-card) on Tavily/Gemini failure so an
-outage in either upstream can never halt the daily rotation.
+Failure policy (AD_CREATIVE_FALLBACK env var):
+  "fail" (default)  → raise AdCreativeError when FAL can't render. The
+      caller skips the post for today; nothing is quarantined. This is
+      the default because the white-card fallback shipped unacceptable
+      "white box" posts (2026-06-10) whenever FAL silently failed —
+      fal_client missing from requirements, FAL_KEY unset, or an API
+      error all degraded every "AI" banner to a white card with no
+      operator-visible signal.
+  "white-card"      → legacy behavior: fall back to compose_banner so an
+      upstream outage never halts the daily rotation. Opt in only if a
+      white-card post is preferable to no post.
 """
 from __future__ import annotations
 
-import base64
 import logging
 import os
 from io import BytesIO
@@ -44,17 +51,45 @@ from instagram.banner_compose import (
 
 logger = logging.getLogger(__name__)
 
-# Gemini image generation model. The original "nano-banana-pro-preview" alias
-# was a tutorial placeholder that stopped working ~2026-05-26. Use the stable
-# gemini-2.5-flash-image model (confirmed live from Google AI docs 2026-05-31).
-# Override via GEMINI_AD_MODEL env var if Google releases a newer model.
-GEMINI_MODEL = os.environ.get("GEMINI_AD_MODEL", "gemini-2.5-flash-image")
-GEMINI_ENDPOINT_TEMPLATE = (
-    "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-)
+
+class AdCreativeError(Exception):
+    """Raised when the FAL ad-creative pipeline can't produce a banner and
+    AD_CREATIVE_FALLBACK is not set to "white-card".
+
+    Transient by design: the product is NOT at fault, so callers must skip
+    today's post rather than quarantine (contrast with BannerQualityError).
+    """
+
+    def __init__(self, reason: str):
+        super().__init__(reason)
+        self.reason = reason
+
+
+def _fal_available() -> tuple[bool, str]:
+    """Check the two preconditions for any FAL call. Returns (ok, reason)."""
+    if not os.environ.get("FAL_KEY"):
+        return False, "FAL_KEY is not set (export it or add the GitHub secret)"
+    try:
+        import fal_client  # noqa: F401
+    except ImportError:
+        return False, "fal_client is not installed (pip install fal-client)"
+    return True, ""
+
+
+def _fallback_or_raise(
+    product: dict, src: str, out: Path, reason: str
+) -> str:
+    """Apply the AD_CREATIVE_FALLBACK policy for an unrenderable creative."""
+    mode = (os.environ.get("AD_CREATIVE_FALLBACK") or "fail").lower().strip()
+    if mode == "white-card":
+        print(f"   [ad-creative] {reason}; falling back to white-card (AD_CREATIVE_FALLBACK=white-card)")
+        return compose_banner(product, src, out)
+    raise AdCreativeError(reason)
+
+
 TAVILY_ENDPOINT = "https://api.tavily.com/search"
 N_REFERENCES = 4
-REFERENCE_MAX_DIM = 1024  # cap reference image size to keep payload sane
+REFERENCE_MAX_DIM = 1024
 
 PROMPT_TEMPLATE = """You are an e-commerce ad creative director. Produce a single 1080x1080 square \
 marketing image for the product "{name}" in the {category} category.
@@ -112,11 +147,7 @@ def _tavily_image_urls(query: str, n: int) -> list[str]:
 
 
 def _normalize_to_jpeg(data: bytes, max_dim: int = REFERENCE_MAX_DIM) -> bytes | None:
-    """Re-encode any image format to JPEG and clamp the longest side.
-
-    Gemini accepts PNG/JPEG/WebP, but normalizing keeps the request payload
-    predictable and small. Returns None on decode failure.
-    """
+    """Re-encode any image format to JPEG and clamp the longest side."""
     try:
         img = Image.open(BytesIO(data)).convert("RGB")
         img.thumbnail((max_dim, max_dim), Image.LANCZOS)
@@ -138,62 +169,8 @@ def _load_image_bytes(path_or_url: str) -> bytes | None:
         return None
 
 
-def _gemini_generate_image(prompt: str, jpeg_inputs: list[bytes]) -> bytes | None:
-    """Call Gemini multimodal endpoint. Returns image bytes or None."""
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        logger.warning("GEMINI_API_KEY not set; cannot generate ad creative")
-        return None
-
-    parts: list[dict] = [{"text": prompt}]
-    for jpeg in jpeg_inputs:
-        parts.append({
-            "inlineData": {
-                "mimeType": "image/jpeg",
-                "data": base64.b64encode(jpeg).decode("ascii"),
-            }
-        })
-
-    endpoint = GEMINI_ENDPOINT_TEMPLATE.format(model=GEMINI_MODEL)
-    try:
-        r = requests.post(
-            endpoint,
-            params={"key": api_key},
-            json={"contents": [{"parts": parts}]},
-            headers={"Content-Type": "application/json"},
-            timeout=120,
-        )
-    except requests.RequestException as exc:
-        logger.warning("Gemini request failed: %s", exc)
-        return None
-
-    if not r.ok:
-        logger.warning("Gemini HTTP %s: %s", r.status_code, r.text[:300])
-        return None
-
-    try:
-        result = r.json()
-    except ValueError:
-        logger.warning("Gemini returned non-JSON body")
-        return None
-
-    candidates = result.get("candidates") or []
-    if not candidates:
-        logger.warning("Gemini returned no candidates: %s", str(result)[:300])
-        return None
-
-    parts_out = candidates[0].get("content", {}).get("parts", []) or []
-    for p in parts_out:
-        inline = p.get("inlineData") or p.get("inline_data")
-        if inline and inline.get("data"):
-            return base64.b64decode(inline["data"])
-
-    logger.warning("Gemini response had no inlineData image: %s", str(result)[:300])
-    return None
-
-
 def _resize_to_canvas(img_bytes: bytes) -> Image.Image:
-    img = Image.open(BytesIO(img_bytes)).convert("RGB")
+    img = Image.open(img_bytes).convert("RGB") if hasattr(img_bytes, "read") else Image.open(BytesIO(img_bytes)).convert("RGB")
     if img.size != (CANVAS, CANVAS):
         img = img.resize((CANVAS, CANVAS), Image.LANCZOS)
     return img
@@ -205,30 +182,44 @@ def compose_ad_creative_banner(
     output_path: str | Path,
     competitor_brand: str | None = None,
 ) -> str:
-    """Compose an AI-generated ad-creative banner.
+    """Compose an FAL.AI-generated ad-creative banner.
 
     When ``competitor_brand`` is set, the reference image stack is sourced
     from the Facebook Ad Library via ScrapeCreators (high-impression active
     ads matching the brand or keyword) instead of generic Tavily web
-    images. The competitor path falls back to Tavily, then to the
-    white-card pipeline, so a single upstream outage cannot halt the
-    daily rotation. Returns the output path.
+    images. The competitor path falls back to Tavily references.
+
+    When FAL itself can't render (missing key/package, API failure), the
+    AD_CREATIVE_FALLBACK policy applies: raise AdCreativeError (default)
+    or fall back to the white-card pipeline ("white-card"). Returns the
+    output path.
     """
+    try:
+        from instagram.image_gen_fal import _build_fal_prompt, _fal_generate_image
+    except ImportError as exc:
+        raise ImportError("image_gen_fal module is required for FAL.AI ad creatives") from exc
+
     name = product.get("name", "")
     category = (product.get("category") or "Best Sellers").strip()
     src = str(product_image_url_or_path)
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
 
+    # Fail fast (before any Tavily/ScrapeCreators spend) when FAL can't run.
+    # This is the gate that used to be missing: without it, a missing
+    # fal_client/FAL_KEY burned reference-search credits and then silently
+    # shipped a white-card banner.
+    fal_ok, fal_reason = _fal_available()
+    if not fal_ok:
+        return _fallback_or_raise(product, src, out, fal_reason)
+
     src_raw = _load_image_bytes(src)
     if src_raw is None:
-        print("   [ad-creative] could not load product image; falling back to white-card")
-        return compose_banner(product, src, out)
+        return _fallback_or_raise(product, src, out, "could not load product image")
 
     src_jpeg = _normalize_to_jpeg(src_raw)
     if src_jpeg is None:
-        print("   [ad-creative] product image unreadable; falling back to white-card")
-        return compose_banner(product, src, out)
+        return _fallback_or_raise(product, src, out, "product image unreadable")
 
     ref_urls: list[str] = []
     ref_source = "tavily"
@@ -260,12 +251,11 @@ def compose_ad_creative_banner(
     )
 
     prompt = PROMPT_TEMPLATE.format(name=name, category=category)
-    gemini_bytes = _gemini_generate_image(prompt, [src_jpeg] + ref_jpegs)
-    if gemini_bytes is None:
-        print("   [ad-creative] Gemini returned no image; falling back to white-card")
-        return compose_banner(product, src, out)
+    out_bytes = _fal_generate_image(prompt, src_jpeg, reference_images=ref_jpegs)
+    if out_bytes is None:
+        return _fallback_or_raise(product, src, out, "FAL returned no image")
 
-    canvas = _resize_to_canvas(gemini_bytes).convert("RGBA")
+    canvas = _resize_to_canvas(out_bytes).convert("RGBA")
     canvas = _add_text(canvas, product)
 
     canvas.convert("RGB").save(

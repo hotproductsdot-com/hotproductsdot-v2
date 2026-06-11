@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778535707231,
+  "lastScanned": 1781120363668,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -57,7 +57,7 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 11,
-      "lastAccessed": 1778535706884,
+      "lastAccessed": 1781120362674,
       "keyFiles": [
         "find_bestsellers.cpython-312.pyc",
         "fix_amazon_urls.cpython-312.pyc",
@@ -66,38 +66,89 @@
         "refresh_prices.cpython-312.pyc"
       ]
     },
+    "agent-os": {
+      "path": "agent-os",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781120362703,
+      "keyFiles": []
+    },
+    "agentic-os": {
+      "path": "agentic-os",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1781120362725,
+      "keyFiles": [
+        "README.md",
+        "SOUL.md",
+        "distribution.yaml"
+      ]
+    },
+    "amazon_images": {
+      "path": "amazon_images",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781120362745,
+      "keyFiles": []
+    },
+    "amazon_source_images": {
+      "path": "amazon_source_images",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1781120362765,
+      "keyFiles": [
+        "airpods_max.jpg",
+        "beats_studio3.jpg"
+      ]
+    },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1778535706941,
+      "lastAccessed": 1781120362788,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
+    },
+    "facebook-cookbook": {
+      "path": "facebook-cookbook",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781120362809,
+      "keyFiles": []
     },
     "generated_images": {
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778535706949,
+      "lastAccessed": 1781120362825,
+      "keyFiles": []
+    },
+    "graphify-out": {
+      "path": "graphify-out",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1781120362845,
       "keyFiles": []
     },
     "growth-engine": {
       "path": "growth-engine",
       "purpose": null,
-      "fileCount": 6,
-      "lastAccessed": 1778535706960,
+      "fileCount": 8,
+      "lastAccessed": 1781120362863,
       "keyFiles": [
         "README.md",
         "config.yaml",
-        "requirements.txt"
+        "config.yaml.backup",
+        "requirements.txt",
+        "web_ui.py"
       ]
     },
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 16,
-      "lastAccessed": 1778535706978,
+      "fileCount": 25,
+      "lastAccessed": 1781120362883,
       "keyFiles": [
         "__init__.py",
         "ad_creative_gen.py",
@@ -110,7 +161,7 @@
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778535706989,
+      "lastAccessed": 1781120362898,
       "keyFiles": [
         "content_calendar.json",
         "post_log.csv"
@@ -120,7 +171,7 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778535707001,
+      "lastAccessed": 1781120362918,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
@@ -130,7 +181,7 @@
       "path": "pinterest-setup",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1778535707018,
+      "lastAccessed": 1781120362940,
       "keyFiles": [
         "BOARDS.csv",
         "CONTENT_CALENDAR.md",
@@ -143,7 +194,7 @@
       "path": "pipeline-ui",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1778535707023,
+      "lastAccessed": 1781120362970,
       "keyFiles": [
         "README.md",
         "jobs.py",
@@ -156,7 +207,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 11,
-      "lastAccessed": 1778535707034,
+      "lastAccessed": 1781120362988,
       "keyFiles": [
         "broken-links.csv",
         "check_duplicates.py",
@@ -169,7 +220,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 14,
-      "lastAccessed": 1778535707039,
+      "lastAccessed": 1781120363008,
       "keyFiles": [
         "_debug_ai_gate.py",
         "_debug_validator.py",
@@ -182,7 +233,7 @@
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1778535707048,
+      "lastAccessed": 1781120363030,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -195,49 +246,55 @@
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1778535707056,
+      "lastAccessed": 1781120363046,
       "keyFiles": [
         "pyvenv.cfg"
       ]
     },
+    "agentic-os/config": {
+      "path": "agentic-os/config",
+      "purpose": "Configuration files",
+      "fileCount": 2,
+      "lastAccessed": 1781120363118,
+      "keyFiles": [
+        "cursor-mcp.json",
+        "personalities.yaml"
+      ]
+    },
+    "agentic-os/scripts": {
+      "path": "agentic-os/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 7,
+      "lastAccessed": 1781120363175,
+      "keyFiles": [
+        "install.ps1",
+        "install.sh",
+        "start-all.sh"
+      ]
+    },
+    "facebook-cookbook/scripts": {
+      "path": "facebook-cookbook/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 0,
+      "lastAccessed": 1781120363342,
+      "keyFiles": []
+    },
     "growth-engine/data": {
       "path": "growth-engine/data",
       "purpose": "Data files",
-      "fileCount": 5,
-      "lastAccessed": 1778535707102,
+      "fileCount": 7,
+      "lastAccessed": 1781120363406,
       "keyFiles": [
         "ai_visibility.db",
         "backlinks.db",
         "content_plan.json"
       ]
     },
-    "growth-engine/lib": {
-      "path": "growth-engine/lib",
-      "purpose": "Library code",
-      "fileCount": 9,
-      "lastAccessed": 1778535707108,
-      "keyFiles": [
-        "__init__.py",
-        "article_template.py",
-        "claude_client.py"
-      ]
-    },
-    "growth-engine/scripts": {
-      "path": "growth-engine/scripts",
-      "purpose": "Build/utility scripts",
-      "fileCount": 8,
-      "lastAccessed": 1778535707132,
-      "keyFiles": [
-        "1_keyword_research.py",
-        "2_generate_article.py",
-        "3_backlink_finder.py"
-      ]
-    },
     "pipeline-ui/static": {
       "path": "pipeline-ui/static",
       "purpose": "Static files",
       "fileCount": 3,
-      "lastAccessed": 1778535707159,
+      "lastAccessed": 1781120363474,
       "keyFiles": [
         "app.js",
         "index.html",
@@ -248,175 +305,156 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1778535707178,
+      "lastAccessed": 1781120363523,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
         "layout.tsx"
       ]
     },
-    "venv/bin": {
-      "path": "venv/bin",
-      "purpose": "Executable scripts",
-      "fileCount": 36,
-      "lastAccessed": 1778535707194,
+    "venv/Scripts": {
+      "path": "venv/Scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 14,
+      "lastAccessed": 1781120363600,
       "keyFiles": [
         "Activate.ps1",
         "activate",
-        "activate.csh"
+        "activate.bat"
+      ]
+    },
+    "venv/bin": {
+      "path": "venv/bin",
+      "purpose": "Executable scripts",
+      "fileCount": 52,
+      "lastAccessed": 1781120363634,
+      "keyFiles": [
+        "Activate.ps1",
+        "accelerate",
+        "accelerate-config"
       ]
     },
     "venv/lib": {
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1778535707231,
+      "lastAccessed": 1781120363668,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
-      "path": "find_bestsellers.py",
-      "accessCount": 8,
-      "lastAccessed": 1778466653881,
+      "path": "amazon_local_api.py",
+      "accessCount": 12,
+      "lastAccessed": 1781134120252,
       "type": "file"
     },
     {
-      "path": "scrape_top_affiliates.py",
-      "accessCount": 8,
-      "lastAccessed": 1778466659325,
+      "path": "post_daily.py",
+      "accessCount": 11,
+      "lastAccessed": 1781136755156,
       "type": "file"
     },
     {
-      "path": "_scrapling_price_test.py",
-      "accessCount": 8,
-      "lastAccessed": 1778466665403,
+      "path": "refresh_catalog_local.py",
+      "accessCount": 10,
+      "lastAccessed": 1781134099344,
+      "type": "file"
+    },
+    {
+      "path": "instagram/ad_creative_gen.py",
+      "accessCount": 9,
+      "lastAccessed": 1781136718152,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_amazon_local_api.py",
+      "accessCount": 5,
+      "lastAccessed": 1781134167346,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 4,
+      "lastAccessed": 1781133387885,
+      "type": "file"
+    },
+    {
+      "path": "instagram/image_gen_fal.py",
+      "accessCount": 3,
+      "lastAccessed": 1781136713985,
+      "type": "file"
+    },
+    {
+      "path": ".env",
+      "accessCount": 2,
+      "lastAccessed": 1781129765236,
       "type": "file"
     },
     {
       "path": "refresh_prices.py",
-      "accessCount": 6,
-      "lastAccessed": 1778466800255,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/windows/install_task.ps1",
-      "accessCount": 6,
-      "lastAccessed": 1778538047109,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 5,
-      "lastAccessed": 1778418948448,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/README.md",
-      "accessCount": 5,
-      "lastAccessed": 1778536036121,
-      "type": "file"
-    },
-    {
-      "path": "site/app/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1778416057506,
-      "type": "file"
-    },
-    {
-      "path": "site/package.json",
-      "accessCount": 4,
-      "lastAccessed": 1778419016988,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/scripts/run_daily.py",
-      "accessCount": 3,
-      "lastAccessed": 1778535920970,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/.env.example",
-      "accessCount": 3,
-      "lastAccessed": 1778535952693,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/analytics.ts",
       "accessCount": 2,
-      "lastAccessed": 1778347596277,
+      "lastAccessed": 1781133502665,
       "type": "file"
     },
     {
-      "path": "growth-engine/lib/article_template.py",
+      "path": "tests/test_refresh_catalog_local.py",
       "accessCount": 2,
-      "lastAccessed": 1778451140350,
+      "lastAccessed": 1781133839734,
       "type": "file"
     },
     {
-      "path": "site/app/lib/guides.ts",
+      "path": "instagram/banner_compose.py",
       "accessCount": 2,
-      "lastAccessed": 1778451177372,
-      "type": "file"
-    },
-    {
-      "path": "site/app/guides/[slug]/page.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1778451225409,
+      "lastAccessed": 1781136110220,
       "type": "file"
     },
     {
       "path": "requirements.txt",
       "accessCount": 2,
-      "lastAccessed": 1778457783583,
+      "lastAccessed": 1781136803030,
       "type": "file"
     },
     {
-      "path": "README.md",
-      "accessCount": 2,
-      "lastAccessed": 1778466923739,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/lib/facebook.py",
-      "accessCount": 2,
-      "lastAccessed": 1778535921699,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/scripts/6_facebook_post.py",
-      "accessCount": 2,
-      "lastAccessed": 1778535921883,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/windows/run_daily.bat",
-      "accessCount": 2,
-      "lastAccessed": 1778535952635,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/config.yaml",
-      "accessCount": 2,
-      "lastAccessed": 1778535995835,
-      "type": "file"
-    },
-    {
-      "path": "growth-engine/lib/publish.py",
+      "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
-      "lastAccessed": 1778450506344,
+      "lastAccessed": 1781123385360,
       "type": "file"
     },
     {
-      "path": "growth-engine/scripts/5_publish.py",
+      "path": "oxylabs_refresh.py",
       "accessCount": 1,
-      "lastAccessed": 1778450519485,
+      "lastAccessed": 1781132843607,
       "type": "file"
     },
     {
-      "path": "growth-engine/lib/tracking.py",
+      "path": "_scrapling_price_test.py",
       "accessCount": 1,
-      "lastAccessed": 1778451043451,
+      "lastAccessed": 1781132844519,
+      "type": "file"
+    },
+    {
+      "path": "oxylabs-amazon-product.sh",
+      "accessCount": 1,
+      "lastAccessed": 1781132844819,
+      "type": "file"
+    },
+    {
+      "path": "generated_images/2026-06-10/amorepacific-treatment-enzyme-peel-cleansing-powder-korean-gentle-daily-exfoliator-with-hyaluronic-acid-and-green-tea-enzymes-1-9-oz/banner.jpg",
+      "accessCount": 1,
+      "lastAccessed": 1781136132848,
+      "type": "file"
+    },
+    {
+      "path": "instagram/generate_fal_products.py",
+      "accessCount": 1,
+      "lastAccessed": 1781136298789,
+      "type": "file"
+    },
+    {
+      "path": "instagram/test_ad_creative_fallback.py",
+      "accessCount": 1,
+      "lastAccessed": 1781136627277,
       "type": "file"
     }
   ],

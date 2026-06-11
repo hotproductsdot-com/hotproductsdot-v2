@@ -22,6 +22,10 @@ import logging
 import sys
 from pathlib import Path
 
+# Force UTF-8 stdout on Windows to prevent UnicodeEncodeError with emoji
+if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 from dotenv import load_dotenv
 
 # Load environment
