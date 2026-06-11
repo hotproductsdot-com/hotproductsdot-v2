@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import dataclasses
 import random
 import re
 import sys
@@ -90,6 +91,18 @@ def decide_update(row: dict, live: ProductData) -> UpdateDecision:
     fields: dict = {}
     diffs: list = []
     suspicious = False
+
+    # Sanity bounds: a parse glitch can hand us swapped fields (rating in
+    # the price slot, review count in the rating slot — the 2026-06-10
+    # AirPods Max corruption wrote rating=16685 / price=$4.60 to the
+    # catalog and it shipped on a banner). Out-of-domain values are
+    # discarded here so they can never reach the CSV.
+    if live.rating is not None and not (0.0 < live.rating <= 5.0):
+        live = dataclasses.replace(live, rating=None)
+    if live.reviews_count is not None and live.reviews_count < 0:
+        live = dataclasses.replace(live, reviews_count=None)
+    if live.price is not None and live.price <= 0:
+        live = dataclasses.replace(live, price=None)
 
     old_price = _to_float(row.get("Price Range"))
     if live.price is not None:

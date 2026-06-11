@@ -38,32 +38,34 @@ FAL_IMG2IMG_RESOLUTION = os.environ.get("FAL_IMG2IMG_RESOLUTION", "2K")
 FAL_FALLBACK_TIMEOUT = 120
 REFERENCE_MAX_DIM = 1024
 
-_PROMPT_BANNER = """You are a professional product photographer. Produce a single 1080x1080 square \
-affiliate marketing image for the product "{name}".
+_PROMPT_BANNER = """You are a professional e-commerce product photographer specializing in \
+high-converting affiliate marketing ads. Create a premium 1080x1080 square product image.
 
-The FIRST attached image is the real product. Reproduce it faithfully — exact \
-shape, color, branding, and proportions. Do not invent details.
+CRITICAL: Photograph the product "{name}" exactly as it appears — same shape, color, \
+branding, every detail. Do NOT invent, modify, or add anything to the product itself.
 
-The remaining attached images are lifestyle/marketing references showing visual \
-language (lighting, framing, mood, backdrop) of high-performing affiliate ads. \
-Match that visual language. Do NOT include any other products or scenes from \
-the references — only the hero product.
+Studio Setup:
+- Dark charcoal gradient background (near-black edges, subtle gray center)
+- Soft orange backlight glow (#FF6B00) behind and around the product
+- Product sharp, centered, isolated with soft drop shadow
+- Clean, professional, photorealistic lighting
 
-Requirements:
-- Square 1:1 framing, hero product front and center, sharp focus
-- Premium studio look: soft shadow under the product, clean dark backdrop with \
-a subtle warm orange glow behind the product
-- Photorealistic only — no cartoon, illustration, 3D render, or text overlays
-- No logos, watermarks, captions, or written words anywhere — text is added in \
-post-processing
-- Roughly 30% breathing room around the product so text can fit above and below
+Do NOT:
+- Add white boxes, borders, frames, or backgrounds
+- Add text, watermarks, logos, or captions
+- Include other products, people, or scenes
+- Use 3D renders, illustrations, or stylized effects
+- Add anything except the product and its shadow
+
+Keep 30% breathing room around the product for future text overlay. Square 1:1 only.
 """
 
-_PROMPT_FALLBACK = """You are a professional product photographer. Create a 1080x1080 square image of {name}.
+_PROMPT_FALLBACK = """You are a professional product photographer. Create a 1080x1080 \
+square image of {name}.
 
-The image shows the real product on a clean dark background with soft orange \
-accent lighting. Product is sharp, centered, and isolated — no other items, no \
-text, no watermarks. Square 1:1 framing, photorealistic only.
+Photograph the product exactly as it is, isolated on a dark professional background \
+with soft lighting. Product only — sharp, centered, no text, no borders, no additions. \
+Dark charcoal backdrop with subtle orange accent light. Square 1:1, photorealistic.
 """
 
 

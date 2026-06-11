@@ -145,6 +145,15 @@ def fetch_oxylabs(asin: str, *, username: str, password: str) -> Refresh:
         r.price = _to_float(price)
         r.rating = _to_float(rating)
         r.reviews = _to_int(reviews)
+        # Sanity bounds: discard out-of-domain values so a swapped/garbled
+        # payload (rating holding a review count, a near-zero price) can
+        # never be written to the catalog.
+        if r.rating is not None and not (0.0 < r.rating <= 5.0):
+            r.rating = None
+        if r.reviews is not None and r.reviews < 0:
+            r.reviews = None
+        if r.price is not None and r.price <= 0:
+            r.price = None
         r.available = _parse_availability(content)
         # Capture only the fields _parse_availability looked at, so the audit
         # log stays small and never leaks the full Oxylabs payload.

@@ -82,7 +82,10 @@ def _fallback_or_raise(
     """Apply the AD_CREATIVE_FALLBACK policy for an unrenderable creative."""
     mode = (os.environ.get("AD_CREATIVE_FALLBACK") or "fail").lower().strip()
     if mode == "white-card":
-        print(f"   [ad-creative] {reason}; falling back to white-card (AD_CREATIVE_FALLBACK=white-card)")
+        # compose_banner now defaults to direct cutout placement (no white
+        # card) — the env var name is historical; the fallback banner is
+        # the legacy composed banner, box-free.
+        print(f"   [ad-creative] {reason}; falling back to composed banner (AD_CREATIVE_FALLBACK=white-card)")
         return compose_banner(product, src, out)
     raise AdCreativeError(reason)
 

@@ -1030,7 +1030,9 @@ def compose_banner(
     product_image_url_or_path: str,
     output_path: str | Path,
     cta_version: str = "none",
-    use_card: bool = True,
+    # Direct cutout placement by default — the white-card frame shipped the
+    # 2026-06-10 "white box" posts and is now opt-in only (use_card=True).
+    use_card: bool = False,
 ) -> str:
     # Check for manual image URL override
     product_slug = re.sub(r"[^a-z0-9]+", "-", str(product.get("name", "")).lower()).strip("-")
