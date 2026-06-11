@@ -351,8 +351,8 @@
     },
     {
       "path": "instagram/ad_creative_gen.py",
-      "accessCount": 16,
-      "lastAccessed": 1781145698213,
+      "accessCount": 19,
+      "lastAccessed": 1781146288469,
       "type": "file"
     },
     {
@@ -365,6 +365,12 @@
       "path": "refresh_catalog_local.py",
       "accessCount": 10,
       "lastAccessed": 1781134099344,
+      "type": "file"
+    },
+    {
+      "path": "instagram/image_gen_fal.py",
+      "accessCount": 10,
+      "lastAccessed": 1781146284888,
       "type": "file"
     },
     {
@@ -383,12 +389,6 @@
       "path": "site/app/lib/products.ts",
       "accessCount": 7,
       "lastAccessed": 1781141852158,
-      "type": "file"
-    },
-    {
-      "path": "instagram/image_gen_fal.py",
-      "accessCount": 7,
-      "lastAccessed": 1781145218966,
       "type": "file"
     },
     {
@@ -470,6 +470,12 @@
       "type": "file"
     },
     {
+      "path": "instagram/fal_test_manifest.py",
+      "accessCount": 2,
+      "lastAccessed": 1781146256211,
+      "type": "file"
+    },
+    {
       "path": "marketing-campaigns/post_log.csv",
       "accessCount": 1,
       "lastAccessed": 1781123385360,
@@ -521,12 +527,6 @@
       "path": "generated_images/composite_sample/breville-composite.jpg",
       "accessCount": 1,
       "lastAccessed": 1781144341408,
-      "type": "file"
-    },
-    {
-      "path": "instagram/fal_test_manifest.py",
-      "accessCount": 1,
-      "lastAccessed": 1781145181023,
       "type": "file"
     }
   ],
