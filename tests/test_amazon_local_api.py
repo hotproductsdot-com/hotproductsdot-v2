@@ -122,6 +122,23 @@ DOG_PAGE_HTML = """
 alt="Sorry! Something went wrong on our end."/><a href="/dogsofamazon">Dogs of Amazon</a></body></html>
 """
 
+# 2026-06-10 catalog corruption: buy-box empty, star rating rendered with
+# a-price-whole/fraction inside apex_offerDisplay_desktop (AirPods Max).
+RATING_AS_PRICE_HTML = """
+<div id="apex_offerDisplay_desktop">
+  <span class="a-price aok-align-center priceToPay apex-pricetopay-value" data-a-size="xl">
+    <span class="a-offscreen">&nbsp;</span>
+    <span aria-hidden="true"><span class="a-price-symbol">$</span>
+    <span class="a-price-whole">4<span class="a-price-decimal">.</span></span>
+    <span class="a-price-fraction">6</span></span>
+  </span>
+</div>
+<span id="acrPopover" title="4.6 out of 5 stars">
+  <i class="a-icon a-icon-star"><span class="a-icon-alt">4.6 out of 5 stars</span></i>
+</span>
+<span id="acrCustomerReviewText" aria-label="16,685 ratings">(16,685)</span>
+"""
+
 
 def full_page(*parts: str) -> str:
     return "<html><body>" + "".join(parts) + "</body></html>"
@@ -151,6 +168,18 @@ class TestParsePriceString:
     def test_empty_returns_none(self):
         assert parse_price_string("") is None
         assert parse_price_string("\xa0") is None
+
+    def test_rejects_star_rating_text(self):
+        assert parse_price_string("4.6 out of 5 stars") is None
+        assert parse_price_string("4.4 out of 5 stars") is None
+
+    def test_rejects_bare_review_count(self):
+        assert parse_price_string("(16,685)") is None
+        assert parse_price_string("16,685 ratings") is None
+
+    def test_broad_fallback_requires_currency(self):
+        assert parse_price_string("129.99", require_currency=True) is None
+        assert parse_price_string("$129.99", require_currency=True) == 129.99
 
 
 # ── classify_page ────────────────────────────────────────────────────────────
@@ -278,6 +307,22 @@ class TestParseProduct:
         page = full_page(TITLE_HTML, RATING_HTML, REVIEWS_ARIA_HTML)
         p = parse_product(page, asin="B0TEST00AA")
         assert p.is_definitive() is False
+
+    def test_rating_markup_not_used_as_price(self):
+        """Regression: AirPods Max pilot wrote price=$4.60, rating=16685."""
+        page = full_page(TITLE_HTML, RATING_AS_PRICE_HTML)
+        p = parse_product(page, asin="B0DGJBQSJY")
+        assert p.price is None
+        assert p.rating == 4.6
+        assert p.reviews_count == 16685
+
+    def test_rating_never_exceeds_five(self):
+        page = full_page(
+            TITLE_HTML,
+            """<span data-hook="rating-out-of-text">16,685 ratings</span>""",
+        )
+        p = parse_product(page, asin="B0TEST00AA")
+        assert p.rating is None
 
 
 # ── ProductData immutability (frozen dataclass per house style) ─────────────

@@ -596,11 +596,22 @@ These columns are appended to `top-1000.csv` by `fetch_daily_deals.py`. They are
 
 ### Cron setup
 
-Add this line to your `crontab -e` (runs at 8 am Central on the machine where the repo lives):
+**Status: INSTALLED** (2026-06-11) in the `cyberace` user crontab on the WSL2 machine where the repo lives. Runs daily at 8 am Central:
 
 ```cron
+# HotProducts Daily Deals — Limited Time Sale refresh (added 2026-06-11)
 0 8 * * * /mnt/e/GITHUB/hotproductsdot-v2/run_daily_deals.sh >> /mnt/e/GITHUB/hotproductsdot-v2/logs/daily_deals.log 2>&1
 ```
+
+To verify or manage the schedule:
+
+```bash
+crontab -l | grep run_daily_deals          # confirm the entry exists
+service cron status                        # confirm the cron daemon is running (WSL2)
+tail -50 logs/daily_deals.log              # check the latest run's output
+```
+
+> **WSL2 note:** cron only fires while the WSL2 instance is running. If the machine was asleep or WSL was shut down at 8 am, that day's run is skipped — run `./run_daily_deals.sh` manually to catch up. The 14:00 UTC `daily_post.yml` workflow then picks up whatever batch is on `main`.
 
 `run_daily_deals.sh` runs `fetch_daily_deals.py` inside a **detached git worktree** (`/mnt/e/GITHUB/.hotproducts-deals-worktree`) so the developer checkout (which may be on a feature branch or have uncommitted changes) is never touched. After a successful run it commits the updated catalog + images and pushes to `main` with `[skip ci]` in the message. If no qualifying deals are found (exit code 2), yesterday's batch is kept live and nothing is pushed.
 

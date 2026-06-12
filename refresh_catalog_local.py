@@ -10,8 +10,11 @@ Behavior mirrors the Oxylabs script:
   * Field-level differences appended to products/products4review.csv
   * Dead / unavailable listings appended to products/broken-links.csv
   * Tolerance gates keep the daily diff small (price ±2%, rating ±0.1,
-    reviews ±5%); price drift >25% is treated as suspicious and skipped
-  * "Refreshed Date" (M/D/YYYY) is set on every successfully checked row
+    reviews ±5%); price drift >25% is treated as suspicious
+  * Rows whose price cannot be verified (dead listing, no buy box, scrape
+    failure, suspicious drift, or no live price) are removed from the
+    catalog and logged to products/broken-links.csv
+  * "Refreshed Date" (M/D/YYYY) is set on every successfully verified row
 
 Usage:
   venv/bin/python refresh_catalog_local.py [--limit N] [--offset N]
@@ -132,6 +135,31 @@ def decide_update(row: dict, live: ProductData) -> UpdateDecision:
     return UpdateDecision(fields=fields, diffs=tuple(diffs), suspicious_price=suspicious)
 
 
+def unverified_removal_reason(
+    live: ProductData,
+    decision: UpdateDecision | None = None,
+) -> str | None:
+    """Return a removal reason when the live scrape cannot verify catalog price."""
+    no_offer = (
+        live.page_status == "ok"
+        and live.price is None
+        and live.availability == "See All Buying Options"
+    )
+    if live.page_status == "not_found":
+        return "listing_removed"
+    if live.page_status != "ok":
+        return f"scrape_{live.page_status}"
+    if no_offer:
+        return "no_buybox_offer"
+    if live.is_in_stock is False:
+        return "unavailable"
+    if decision is not None and decision.suspicious_price:
+        return "suspicious_price"
+    if live.price is None:
+        return "no_live_price"
+    return None
+
+
 def _backup_csv() -> Path:
     stamp = date.today().isoformat()
     backup = CSV_PATH.with_name(f"top-1000.backup.{stamp}.csv")
@@ -220,35 +248,30 @@ def main() -> int:
     today = f"{_now.month}/{_now.day}/{_now.year}"
     review_rows: list[list[str]] = []
     broken_rows: list[list[str]] = []
-    updated = suspicious = unavailable = failed = unchanged = 0
+    remove_indices: set[int] = set()
+    updated = removed = unchanged = 0
 
     for idx, live in sorted(results.items()):
         row = rows[idx]
         name = row.get("Product Name", "")
-        no_offer = (live.page_status == "ok" and live.price is None
-                    and live.availability == "See All Buying Options")
-        if live.page_status == "not_found" or no_offer or (
-                live.page_status == "ok" and live.is_in_stock is False):
-            unavailable += 1
-            reason = ("listing_removed" if live.page_status == "not_found"
-                      else "no_buybox_offer" if no_offer else "unavailable")
-            broken_rows.append([live.asin, name, row.get("Amazon URL", ""), live.page_status,
-                                reason, live.title or "", str(live.price or ""), live.availability or ""])
-            continue
-        if live.page_status != "ok":
-            failed += 1
+        decision = decide_update(row, live) if live.page_status == "ok" else None
+        reason = unverified_removal_reason(live, decision)
+        if reason:
+            removed += 1
+            remove_indices.add(idx)
+            _log(f"  REMOVED {live.asin} ({reason}): CSV={row.get('Price Range')} "
+                 f"live={live.price}  {name[:48]}")
+            broken_rows.append([
+                live.asin, name, row.get("Amazon URL", ""), live.page_status,
+                reason, live.title or "", str(live.price or ""), live.availability or "",
+            ])
+            if decision and decision.suspicious_price:
+                review_rows.append([
+                    live.asin, name, "Price (SUSPICIOUS >25% drift — removed)",
+                    str(row.get("Price Range", "")), f"{live.price:.2f}",
+                ])
             continue
 
-        decision = decide_update(row, live)
-        if decision.suspicious_price:
-            # Unverified price: send to the review file and leave the row
-            # completely untouched — stamping Refreshed Date here would mark
-            # a stale price as freshly verified.
-            suspicious += 1
-            _log(f"  SUSPICIOUS price skipped {live.asin}: CSV={row.get('Price Range')} live={live.price}")
-            review_rows.append([live.asin, name, "Price (SUSPICIOUS >25% drift)",
-                                str(row.get("Price Range", "")), f"{live.price:.2f}"])
-            continue
         for fname, old, new in decision.diffs:
             review_rows.append([live.asin, name, fname, old, new])
         if decision.fields:
@@ -258,16 +281,18 @@ def main() -> int:
             rows[idx] = {**row, "Refreshed Date": today}
             unchanged += 1
 
+    rows = [row for i, row in enumerate(rows) if i not in remove_indices]
+
     print("\n" + "=" * 72)
-    print(f"  Updated: {updated}   Unchanged: {unchanged}   Unavailable/removed: {unavailable}")
-    print(f"  Suspicious price (skipped): {suspicious}   Hard failures: {failed}")
-    rate = 100.0 * (total - failed) / total if total else 100.0
-    print(f"  Definitive-verdict success rate: {rate:.1f}% ({total - failed}/{total})")
+    print(f"  Updated: {updated}   Unchanged: {unchanged}   Removed (unverified): {removed}")
+    verified = updated + unchanged
+    rate = 100.0 * verified / total if total else 100.0
+    print(f"  Price-verified success rate: {rate:.1f}% ({verified}/{total})")
     print("=" * 72)
 
     if args.dry_run:
         print("\n  [DRY RUN] No files written.")
-        return 0 if failed == 0 else 1
+        return 0
 
     if review_rows:
         _append_csv(REVIEW_PATH, ["ASIN", "Product Name", "Field", "CSV Value", "Live Value"], review_rows)
@@ -284,8 +309,8 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
     tmp.replace(CSV_PATH)
-    print(f"  Catalog written: {CSV_PATH.name}")
-    return 0 if failed == 0 else 1
+    print(f"  Catalog written: {CSV_PATH.name} ({len(rows)} rows)")
+    return 0
 
 
 if __name__ == "__main__":

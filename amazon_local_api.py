@@ -31,6 +31,7 @@ import json
 import random
 import re
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -67,8 +68,18 @@ _BSR_RE = re.compile(r"#([\d,]+)\s+in\s+([^(#]+?)(?:\s*\(|\s*$|\s{2,})")
 _TWISTER_PRICE_ID = "twister-plus-buying-options-price-data"
 
 # Containers whose prices belong to OTHER products (comparison widgets,
-# carousels) — never use these for the buy-box price.
-_TRAP_CONTAINER_RE = re.compile(r"(comparison|carousel|sims|sponsored)", re.IGNORECASE)
+# carousels, customer-review headers) — never use these for the buy-box price.
+_TRAP_CONTAINER_RE = re.compile(
+    r"(comparison|carousel|sims|sponsored|averageCustomerReviews|acrPopover|"
+    r"reviewsMedley|customerReviews|CustomerReviews|cm_cr_dp_d_rating)",
+    re.IGNORECASE,
+)
+# Price-like text that is actually a star rating or review count.
+_PRICE_TEXT_REJECT_RE = re.compile(
+    r"(out\s+of\s+5|\bstars?\b|\bratings?\b|\breviews?\b)",
+    re.IGNORECASE,
+)
+_BARE_COUNT_RE = re.compile(r"^[\(\s]*[\d,]+[\)\s]*$")
 
 
 @dataclass(frozen=True)
@@ -115,11 +126,22 @@ class ProductData:
 
 # ── Parsing helpers ──────────────────────────────────────────────────────────
 
-def parse_price_string(s: str | None) -> float | None:
+def parse_price_string(
+    s: str | None,
+    *,
+    require_currency: bool = False,
+) -> float | None:
     """'$2,570.00' → 2570.0; '$19.99 - $29.99' → 19.99; junk → None."""
     if not s:
         return None
-    low_end = s.split("-")[0]
+    text = s.strip()
+    if _PRICE_TEXT_REJECT_RE.search(text):
+        return None
+    if _BARE_COUNT_RE.match(text):
+        return None
+    if require_currency and "$" not in text and "USD" not in text.upper():
+        return None
+    low_end = text.split("-")[0]
     cleaned = re.sub(r"[^\d.]", "", low_end.replace(",", ""))
     if not cleaned or cleaned == ".":
         return None
@@ -153,6 +175,31 @@ def _in_trap_container(el) -> bool:
         if attrs and _TRAP_CONTAINER_RE.search(attrs):
             return True
     return False
+
+
+def _container_has_currency_symbol(container) -> bool:
+    symbol = container.select_one(".a-price-symbol")
+    return bool(symbol and "$" in symbol.get_text())
+
+
+def _coerce_rating(value: float | None) -> float | None:
+    if value is None or not (0.0 < value <= 5.0):
+        return None
+    return value
+
+
+def _reject_price_rating_collision(
+    price: float | None,
+    rating: float | None,
+    *,
+    twister_confirmed: bool,
+) -> float | None:
+    """Drop DOM prices that are really the star rating (2026-06-10 catalog bug)."""
+    if price is None or rating is None or twister_confirmed:
+        return price
+    if price <= 5.0 and abs(price - rating) < 0.15:
+        return None
+    return price
 
 
 def _price_from_twister_json(body: str) -> float | None:
@@ -212,6 +259,8 @@ _PRICE_PARTS_CONTAINERS = [
 def _price_from_selectors(soup: BeautifulSoup) -> float | None:
     for sel in _SCOPED_PRICE_SELECTORS:
         for el in soup.select(sel):
+            if _in_trap_container(el):
+                continue
             value = parse_price_string(el.get_text(strip=True))
             if value is not None:
                 return value
@@ -224,6 +273,8 @@ def _price_from_parts(soup: BeautifulSoup) -> float | None:
     for sel in _PRICE_PARTS_CONTAINERS:
         for container in soup.select(sel):
             if _in_trap_container(container):
+                continue
+            if not _container_has_currency_symbol(container):
                 continue
             whole = container.select_one(".a-price-whole")
             if not whole:
@@ -241,23 +292,26 @@ def _price_broad_fallback(soup: BeautifulSoup) -> float | None:
     for el in soup.select(".a-price .a-offscreen"):
         if _in_trap_container(el):
             continue
-        value = parse_price_string(el.get_text(strip=True))
+        value = parse_price_string(el.get_text(strip=True), require_currency=True)
         if value is not None:
             return value
     return None
 
 
-def _extract_price(body: str, soup: BeautifulSoup) -> float | None:
+def _extract_price(body: str, soup: BeautifulSoup) -> tuple[float | None, bool]:
+    """Return (price, twister_confirmed)."""
+    twister = _price_from_twister_json(body)
+    if twister is not None:
+        return twister, True
     for strategy in (
-        lambda: _price_from_twister_json(body),
-        lambda: _price_from_selectors(soup),
-        lambda: _price_from_parts(soup),
-        lambda: _price_broad_fallback(soup),
+        _price_from_selectors,
+        _price_from_parts,
+        _price_broad_fallback,
     ):
-        value = strategy()
+        value = strategy(soup)
         if value is not None:
-            return value
-    return None
+            return value, False
+    return None, False
 
 
 def _extract_rating(soup: BeautifulSoup) -> float | None:
@@ -265,11 +319,11 @@ def _extract_rating(soup: BeautifulSoup) -> float | None:
     if popover and popover.get("title"):
         m = _RATING_RE.search(popover["title"])
         if m:
-            return float(m.group(1))
+            return _coerce_rating(float(m.group(1)))
     for el in soup.select("i.a-icon-star .a-icon-alt, span[data-hook='rating-out-of-text']"):
         m = _RATING_RE.search(el.get_text())
         if m:
-            return float(m.group(1))
+            return _coerce_rating(float(m.group(1)))
     return None
 
 
@@ -326,10 +380,11 @@ def parse_product(body: str, asin: str) -> ProductData:
     soup = BeautifulSoup(body, "lxml")
     title_el = soup.select_one("#productTitle")
     title = title_el.get_text(strip=True) if title_el else None
-    price = _extract_price(body, soup)
+    price, twister_confirmed = _extract_price(body, soup)
     availability, in_stock = _extract_availability(soup)
     rating = _extract_rating(soup)
     reviews = _extract_reviews(soup)
+    price = _reject_price_rating_collision(price, rating, twister_confirmed=twister_confirmed)
     bsr, bsr_category = _extract_bsr(body)
     return ProductData(
         asin=asin,
@@ -349,9 +404,48 @@ def parse_product(body: str, asin: str) -> ProductData:
 
 # ── Fetch engines ────────────────────────────────────────────────────────────
 
+# Global pacing across ALL worker threads. Per-worker delays still allow 4
+# workers to fire near-simultaneously; this floor caps the aggregate request
+# rate from this IP, which is what Amazon's anti-bot actually sees.
+MIN_REQUEST_INTERVAL = 1.5  # seconds between any two requests, process-wide
+
+_throttle_lock = threading.Lock()
+_last_request_at = 0.0
+
+_thread_local = threading.local()
+
+
+def _global_throttle() -> None:
+    global _last_request_at
+    with _throttle_lock:
+        now = time.monotonic()
+        wait = _last_request_at + MIN_REQUEST_INTERVAL - now
+        if wait > 0:
+            time.sleep(wait)
+        _last_request_at = time.monotonic()
+
+
+def _curl_session(impersonate: str):
+    """Per-thread persistent session. Cookie continuity across requests makes
+    traffic look like a browsing session instead of stateless bot hits —
+    cookie-less fetches are what triggered the 2026-06-11 CAPTCHA wave."""
+    sessions = getattr(_thread_local, "curl_sessions", None)
+    if sessions is None:
+        sessions = _thread_local.curl_sessions = {}
+    session = sessions.get(impersonate)
+    if session is None:
+        from curl_cffi import requests as creq
+        session = sessions[impersonate] = creq.Session(impersonate=impersonate)
+    return session
+
+
+def reset_sessions() -> None:
+    """Drop this thread's sessions (fresh cookies) — call after repeated blocks."""
+    getattr(_thread_local, "curl_sessions", {}).clear()
+
+
 def _fetch_curl(url: str, impersonate: str, timeout: int) -> tuple[str, int]:
-    from curl_cffi import requests as creq
-    resp = creq.get(url, impersonate=impersonate, timeout=timeout, headers=DEFAULT_HEADERS)
+    resp = _curl_session(impersonate).get(url, timeout=timeout, headers=DEFAULT_HEADERS)
     return resp.text, resp.status_code
 
 
@@ -375,9 +469,12 @@ def _run_engine(name: str, url: str, timeout: int) -> tuple[str, int]:
     raise ValueError(f"unknown engine: {name}")
 
 
-def _backoff(base_delay: float, attempt: int) -> float:
-    """Jittered linear backoff, capped so a fully-blocked ASIN can't stall
-    a batch for minutes."""
+def _backoff(base_delay: float, attempt: int, *, blocked: bool = False) -> float:
+    """Jittered backoff. Transport errors retry quickly (linear, 8s cap);
+    blocked/suspect verdicts cool down exponentially (45s cap) — rapid-fire
+    retries against a CAPTCHA make Amazon block the URL harder."""
+    if blocked:
+        return min(random.uniform(base_delay, base_delay * 2) * (2 ** (attempt - 1)), 45.0)
     return min(random.uniform(base_delay, base_delay * 2) * attempt, 8.0)
 
 
@@ -398,6 +495,7 @@ def fetch_product(
         engine = ENGINE_ORDER[(attempt - 1) % len(ENGINE_ORDER)]
         url = URL_FORMS[(attempt - 1) // len(ENGINE_ORDER) % len(URL_FORMS)].format(asin=asin)
         try:
+            _global_throttle()
             body, status = _run_engine(engine, url, timeout)
         except Exception as exc:
             last = dataclasses.replace(
@@ -427,6 +525,10 @@ def fetch_product(
                 page_status=verdict, engine=engine, attempts=attempt,
                 error=f"{engine}: {verdict} (HTTP {status})",
             )
+            if verdict in ("blocked", "suspect"):
+                reset_sessions()  # poisoned cookies — start a fresh session
+                time.sleep(_backoff(base_delay, attempt, blocked=True))
+                continue
         time.sleep(_backoff(base_delay, attempt))
     return last
 

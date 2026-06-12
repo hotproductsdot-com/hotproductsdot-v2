@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1781120363668,
+  "lastScanned": 1781230718815,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -47,7 +47,8 @@
     "workspaces": [],
     "mainDirectories": [
       "docs",
-      "scripts"
+      "scripts",
+      "tests"
     ],
     "gitBranches": null
   },
@@ -56,28 +57,28 @@
     "__pycache__": {
       "path": "__pycache__",
       "purpose": null,
-      "fileCount": 11,
-      "lastAccessed": 1781120362674,
+      "fileCount": 14,
+      "lastAccessed": 1781230717780,
       "keyFiles": [
+        "amazon_local_api.cpython-312.pyc",
+        "fetch_daily_deals.cpython-312.pyc",
         "find_bestsellers.cpython-312.pyc",
         "fix_amazon_urls.cpython-312.pyc",
-        "oxylabs_refresh.cpython-312.pyc",
-        "post_daily.cpython-312.pyc",
-        "refresh_prices.cpython-312.pyc"
+        "oxylabs_refresh.cpython-312.pyc"
       ]
     },
     "agent-os": {
       "path": "agent-os",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781120362703,
+      "lastAccessed": 1781230717802,
       "keyFiles": []
     },
     "agentic-os": {
       "path": "agentic-os",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1781120362725,
+      "lastAccessed": 1781230717836,
       "keyFiles": [
         "README.md",
         "SOUL.md",
@@ -88,14 +89,14 @@
       "path": "amazon_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781120362745,
+      "lastAccessed": 1781230717859,
       "keyFiles": []
     },
     "amazon_source_images": {
       "path": "amazon_source_images",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781120362765,
+      "lastAccessed": 1781230717888,
       "keyFiles": [
         "airpods_max.jpg",
         "beats_studio3.jpg"
@@ -105,7 +106,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1781120362788,
+      "lastAccessed": 1781230717914,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
@@ -114,28 +115,28 @@
       "path": "facebook-cookbook",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781120362809,
+      "lastAccessed": 1781230717936,
       "keyFiles": []
     },
     "generated_images": {
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781120362825,
+      "lastAccessed": 1781230717959,
       "keyFiles": []
     },
     "graphify-out": {
       "path": "graphify-out",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1781120362845,
+      "lastAccessed": 1781230717976,
       "keyFiles": []
     },
     "growth-engine": {
       "path": "growth-engine",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1781120362863,
+      "lastAccessed": 1781230717996,
       "keyFiles": [
         "README.md",
         "config.yaml",
@@ -147,8 +148,8 @@
     "instagram": {
       "path": "instagram",
       "purpose": null,
-      "fileCount": 25,
-      "lastAccessed": 1781120362883,
+      "fileCount": 26,
+      "lastAccessed": 1781230718026,
       "keyFiles": [
         "__init__.py",
         "ad_creative_gen.py",
@@ -161,7 +162,7 @@
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781120362898,
+      "lastAccessed": 1781230718042,
       "keyFiles": [
         "content_calendar.json",
         "post_log.csv"
@@ -171,7 +172,7 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781120362918,
+      "lastAccessed": 1781230718065,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
@@ -181,7 +182,7 @@
       "path": "pinterest-setup",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1781120362940,
+      "lastAccessed": 1781230718110,
       "keyFiles": [
         "BOARDS.csv",
         "CONTENT_CALENDAR.md",
@@ -194,7 +195,7 @@
       "path": "pipeline-ui",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1781120362970,
+      "lastAccessed": 1781230718157,
       "keyFiles": [
         "README.md",
         "jobs.py",
@@ -206,8 +207,8 @@
     "products": {
       "path": "products",
       "purpose": null,
-      "fileCount": 11,
-      "lastAccessed": 1781120362988,
+      "fileCount": 17,
+      "lastAccessed": 1781230718188,
       "keyFiles": [
         "broken-links.csv",
         "check_duplicates.py",
@@ -220,7 +221,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 14,
-      "lastAccessed": 1781120363008,
+      "lastAccessed": 1781230718219,
       "keyFiles": [
         "_debug_ai_gate.py",
         "_debug_validator.py",
@@ -233,7 +234,7 @@
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1781120363030,
+      "lastAccessed": 1781230718235,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -242,11 +243,22 @@
         "package-lock.json"
       ]
     },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 3,
+      "lastAccessed": 1781230718248,
+      "keyFiles": [
+        "test_amazon_local_api.py",
+        "test_fetch_daily_deals.py",
+        "test_refresh_catalog_local.py"
+      ]
+    },
     "venv": {
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1781120363046,
+      "lastAccessed": 1781230718273,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -255,7 +267,7 @@
       "path": "agentic-os/config",
       "purpose": "Configuration files",
       "fileCount": 2,
-      "lastAccessed": 1781120363118,
+      "lastAccessed": 1781230718341,
       "keyFiles": [
         "cursor-mcp.json",
         "personalities.yaml"
@@ -265,7 +277,7 @@
       "path": "agentic-os/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 7,
-      "lastAccessed": 1781120363175,
+      "lastAccessed": 1781230718376,
       "keyFiles": [
         "install.ps1",
         "install.sh",
@@ -276,14 +288,14 @@
       "path": "facebook-cookbook/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1781120363342,
+      "lastAccessed": 1781230718446,
       "keyFiles": []
     },
     "growth-engine/data": {
       "path": "growth-engine/data",
       "purpose": "Data files",
       "fileCount": 7,
-      "lastAccessed": 1781120363406,
+      "lastAccessed": 1781230718507,
       "keyFiles": [
         "ai_visibility.db",
         "backlinks.db",
@@ -294,7 +306,7 @@
       "path": "pipeline-ui/static",
       "purpose": "Static files",
       "fileCount": 3,
-      "lastAccessed": 1781120363474,
+      "lastAccessed": 1781230718592,
       "keyFiles": [
         "app.js",
         "index.html",
@@ -305,7 +317,7 @@
       "path": "site/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1781120363523,
+      "lastAccessed": 1781230718678,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -315,8 +327,8 @@
     "venv/Scripts": {
       "path": "venv/Scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 14,
-      "lastAccessed": 1781120363600,
+      "fileCount": 23,
+      "lastAccessed": 1781230718734,
       "keyFiles": [
         "Activate.ps1",
         "activate",
@@ -327,7 +339,7 @@
       "path": "venv/bin",
       "purpose": "Executable scripts",
       "fileCount": 52,
-      "lastAccessed": 1781120363634,
+      "lastAccessed": 1781230718783,
       "keyFiles": [
         "Activate.ps1",
         "accelerate",
@@ -338,195 +350,15 @@
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1781120363668,
+      "lastAccessed": 1781230718814,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
-      "path": "post_daily.py",
-      "accessCount": 25,
-      "lastAccessed": 1781144150001,
-      "type": "file"
-    },
-    {
-      "path": "instagram/ad_creative_gen.py",
-      "accessCount": 19,
-      "lastAccessed": 1781146288469,
-      "type": "file"
-    },
-    {
-      "path": "instagram/image_gen_fal.py",
-      "accessCount": 13,
-      "lastAccessed": 1781146627458,
-      "type": "file"
-    },
-    {
-      "path": "amazon_local_api.py",
-      "accessCount": 12,
-      "lastAccessed": 1781134120252,
-      "type": "file"
-    },
-    {
-      "path": "refresh_catalog_local.py",
-      "accessCount": 10,
-      "lastAccessed": 1781134099344,
-      "type": "file"
-    },
-    {
       "path": "README.md",
-      "accessCount": 9,
-      "lastAccessed": 1781143146466,
-      "type": "file"
-    },
-    {
-      "path": "tests/test_fetch_daily_deals.py",
-      "accessCount": 8,
-      "lastAccessed": 1781144173117,
-      "type": "file"
-    },
-    {
-      "path": "site/app/lib/products.ts",
-      "accessCount": 7,
-      "lastAccessed": 1781141852158,
-      "type": "file"
-    },
-    {
-      "path": "tests/test_amazon_local_api.py",
-      "accessCount": 5,
-      "lastAccessed": 1781134167346,
-      "type": "file"
-    },
-    {
-      "path": "site/app/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1781141856297,
-      "type": "file"
-    },
-    {
-      "path": "oxylabs_refresh.py",
-      "accessCount": 3,
-      "lastAccessed": 1781141239303,
-      "type": "file"
-    },
-    {
-      "path": "fetch_daily_deals.py",
-      "accessCount": 3,
-      "lastAccessed": 1781141846366,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/LimitedDealCard.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1781141847477,
-      "type": "file"
-    },
-    {
-      "path": "run_daily_deals.sh",
-      "accessCount": 3,
-      "lastAccessed": 1781141852808,
-      "type": "file"
-    },
-    {
-      "path": "find_bestsellers.py",
-      "accessCount": 3,
-      "lastAccessed": 1781143202887,
-      "type": "file"
-    },
-    {
-      "path": ".env",
       "accessCount": 2,
-      "lastAccessed": 1781129765236,
-      "type": "file"
-    },
-    {
-      "path": "refresh_prices.py",
-      "accessCount": 2,
-      "lastAccessed": 1781133502665,
-      "type": "file"
-    },
-    {
-      "path": "tests/test_refresh_catalog_local.py",
-      "accessCount": 2,
-      "lastAccessed": 1781133839734,
-      "type": "file"
-    },
-    {
-      "path": "instagram/banner_compose.py",
-      "accessCount": 2,
-      "lastAccessed": 1781136110220,
-      "type": "file"
-    },
-    {
-      "path": "requirements.txt",
-      "accessCount": 2,
-      "lastAccessed": 1781136803030,
-      "type": "file"
-    },
-    {
-      "path": "instagram/test_ad_creative_fallback.py",
-      "accessCount": 2,
-      "lastAccessed": 1781145187832,
-      "type": "file"
-    },
-    {
-      "path": "instagram/fal_test_manifest.py",
-      "accessCount": 2,
-      "lastAccessed": 1781146256211,
-      "type": "file"
-    },
-    {
-      "path": "marketing-campaigns/post_log.csv",
-      "accessCount": 1,
-      "lastAccessed": 1781123385360,
-      "type": "file"
-    },
-    {
-      "path": "_scrapling_price_test.py",
-      "accessCount": 1,
-      "lastAccessed": 1781132844519,
-      "type": "file"
-    },
-    {
-      "path": "oxylabs-amazon-product.sh",
-      "accessCount": 1,
-      "lastAccessed": 1781132844819,
-      "type": "file"
-    },
-    {
-      "path": "generated_images/2026-06-10/amorepacific-treatment-enzyme-peel-cleansing-powder-korean-gentle-daily-exfoliator-with-hyaluronic-acid-and-green-tea-enzymes-1-9-oz/banner.jpg",
-      "accessCount": 1,
-      "lastAccessed": 1781136132848,
-      "type": "file"
-    },
-    {
-      "path": "instagram/generate_fal_products.py",
-      "accessCount": 1,
-      "lastAccessed": 1781136298789,
-      "type": "file"
-    },
-    {
-      "path": "generated_images/2026-06-10/breville-espresso-machine/banner.jpg",
-      "accessCount": 1,
-      "lastAccessed": 1781141226611,
-      "type": "file"
-    },
-    {
-      "path": "site/app/components/DealCard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1781141241531,
-      "type": "file"
-    },
-    {
-      "path": ".smoke_artifact/render-smoke-27317590484/2026-06-11/breville-espresso-machine/banner.jpg",
-      "accessCount": 1,
-      "lastAccessed": 1781141322693,
-      "type": "file"
-    },
-    {
-      "path": "generated_images/composite_sample/breville-composite.jpg",
-      "accessCount": 1,
-      "lastAccessed": 1781144341408,
+      "lastAccessed": 1781231254028,
       "type": "file"
     }
   ],

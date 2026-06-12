@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from amazon_local_api import ProductData  # noqa: E402
-from refresh_catalog_local import decide_update, extract_asin  # noqa: E402
+from refresh_catalog_local import decide_update, extract_asin, unverified_removal_reason  # noqa: E402
 
 
 def make_row(price="100.00", rating="4.5", reviews="200"):
@@ -74,3 +74,42 @@ class TestDecideUpdate:
         snapshot = dict(row)
         decide_update(row, make_product(price=110.0))
         assert row == snapshot
+
+
+class TestUnverifiedRemovalReason:
+    def test_verified_price_kept(self):
+        live = make_product(price=100.0)
+        decision = decide_update(make_row(), live)
+        assert unverified_removal_reason(live, decision) is None
+
+    def test_suspicious_price_removed(self):
+        live = make_product(price=200.0)
+        decision = decide_update(make_row(), live)
+        assert unverified_removal_reason(live, decision) == "suspicious_price"
+
+    def test_no_live_price_removed(self):
+        live = make_product(price=None, rating=4.5, reviews=100)
+        assert unverified_removal_reason(live, decide_update(make_row(), live)) == "no_live_price"
+
+    def test_no_buybox_removed(self):
+        live = ProductData(
+            asin="B0TEST00AA", title="Test", page_status="ok",
+            availability="See All Buying Options", rating=4.5, reviews_count=10,
+        )
+        assert unverified_removal_reason(live) == "no_buybox_offer"
+
+    def test_listing_removed(self):
+        live = make_product(status="not_found")
+        assert unverified_removal_reason(live) == "listing_removed"
+
+    def test_scrape_blocked_removed(self):
+        live = make_product(status="blocked")
+        assert unverified_removal_reason(live) == "scrape_blocked"
+
+    def test_unavailable_removed(self):
+        live = ProductData(
+            asin="B0TEST00AA", title="Test", page_status="ok",
+            availability="Currently unavailable.", is_in_stock=False,
+            rating=4.0, reviews_count=50,
+        )
+        assert unverified_removal_reason(live) == "unavailable"
