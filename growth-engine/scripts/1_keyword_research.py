@@ -166,6 +166,10 @@ def _stub_plan(cats, count):
 
 def save_plan(plan: list, refresh: bool) -> Path:
     path = Path(CONFIG["paths"]["content_plan"])
+    if is_dry_run():
+        # Dry-run stub briefs must not poison the real content plan.
+        # Save to a separate file so live runs never see them.
+        path = path.with_name("content_plan.dryrun.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     existing = []
     if path.exists() and not refresh:

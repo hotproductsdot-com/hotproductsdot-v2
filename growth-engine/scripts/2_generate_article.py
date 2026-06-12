@@ -139,6 +139,11 @@ def _next_brief(
     for b in plan["briefs"]:
         if b.get("status", "pending") != "pending":
             continue
+        if not is_dry_run() and b["slug"].startswith("stub-"):
+            # Dry-run stubs must never be published as real articles.
+            b["status"] = "void-stub"
+            reconciled = True
+            continue
         if b["slug"] in skip_slugs:
             b["status"] = "published"
             reconciled = True

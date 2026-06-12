@@ -234,26 +234,62 @@ def _parse_deals_page(html: str, category: str, min_discount: int) -> list[Deal]
 
 # ── Network ───────────────────────────────────────────────────────────────────────
 
+def _fetch_direct(url: str) -> str:
+    """Fetch via scrapling (chrome-impersonated). Returns HTML or '' if blocked."""
+    try:
+        with FetcherSession() as session:
+            resp = session.get(url, timeout=25, retries=2)
+    except Exception as exc:
+        return ""
+    if resp.status != 200:
+        return ""
+    body = resp.body.decode(resp.encoding or "utf-8", errors="replace")
+    if "Robot Check" in body or "Type the characters" in body:
+        return ""
+    return body
+
+
+def _fetch_via_oxylabs(url: str) -> str:
+    """Fallback: fetch via Oxylabs realtime scraper API.
+
+    Uses OXYLABS_USERNAME/OXYLABS_PASSWORD from .env if available.
+    Returns HTML or '' on failure.
+    """
+    user = os.getenv("OXYLABS_USERNAME", "").strip()
+    pwd = os.getenv("OXYLABS_PASSWORD", "").strip()
+    if not user or not pwd:
+        return ""
+    import requests
+
+    try:
+        r = requests.post(
+            "https://realtime.oxylabs.io/v1/queries",
+            auth=(user, pwd),
+            json={"source": "amazon", "url": url, "parse": False},
+            timeout=90,
+        )
+        r.raise_for_status()
+        results = r.json().get("results") or []
+        if not results:
+            return ""
+        if results[0].get("status_code") != 200:
+            return ""
+        return results[0].get("content") or ""
+    except Exception:
+        return ""
+
+
 def _fetch_category_deals(category: str, delay: float, min_discount: int) -> list[Deal]:
     keyword = _CATEGORY_KEYWORDS.get(category, category.replace("-", " "))
     url = _DEALS_URL.format(keyword=keyword.replace(" ", "+"))
     print(f"  [deal_finder] {category} → {url}")
 
     time.sleep(random.uniform(delay * 0.8, delay * 1.2))
-    try:
-        with FetcherSession() as session:
-            resp = session.get(url, timeout=25, retries=1)
-    except Exception as exc:
-        print(f"  [deal_finder] ERROR ({category}): {exc}")
-        return []
-
-    if resp.status != 200:
-        print(f"  [deal_finder] HTTP {resp.status} for {category} — skipping")
-        return []
-
-    body = resp.body.decode(resp.encoding or "utf-8", errors="replace")
-    if "Robot Check" in body or "Type the characters" in body:
-        print(f"  [deal_finder] BLOCKED for {category} — skipping")
+    body = _fetch_direct(url)
+    if not body:
+        body = _fetch_via_oxylabs(url)
+    if not body:
+        print(f"  [deal_finder] HTTP 503 for {category} — skipping")
         return []
 
     deals = _parse_deals_page(body, category, min_discount)

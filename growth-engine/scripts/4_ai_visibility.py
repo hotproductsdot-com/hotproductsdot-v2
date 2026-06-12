@@ -121,7 +121,16 @@ def _ask_perplexity(query: str) -> str:
         )
         r.raise_for_status()
         data = r.json()
-        return data["choices"][0]["message"]["content"]
+        text = data["choices"][0]["message"]["content"]
+        # Perplexity puts cited URLs in separate fields, not in message body.
+        # Without these, domain detection always sees 0 domains.
+        urls = list(data.get("citations") or [])
+        for sr in data.get("search_results") or []:
+            if isinstance(sr, dict) and sr.get("url"):
+                urls.append(sr["url"])
+        if urls:
+            text += "\n\nCitations:\n" + "\n".join(dict.fromkeys(urls))
+        return text
     except Exception as e:
         print(f"[visibility] Perplexity failed: {e}")
         return ""
