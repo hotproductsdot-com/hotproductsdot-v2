@@ -53,7 +53,9 @@ elif [[ $rc -ne 0 ]]; then
 fi
 
 cd "$WORKTREE"
-git add products/top-1000.csv site/public/products products/discovery
+# products/discovery/ is gitignored (regenerated per run) — adding it makes
+# git add exit 1, which kills the script under set -e before commit/push.
+git add products/top-1000.csv site/public/products
 if git diff --staged --quiet; then
   echo "No catalog changes — nothing to push."
   exit 0
