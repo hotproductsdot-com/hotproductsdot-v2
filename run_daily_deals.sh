@@ -4,7 +4,7 @@
 # Runs fetch_daily_deals.py against origin/main in a detached git worktree so
 # the developer checkout (often on a feature branch, possibly dirty) is never
 # touched, then commits + pushes the updated catalog/images to main. The
-# 14:00 UTC daily_post.yml workflow then posts the top 4 deals to Instagram
+# 14:00 UTC daily_post.yml workflow then posts the top 5 deals to Instagram
 # and rebuilds/deploys the site with the new Limited Time Sale section.
 #
 # Cron (local time is America/Chicago on this machine):

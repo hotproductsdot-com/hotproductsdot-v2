@@ -77,17 +77,17 @@ class PoolExhaustedError(Exception):
     duplicate post."""
 
 # Don't re-pick a product attempted (any status) within this many *prior* days.
-# At 4 posts/day across a 60-product pool a full cycle is ~15 days; 14 days of
+# At 5 posts/day across a 60-product pool a full cycle is ~12 days; 14 days of
 # cooldown buys defense-in-depth against the post_log.csv being lost mid-pipeline.
 # Same-day retries are still allowed so transient errors can be re-driven.
 DEFAULT_COOLDOWN_DAYS = 14
 
 # Hard ceiling on how many successful posts (Status=ok) a single UTC day may
-# contain per platform. The daily_post.yml workflow runs 4 invocations per
+# contain per platform. The daily_post.yml workflow runs 5 invocations per
 # scheduled cron — if a re-run / accidental dispatch triggers another batch,
 # the quota guard refuses to post and exits rc=3. Override with env var if
 # the daily volume ever changes.
-DAILY_PLATFORM_QUOTA = int(os.environ.get("DAILY_PLATFORM_QUOTA", "4"))
+DAILY_PLATFORM_QUOTA = int(os.environ.get("DAILY_PLATFORM_QUOTA", "5"))
 
 logger = logging.getLogger(__name__)
 
@@ -1402,8 +1402,8 @@ def main() -> None:
         else:
             # Limited-time deals take over the rotation when a fresh batch
             # exists (fetch_daily_deals.py cron, 8am Central). The pool is
-            # ranked by sales-velocity × discount, so the 4 daily IG posts
-            # are the top 4 deals. Stale/absent batch → normal rotation.
+            # ranked by sales-velocity × discount, so the 5 daily IG posts
+            # are the top 5 deals. Stale/absent batch → normal rotation.
             deal_pool = [] if args.ignore_deals else select_deal_pool(all_products)
             if deal_pool:
                 # Explicitly remove already-posted deals before selection so

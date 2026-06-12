@@ -635,7 +635,7 @@ python fetch_daily_deals.py --deal-count 25 --max-verify 60 --min-discount 10
 
 ### How `post_daily.py` uses deals
 
-When a fresh deal batch exists in the catalog (`Temporary=daily-deal`, `Deal Date` within 2 days), `post_daily.py` automatically uses the **deal pool** instead of the normal rotation. Posts are ranked by `deal_score` so the top 4 deals are posted each day. The Instagram caption gains a `⏰ LIMITED-TIME DEAL: N% OFF (was $X)` line at the top. Pass `--ignore-deals` to skip the deal pool and fall back to the normal rotation.
+When a fresh deal batch exists in the catalog (`Temporary=daily-deal`, `Deal Date` within 2 days), `post_daily.py` automatically uses the **deal pool** instead of the normal rotation. Posts are ranked by `deal_score` so the top 5 deals are posted each day. The Instagram caption gains a `⏰ LIMITED-TIME DEAL: N% OFF (was $X)` line at the top. Pass `--ignore-deals` to skip the deal pool and fall back to the normal rotation.
 
 ### How the site renders deals
 

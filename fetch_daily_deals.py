@@ -20,7 +20,7 @@ run_daily_deals.sh):
                slug (same job autofix-images.js does for manual adds).
 
 Consumers of the deal columns:
-  - post_daily.py     posts exclusively from fresh deal rows (top 4 by score).
+  - post_daily.py     posts exclusively from fresh deal rows (top 5 by score).
   - site/prebuild.js + site/app/lib/products.ts render the homepage
     "Limited Time Sale" section.
 
