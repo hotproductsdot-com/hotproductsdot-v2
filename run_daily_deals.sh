@@ -28,6 +28,9 @@ git fetch --quiet origin main
 if [[ ! -d "$WORKTREE" ]]; then
   git worktree add --detach "$WORKTREE" origin/main
 fi
+# A previous failed run can leave staged/dirty state that makes the detached
+# checkout refuse — clear it first; the worktree holds no work worth keeping.
+git -C "$WORKTREE" reset --hard --quiet
 git -C "$WORKTREE" checkout --quiet --detach origin/main
 git -C "$WORKTREE" reset --hard --quiet origin/main
 
