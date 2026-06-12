@@ -288,3 +288,15 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-10,tiktok,Graco Pack 'n Play On The Go Playard,error,TIKTOK_ACCESS_TOKEN not set
 2026-06-10,instagram,Graco Pack 'n Play On The Go Playard,ok,18111248266925672
 2026-06-10,instagram,Canon EOS R10 Mirrorless Camera,quality_blocked,"ai vision: A prominent third-party brand logo (SanDisk) is visibly displayed on bundled accessories, conflicting with the Canon brand identity of the named product."
+2026-06-11,instagram,Breville Espresso Machine,ok,18096072289952832
+2026-06-11,instagram,La Roche-Posay Toleriane Double Repair Moisturizer,ok,17890444842550090
+2026-06-11,instagram,Secretlab TITAN Evo 2022 Gaming Chair,ok,17874899340502765
+2026-06-11,instagram,SwitchBot Curtain 3,ok,18605806240042271
+2026-06-11,tiktok,Apple Watch Series 10,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-11,tiktok,Apple Watch Series 10,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-12,instagram,Brita Large 10 Cup Water Filter Pitcher,ok,17944239570210185
+2026-06-12,instagram,Autel EVO Nano+ Drone,ok,18138488644529253
+2026-06-12,instagram,Facebook Portal Plus Smart Display,ok,18206479576346086
+2026-06-12,instagram,Garmin Forerunner 265 GPS Running Watch,ok,18105485437812854
+2026-06-12,instagram,Samsung Neo QLED TV 55,quality_blocked,ai vision: The listed price of $44.99 is implausibly low for a 55-inch Samsung Neo QLED TV and appears to be an error that could mislead consumers or violate platform policies.
+2026-06-12,tiktok,Lowepro ProTactic 450 AW II Camera Bag,error,TIKTOK_ACCESS_TOKEN not set
