@@ -356,6 +356,12 @@
   },
   "hotPaths": [
     {
+      "path": "site/app/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781231519033,
+      "type": "file"
+    },
+    {
       "path": "README.md",
       "accessCount": 2,
       "lastAccessed": 1781231254028,

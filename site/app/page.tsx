@@ -72,41 +72,10 @@ export default function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center">
-          <div className="inline-block bg-orange-500/10 text-orange-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6 border border-orange-500/20">
-            Amazon&apos;s Best Picks
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight mb-5">
-            Find the Best Products{" "}
-            <span className="text-orange-500">Before Everyone Else Does</span>
-          </h1>
-          <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
-            {allProducts.length} top-rated, best-selling products across {categories.length} categories — all with verified reviews and real prices.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Link
-              href="/products"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
-            >
-              Browse All Products →
-            </Link>
-            <a
-              href="https://www.amazon.com/bestsellers?tag=hotproduct033-20"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-semibold px-6 py-3 rounded-xl transition-colors"
-            >
-              Amazon Best Sellers
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Limited Time Sale — today's verified on-sale batch, refreshed every
           morning by the fetch_daily_deals.py cron. Hidden when the batch is
-          stale (>2 days) or empty. */}
+          stale (>2 days) or empty. Rendered above the hero so the deals are
+          the first thing visitors see. */}
       {limitedDeals.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-4">
           <div className="flex items-center justify-between mb-8">
@@ -138,6 +107,38 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Hero */}
+      <section className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center">
+          <div className="inline-block bg-orange-500/10 text-orange-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6 border border-orange-500/20">
+            Amazon&apos;s Best Picks
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight mb-5">
+            Find the Best Products{" "}
+            <span className="text-orange-500">Before Everyone Else Does</span>
+          </h1>
+          <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+            {allProducts.length} top-rated, best-selling products across {categories.length} categories — all with verified reviews and real prices.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/products"
+              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+            >
+              Browse All Products →
+            </Link>
+            <a
+              href="https://www.amazon.com/bestsellers?tag=hotproduct033-20"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-semibold px-6 py-3 rounded-xl transition-colors"
+            >
+              Amazon Best Sellers
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Products I LOVE */}
       {lovedProducts.length > 0 && (
