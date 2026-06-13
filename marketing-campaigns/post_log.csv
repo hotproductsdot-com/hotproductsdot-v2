@@ -300,3 +300,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-12,instagram,Garmin Forerunner 265 GPS Running Watch,ok,18105485437812854
 2026-06-12,instagram,Samsung Neo QLED TV 55,quality_blocked,ai vision: The listed price of $44.99 is implausibly low for a 55-inch Samsung Neo QLED TV and appears to be an error that could mislead consumers or violate platform policies.
 2026-06-12,tiktok,Lowepro ProTactic 450 AW II Camera Bag,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-13,instagram,Paula's Choice SKIN PERFECTING 2% BHA Liquid Exfoliant with Salicylic,ok,18425716285123944
+2026-06-13,instagram,"CeraVe Moisturizing Cream, Body and Face Moisturizer for Dry Skin",ok,18104144704835667
+2026-06-13,instagram,"Apple AirPods Pro 3 Wireless Earbuds, Active Noise Cancellation, Live",quality_blocked,ai vision: Two separate earbud units are displayed as duplicate product instances rather than a single product shot.
+2026-06-13,instagram,"Apple AirPods 4 Wireless Earbuds, Bluetooth Headphones, Personalized",ok,18093127763588644
+2026-06-13,instagram,HydroJug Traveler - 32 oz Water Bottle with Handle & Flip Straw,quality_blocked,ai vision: Product title specifies 'with Handle & Flip Straw' but no straw is visible on or with the bottle in the image.
+2026-06-13,tiktok,"Apple iPad 11-inch: A16 chip, 11-inch Model, Liquid Retina Display",error,TIKTOK_ACCESS_TOKEN not set
