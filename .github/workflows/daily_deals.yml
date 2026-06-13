@@ -1,0 +1,249 @@
+name: Limited Time Sale Refresh + Deploy
+
+on:
+  schedule:
+    # GitHub cron is UTC. Run both possible 8am Central UTC slots, then guard
+    # inside the job with TZ=America/Chicago so DST is handled correctly.
+    - cron: '0 13,14 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: limited-time-sale-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-deploy:
+    name: 8am Central deals -> build -> rsync
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    env:
+      HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+      HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+      HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+      HOSTINGER_DEST: domains/hotproductsdot.com/public_html/
+
+    steps:
+      - name: Guard schedule to 8am Central
+        id: guard
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            central_hour="$(TZ=America/Chicago date +%H)"
+            if [ "$central_hour" != "08" ]; then
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              echo "Skipping: local Central hour is ${central_hour}, not 08."
+              exit 0
+            fi
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repo
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Python dependencies
+        if: steps.guard.outputs.run == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Set up Node.js
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install site dependencies
+        if: steps.guard.outputs.run == 'true'
+        working-directory: site
+        run: npm ci
+
+      - name: Restore Next.js build cache
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/cache@v4
+        with:
+          path: site/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-${{ hashFiles('site/**/*.ts', 'site/**/*.tsx', 'site/**/*.js', 'site/**/*.mjs') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
+            nextjs-${{ runner.os }}-
+
+      - name: Fetch limited-time sale batch
+        if: steps.guard.outputs.run == 'true'
+        id: deals
+        env:
+          OXYLABS_USERNAME: ${{ secrets.OXYLABS_USERNAME }}
+          OXYLABS_PASSWORD: ${{ secrets.OXYLABS_PASSWORD }}
+          AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
+        run: |
+          export AMAZON_ASSOCIATE_TAG="${AMAZON_ASSOCIATE_TAG:-hotproduct033-20}"
+          set +e
+          python fetch_daily_deals.py --max-verify 60 --min-discount 10 --deal-count 25 -v
+          rc=$?
+          set -e
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" = "2" ]; then
+            echo "::warning::No qualifying limited-time deals found; continuing to build/deploy so stale batches age out."
+            exit 0
+          fi
+          exit "$rc"
+
+      - name: Upload deal audit artifact
+        if: steps.guard.outputs.run == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-deals-${{ github.run_id }}
+          path: products/discovery/daily-deals-*.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Commit deal catalog changes
+        if: steps.guard.outputs.run == 'true' && steps.deals.outputs.rc == '0'
+        run: |
+          set -e
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add products/top-1000.csv site/public/products
+          if git diff --staged --quiet; then
+            echo "No deal catalog/image changes to commit."
+            exit 0
+          fi
+          git commit -m "feat: limited-time sale batch $(date -u +%F) [skip ci]"
+
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Deal catalog pushed (attempt ${attempt})."
+              exit 0
+            fi
+            echo "::warning::Push attempt ${attempt} failed; rebasing on origin/main"
+            git fetch origin main
+            git rebase origin/main
+            sleep 10
+          done
+          echo "::error::Failed to push deal catalog after 3 attempts"
+          exit 1
+
+      - name: Build static site
+        if: steps.guard.outputs.run == 'true'
+        working-directory: site
+        run: npm run build
+
+      - name: Verify SSH secrets are configured
+        if: steps.guard.outputs.run == 'true'
+        run: |
+          [ -z "$HOSTINGER_HOST" ] && echo "::error::HOSTINGER_HOST secret not set" || echo "HOSTINGER_HOST configured"
+          [ -z "$HOSTINGER_USER" ] && echo "::error::HOSTINGER_USER secret not set" || echo "HOSTINGER_USER configured"
+          [ -z "$HOSTINGER_PORT" ] && echo "::error::HOSTINGER_PORT secret not set" || echo "HOSTINGER_PORT configured"
+          [ -z "$HOSTINGER_SSH_KEY_B64" ] && echo "::error::HOSTINGER_SSH_KEY_B64 secret not set" || echo "HOSTINGER_SSH_KEY_B64 configured"
+          [ -z "$HOSTINGER_KNOWN_HOSTS" ] && echo "::error::HOSTINGER_KNOWN_HOSTS secret not set" || echo "HOSTINGER_KNOWN_HOSTS configured"
+          if [ -z "$HOSTINGER_HOST" ] || [ -z "$HOSTINGER_USER" ] || [ -z "$HOSTINGER_PORT" ] || [ -z "$HOSTINGER_SSH_KEY_B64" ] || [ -z "$HOSTINGER_KNOWN_HOSTS" ]; then
+            exit 1
+          fi
+        env:
+          HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+
+      - name: Set up SSH for Hostinger
+        if: steps.guard.outputs.run == 'true'
+        env:
+          HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s' "$HOSTINGER_SSH_KEY_B64" | tr -d '[:space:]' | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null; then
+            echo "::error::ssh-keygen rejected HOSTINGER_SSH_KEY_B64"
+            exit 1
+          fi
+
+          printf '%s\n' "$HOSTINGER_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          if ! grep -Eq '^[^#[:space:]]' ~/.ssh/known_hosts; then
+            echo "::error::HOSTINGER_KNOWN_HOSTS contains no usable host keys"
+            exit 1
+          fi
+
+          cat >> ~/.ssh/config <<'EOF'
+          Host *
+              ControlMaster auto
+              ControlPath ~/.ssh/cm-%r@%h:%p
+              ControlPersist 10m
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: SSH connectivity smoke test
+        if: steps.guard.outputs.run == 'true'
+        run: |
+          set -e
+          attempt=1
+          max_attempts=4
+          while : ; do
+            if ssh -p "$HOSTINGER_PORT" -i ~/.ssh/id_rsa \
+                -o BatchMode=yes \
+                -o ConnectTimeout=30 \
+                -o ConnectionAttempts=3 \
+                -o ServerAliveInterval=20 \
+                -o ServerAliveCountMax=6 \
+                -o StrictHostKeyChecking=yes \
+                -o UserKnownHostsFile=~/.ssh/known_hosts \
+                "$HOSTINGER_USER@$HOSTINGER_HOST" \
+                "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"; then
+              echo "Smoke test succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::SSH smoke test failed after $max_attempts attempts"
+              exit 1
+            fi
+            wait_s=$((attempt * 15))
+            echo "::warning::SSH smoke test attempt $attempt failed; retrying in ${wait_s}s"
+            sleep "$wait_s"
+            attempt=$((attempt + 1))
+          done
+
+      - name: Rsync to Hostinger
+        if: steps.guard.outputs.run == 'true'
+        run: |
+          set -e
+          attempt=1
+          max_attempts=3
+          while : ; do
+            if rsync -avz --delete --partial --timeout=60 \
+                --exclude='.htaccess' \
+                --exclude='.htpasswd' \
+                --exclude='.well-known/' \
+                --exclude='cgi-bin/' \
+                --exclude='.user.ini' \
+                --exclude='error_log' \
+                --exclude='error_log.*' \
+                --exclude='php.ini' \
+                -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 -o ServerAliveInterval=20 -o ServerAliveCountMax=6 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+                site/out/ \
+                "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"; then
+              echo "Rsync succeeded on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::Rsync failed after $max_attempts attempts"
+              exit 1
+            fi
+            wait_s=$((attempt * 30))
+            echo "::warning::Rsync attempt $attempt failed; retrying in ${wait_s}s"
+            sleep "$wait_s"
+            attempt=$((attempt + 1))
+          done
