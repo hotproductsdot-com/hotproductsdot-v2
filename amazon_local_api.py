@@ -377,7 +377,10 @@ def _extract_bsr(body: str) -> tuple[int | None, str | None]:
 
 def parse_product(body: str, asin: str) -> ProductData:
     """Parse a full Amazon product page into ProductData. Network-free."""
-    soup = BeautifulSoup(body, "lxml")
+    try:
+        soup = BeautifulSoup(body, "lxml")
+    except Exception:
+        soup = BeautifulSoup(body, "html.parser")
     title_el = soup.select_one("#productTitle")
     title = title_el.get_text(strip=True) if title_el else None
     price, twister_confirmed = _extract_price(body, soup)

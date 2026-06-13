@@ -186,12 +186,12 @@ def test_select_deal_pool_filters_stale_and_ranks():
 
 
 @pytest.mark.unit
-def test_select_deal_pool_accepts_yesterday_within_window():
+def test_select_deal_pool_rejects_yesterday_after_missed_refresh():
     today = date(2026, 6, 10)
     yesterday = _pool_product("Yesterday", deal_date="2026-06-09")
     cutoff = _pool_product("TooOld", deal_date=(today - timedelta(days=3)).isoformat())
     pool = post_daily.select_deal_pool([yesterday, cutoff], today=today)
-    assert [p["name"] for p in pool] == ["Yesterday"]
+    assert pool == []
 
 
 @pytest.mark.unit

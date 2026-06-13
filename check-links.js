@@ -18,7 +18,13 @@ const getArg = (flag, def) => {
 const CSV_PATH = getArg('--csv', path.join(__dirname, 'products/top-1000.csv'));
 const CONCURRENCY = parseInt(getArg('--concurrency', '5'), 10);
 const OUTPUT_PATH = getArg('--output', '');
+const VALIDATE_TITLE = false; // use check-product-title-alignment.py instead
 const TIMEOUT_MS = 15000;
+const TITLE_STOPWORDS = new Set([
+  'amazon', 'the', 'and', 'for', 'with', 'from', 'a', 'an', 'of', 'to',
+  'smart', 'video', 'calling', 'touch', 'screen', 'display', 'device', 'new',
+  'black', 'white',
+]);
 
 // Realistic browser headers to avoid Amazon blocking
 const HEADERS = {
@@ -84,10 +90,43 @@ function tagFreeUrl(rawUrl) {
   }
 }
 
-// --- HTTP check with redirect following ---
-function checkUrl(url) {
+function normalizeTokens(raw) {
+  return new Set(
+    String(raw || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .split(/\s+/)
+      .map((t) => t.trim())
+      .filter((t) => t && !TITLE_STOPWORDS.has(t))
+  );
+}
+
+function tokenCoverage(expected, observed) {
+  if (expected.size === 0) return 1;
+  let hit = 0;
+  for (const token of expected) {
+    if (observed.has(token)) hit++;
+  }
+  return hit / expected.size;
+}
+
+function extractAmazonTitle(html) {
+  const fromProductTitle = html.match(/id="productTitle"[^>]*>([\s\S]*?)<\/span>/i);
+  if (fromProductTitle) {
+    return fromProductTitle[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  const fromTitleTag = html.match(/<title>([\s\S]*?)<\/title>/i);
+  if (fromTitleTag) {
+    return fromTitleTag[1]
+      .replace(/\s+-\s+Amazon\.com.*$/i, '')
+      .replace(/^Amazon\.com\s*:\s*/i, '')
+      .trim();
+  }
+  return '';
+}
+
+function requestUrl(url, method) {
   return new Promise((resolve) => {
-    // Strip query string before any network request fires.
     const cleanedUrl = tagFreeUrl(url);
 
     const attempt = (targetUrl, redirectCount) => {
@@ -105,45 +144,46 @@ function checkUrl(url) {
       const options = {
         hostname: parsed.hostname,
         path: parsed.pathname + parsed.search,
-        // HEAD instead of GET: same status code information, no response body,
-        // and Amazon's client-side tracking JavaScript can't run because the
-        // body never arrives. Belt-and-suspenders alongside the tag stripping.
-        method: 'HEAD',
+        method,
         headers: HEADERS,
         timeout: TIMEOUT_MS,
       };
 
       const req = https.request(options, (res) => {
         const { statusCode } = res;
-        // Drain the response body so the socket closes cleanly
-        res.resume();
+        let body = '';
+
+        if (method === 'GET') {
+          res.setEncoding('utf8');
+          res.on('data', (chunk) => {
+            body += chunk;
+            if (body.length > 250000) {
+              req.destroy();
+            }
+          });
+        } else {
+          res.resume();
+        }
 
         if (statusCode >= 301 && statusCode <= 308 && res.headers.location) {
-          // Follow redirect
           const next = res.headers.location.startsWith('http')
             ? res.headers.location
             : `https://${parsed.hostname}${res.headers.location}`;
           return attempt(next, redirectCount + 1);
         }
 
-        const broken = statusCode === 404 || statusCode >= 500;
-        // Amazon redirects dead product pages to their homepage or search
-        const finalPath = parsed.pathname + parsed.search;
-        const redirectedToHome = redirectCount > 0 &&
-          (finalPath === '/' || finalPath.startsWith('/s?') || finalPath.startsWith('/s/?'));
-
         resolve({
           url,
           finalUrl: targetUrl !== url ? targetUrl : undefined,
           status: statusCode,
-          broken: broken || redirectedToHome,
-          detail: redirectedToHome
-            ? 'Redirected to homepage/search (product likely removed)'
-            : statusCode === 404
-              ? '404 Not Found'
-              : statusCode >= 500
-                ? `Server error ${statusCode}`
-                : 'OK',
+          body,
+          path: parsed.pathname + parsed.search,
+          broken: statusCode === 404 || statusCode >= 500,
+          detail: statusCode === 404
+            ? '404 Not Found'
+            : statusCode >= 500
+              ? `Server error ${statusCode}`
+              : 'OK',
         });
       });
 
@@ -159,24 +199,59 @@ function checkUrl(url) {
       req.end();
     };
 
-    // Use the tag-stripped URL for the network call, but report results
-    // against the original (with-tag) URL so dedup against the CSV still works.
     attempt(cleanedUrl, 0);
   });
 }
 
+// --- HTTP check with redirect following ---
+async function checkUrl(row) {
+  const { url, name } = row;
+  const head = await requestUrl(url, 'HEAD');
+
+  const finalPath = head.path || '';
+  const redirectedToHome = head.finalUrl && (
+    finalPath === '/' || finalPath.startsWith('/s?') || finalPath.startsWith('/s/?')
+  );
+
+  const result = {
+    url,
+    name,
+    finalUrl: head.finalUrl,
+    status: head.status,
+    broken: head.broken || redirectedToHome,
+    detail: redirectedToHome
+      ? 'Redirected to homepage/search (product likely removed)'
+      : head.detail,
+  };
+
+  if (VALIDATE_TITLE && !result.broken && /\/dp\/[A-Z0-9]{10}/.test(url)) {
+    const page = await requestUrl(url, 'GET');
+    const amazonTitle = extractAmazonTitle(page.body || '');
+    const coverage = tokenCoverage(normalizeTokens(name), normalizeTokens(amazonTitle));
+    result.amazonTitle = amazonTitle;
+    result.titleCoverage = coverage;
+    result.titleMismatch = coverage < 1;
+    if (result.titleMismatch) {
+      result.broken = true;
+      result.detail = `Title mismatch (${Math.round(coverage * 100)}% coverage): "${amazonTitle}"`;
+    }
+  }
+
+  return result;
+}
+
 // --- Concurrency pool ---
-async function checkAll(urls) {
+async function checkAll(items) {
   const results = [];
-  const queue = [...urls];
+  const queue = [...items];
   let done = 0;
-  const total = urls.length;
+  const total = items.length;
 
   async function worker() {
     while (queue.length > 0) {
-      const url = queue.shift();
+      const item = queue.shift();
       process.stdout.write(`\r[${++done}/${total}] Checking...`);
-      const result = await checkUrl(url);
+      const result = await checkUrl(item);
       results.push(result);
       // Small delay between requests to avoid rate-limiting
       await new Promise(r => setTimeout(r, 300));
@@ -225,19 +300,16 @@ async function main() {
 
   console.log(`Checking ${items.length} URLs from ${CSV_PATH} (concurrency: ${CONCURRENCY})...`);
 
-  const results = await checkAll(items.map(i => i.url));
-
-  // Merge product name back in
-  const urlToName = Object.fromEntries(items.map(i => [i.url, i.name]));
-  const enriched = results.map(r => ({ ...r, name: urlToName[r.url] || '' }));
+  const enriched = await checkAll(items);
 
   const broken = enriched.filter(r => r.broken);
+  const mismatches = enriched.filter(r => r.titleMismatch);
   const timeouts = enriched.filter(r => r.status === 'timeout');
-  const ok = enriched.filter(r => !r.broken && r.status !== 'timeout');
+  const ok = enriched.filter(r => !r.broken && r.status !== 'timeout' && !r.titleMismatch);
 
   // --- Print summary ---
   console.log('\n=== LINK CHECK REPORT ===');
-  console.log(`Total: ${enriched.length} | OK: ${ok.length} | Broken: ${broken.length} | Timeouts: ${timeouts.length}`);
+  console.log(`Total: ${enriched.length} | OK: ${ok.length} | Broken: ${broken.length} | Title mismatches: ${mismatches.length} | Timeouts: ${timeouts.length}`);
   console.log(`Date: ${new Date().toISOString()}`);
 
   if (broken.length > 0) {
@@ -255,8 +327,20 @@ async function main() {
     timeouts.forEach(r => console.log(`  ${r.name} — ${r.url}`));
   }
 
-  if (broken.length === 0) {
+  if (mismatches.length > 0) {
+    console.log('\n--- TITLE MISMATCHES ---');
+    mismatches.forEach(r => {
+      console.log(`[title] ${r.name}`);
+      console.log(`  URL: ${r.url}`);
+      console.log(`  Reason: ${r.detail}`);
+      if (r.amazonTitle) console.log(`  Amazon title: ${r.amazonTitle}`);
+    });
+  }
+
+  if (broken.length === 0 && mismatches.length === 0) {
     console.log('\nAll links look good!');
+  } else if (broken.length === 0 && mismatches.length > 0) {
+    console.log('\nLinks resolve, but one or more titles do not match the catalog row.');
   }
 
   // --- Remove broken items from CSV ---
@@ -272,8 +356,9 @@ async function main() {
   const report = {
     date: new Date().toISOString(),
     csvFile: CSV_PATH,
-    summary: { total: enriched.length, ok: ok.length, broken: broken.length, timeouts: timeouts.length },
+    summary: { total: enriched.length, ok: ok.length, broken: broken.length, mismatches: mismatches.length, timeouts: timeouts.length },
     broken,
+    mismatches,
     timeouts,
   };
 
@@ -281,8 +366,8 @@ async function main() {
   fs.writeFileSync(outPath, JSON.stringify(report, null, 2));
   console.log(`Full report saved to: ${outPath}`);
 
-  // Exit with error code if broken links found (useful for CI)
-  process.exit(broken.length > 0 ? 1 : 0);
+  // Exit with error code if broken links or title mismatches are found.
+  process.exit((broken.length > 0 || mismatches.length > 0) ? 1 : 0);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

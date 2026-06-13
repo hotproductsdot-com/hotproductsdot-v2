@@ -79,19 +79,21 @@ jobs:
           echo "post_log.csv synced to origin/main HEAD ($(git rev-parse --short origin/main))"
           wc -l marketing-campaigns/post_log.csv
 
-      - name: Post 4 products to Instagram
+      - name: Post 5 products to Instagram
         env:
-          # AI vision gate enforces semantic banner quality (scene clutter,
-          # brand mismatch, weird crops, anything heuristics can't measure).
+          # AI vision gate enforces both source-vs-generated product identity
+          # and final semantic banner quality (scene clutter, brand mismatch,
+          # weird crops, anything heuristics can't measure).
           # Verified locally on 5 banners — flip to "shadow" to log without
           # blocking, "off" to skip the API call entirely.
           BANNER_AI_GATE: enforce
           # Posting policy:
           #   - schedule:          REAL POSTING (production daily cron).
-          #   - workflow_dispatch: honors the dry_run checkbox (default ON,
-          #                        so manual runs stay safe-by-default).
-          # Validators (BANNER_AI_GATE=enforce + --catalog-image-only) gate
-          # bad banners regardless of trigger.
+          #   - workflow_dispatch: honors the dry_run checkbox (default OFF,
+          #                        so manual dispatch posts for real unless
+          #                        toggled on).
+          # Validators (BANNER_AI_GATE=enforce) gate bad banners regardless of
+          # trigger, including AI creatives that hallucinate the product.
           #
           # The decision lives in bash, not a GHA expression: an earlier
           # `(cond) && '' || '--dry-run'` form silently always returned
@@ -142,7 +144,7 @@ jobs:
           posts_skipped=0
           posts_blocked=0
           # Dry-run short-circuit: post_daily.py still runs pre_post_refresh,
-          # ad-creative generation (Tavily + Gemini), and banner validation
+          # ad-creative generation (Tavily + FAL), and banner validation
           # before the dry-run gate, burning ~$ in API credits per iteration.
           # Skip the loop entirely — counters stay at 0 and every downstream
           # gate (real-post check, dup-check, log-commit, deploy) is already

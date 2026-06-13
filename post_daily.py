@@ -258,9 +258,10 @@ def load_top_products(n: int | None = None) -> list[dict]:
     return products[:n] if n is not None else products
 
 
-# Deal rows older than this many days are stale (the 8am cron likely missed a
-# run) — fall back to the normal rotation instead of re-posting old "deals".
-DEAL_FRESHNESS_DAYS = 2
+# Deal rows must be from today's sale batch. If the 8am Central refresh misses
+# or finds no qualifying deals, fall back to normal rotation instead of posting
+# yesterday's "limited-time" sale products.
+DEAL_FRESHNESS_DAYS = 0
 
 
 def _deal_velocity_score(p: dict) -> float:
