@@ -306,3 +306,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-13,instagram,"Apple AirPods 4 Wireless Earbuds, Bluetooth Headphones, Personalized",ok,18093127763588644
 2026-06-13,instagram,HydroJug Traveler - 32 oz Water Bottle with Handle & Flip Straw,quality_blocked,ai vision: Product title specifies 'with Handle & Flip Straw' but no straw is visible on or with the bottle in the image.
 2026-06-13,tiktok,"Apple iPad 11-inch: A16 chip, 11-inch Model, Liquid Retina Display",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-14,instagram,"Ninja Nutri-Blender Pro with Auto-iQ | For Smoothies, Shakes, Frozen",ok,18144300247513825
+2026-06-14,instagram,Owala FreeSip Sway Insulated Stainless Steel Water Bottle with,ok,18040447811609208
+2026-06-14,instagram,Owala SmoothSip Slider Insulated Stainless Steel Coffee Tumbler,ok,18017166899889747
+2026-06-14,instagram,STANLEY Quencher H2.0 Tumbler with Handle and Straw 40 oz | Flowstate,ok,18096090277967013
+2026-06-14,instagram,Roku Express 4K+ Streaming Player,ok,18120383917755707
+2026-06-14,tiktok,Conair InfinitiPRO Hair Dryer,error,TIKTOK_ACCESS_TOKEN not set
