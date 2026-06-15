@@ -312,3 +312,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-14,instagram,STANLEY Quencher H2.0 Tumbler with Handle and Straw 40 oz | Flowstate,ok,18096090277967013
 2026-06-14,instagram,Roku Express 4K+ Streaming Player,ok,18120383917755707
 2026-06-14,tiktok,Conair InfinitiPRO Hair Dryer,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-15,instagram,"LEVOIT Tower Fan for Bedroom, 90° Oscillating Standing Fan with 28dB",ok,17895052266491062
+2026-06-15,instagram,"CeraVe Hydrating Facial Cleanser, Moisturizing Face Wash For Dry",ok,18083176835429230
+2026-06-15,instagram,BISSELL Little Green Mini Portable Carpet and Upholstery Deep,ok,18118558810802556
+2026-06-15,instagram,"DREO Tower Fan for Bedroom, 2026 Upgraded DC Motor, 28ft/s High",ok,18100176509468725
+2026-06-15,instagram,"BEDLORE Waterproof Mattress Protector, Queen Size Mattress Pad",quality_blocked,ai vision: A white artifact blob is visible on the top surface of the mattress protector that does not belong to the product and was not flagged as an intentional design element.
+2026-06-15,instagram,Apple Watch Series 11 [GPS 42mm] Smartwatch with Rose Gold Aluminum,quality_blocked,"ai vision: The watch face displays a fabricated abstract purple graphic inconsistent with any real Apple Watch interface, misrepresenting the Apple brand product."
