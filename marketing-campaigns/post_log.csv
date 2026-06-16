@@ -318,3 +318,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-15,instagram,"DREO Tower Fan for Bedroom, 2026 Upgraded DC Motor, 28ft/s High",ok,18100176509468725
 2026-06-15,instagram,"BEDLORE Waterproof Mattress Protector, Queen Size Mattress Pad",quality_blocked,ai vision: A white artifact blob is visible on the top surface of the mattress protector that does not belong to the product and was not flagged as an intentional design element.
 2026-06-15,instagram,Apple Watch Series 11 [GPS 42mm] Smartwatch with Rose Gold Aluminum,quality_blocked,"ai vision: The watch face displays a fabricated abstract purple graphic inconsistent with any real Apple Watch interface, misrepresenting the Apple brand product."
+2026-06-16,instagram,6 Pack Extra Heavy Duty Large Moving Bags with Strong Zipper &,quality_blocked,"ai vision: The bags visibly carry the 'Fygrip' brand name, which does not match or appear in the product title, creating a brand identity conflict."
+2026-06-16,instagram,"Samsung HAF-QIN/EXP Genuine Refrigerator Water Filter, Reduces 99% of",ok,17885732889588978
+2026-06-16,instagram,Brita Elite Water Filter Replacements for Pitchers and Dispensers,ok,18078041105296831
+2026-06-16,instagram,ZeroWater Official Replacement Filter - 5-Stage 0 TDS Water Filter,ok,18101625443018382
+2026-06-16,instagram,"Ninja Fit Compact Personal Blender | For Smoothies, Shakes & Frozen",ok,17892574260536898
+2026-06-16,tiktok,"Amazon Echo Dot (newest model) - Vibrant sounding speaker, Designed",error,TIKTOK_ACCESS_TOKEN not set
