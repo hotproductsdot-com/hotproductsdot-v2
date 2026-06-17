@@ -324,3 +324,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-16,instagram,ZeroWater Official Replacement Filter - 5-Stage 0 TDS Water Filter,ok,18101625443018382
 2026-06-16,instagram,"Ninja Fit Compact Personal Blender | For Smoothies, Shakes & Frozen",ok,17892574260536898
 2026-06-16,tiktok,"Amazon Echo Dot (newest model) - Vibrant sounding speaker, Designed",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-17,instagram,"Instant Pot 6QT VORTEX Plus Air Fryer, 6-in-1, Air Fry, Broil",ok,18076313987309848
+2026-06-17,instagram,"everydrop by Whirlpool Ice and Water Refrigerator Filter 2, EDR2RXD1",ok,18112578266501923
+2026-06-17,instagram,LG LT1000P - 6 Month / 200 Gallon Capacity Replacement Refrigerator,ok,18230923591314601
+2026-06-17,instagram,"Filtrete 20x30x1 Air Filter MERV 5, 6-Pack AC Furnace HVAC Filters",ok,17933103297292732
+2026-06-17,instagram,Apple Watch Series 11 [GPS 46mm] Smartwatch with Jet Black Aluminum,quality_blocked,"ai vision: The product title references 'Apple Watch Series 11' which does not exist as a real Apple product, constituting a false/misleading product claim that must be corrected before publication."
+2026-06-17,instagram,"MCGOR 10inch Under Cabinet Lighting, 2 Pack Rechargeable Motion",quality_blocked,"ai vision: Three separate instances of the light bar are visible, exceeding the single-product display requirement."
