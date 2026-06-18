@@ -330,3 +330,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-17,instagram,"Filtrete 20x30x1 Air Filter MERV 5, 6-Pack AC Furnace HVAC Filters",ok,17933103297292732
 2026-06-17,instagram,Apple Watch Series 11 [GPS 46mm] Smartwatch with Jet Black Aluminum,quality_blocked,"ai vision: The product title references 'Apple Watch Series 11' which does not exist as a real Apple product, constituting a false/misleading product claim that must be corrected before publication."
 2026-06-17,instagram,"MCGOR 10inch Under Cabinet Lighting, 2 Pack Rechargeable Motion",quality_blocked,"ai vision: Three separate instances of the light bar are visible, exceeding the single-product display requirement."
+2026-06-18,instagram,Amazon Fire TV Stick 4K Plus (newest model) with AI-powered Fire TV,ok,18175266976411028
+2026-06-18,instagram,"HTH 52037R Pool Care Shock Advanced, Swimming Pool Chemical - Cal",ok,17980042148858870
+2026-06-18,instagram,"Filtrete 16x25x1 Air Filter MERV 5, 6-Pack AC Furnace HVAC, MPR 300",ok,18056283944737622
+2026-06-18,instagram,Rubbermaid Brilliance Tritan Plastic Food Storage Containers BPA Free,ok,18602306329023486
+2026-06-18,instagram,Amazon Basics Slim Velvet Non-Slip Space Saving Suit Clothes Hangers,ok,18102586016043142
+2026-06-18,tiktok,"Rubbermaid Brilliance Glass Food Storage Containers, Assorted Sizes",error,TIKTOK_ACCESS_TOKEN not set
