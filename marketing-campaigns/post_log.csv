@@ -336,3 +336,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-18,instagram,Rubbermaid Brilliance Tritan Plastic Food Storage Containers BPA Free,ok,18602306329023486
 2026-06-18,instagram,Amazon Basics Slim Velvet Non-Slip Space Saving Suit Clothes Hangers,ok,18102586016043142
 2026-06-18,tiktok,"Rubbermaid Brilliance Glass Food Storage Containers, Assorted Sizes",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-19,instagram,"Whiskey Smoker Kit with Torch - 6 Flavors Wood Chips, 2 Glasses, 2",ok,17906470971260175
+2026-06-19,instagram,"Simply 20x20x1 Air Filter, Merv 8, MPR 600, 6 Pack, Furnace Air",quality_blocked,"ai vision: Multiple copies of the product are shown (7 units visible), failing the single-product rule."
+2026-06-19,instagram,Queen Size 4 Piece Sheet Set - Comfy Breathable & Cooling Sheets,quality_blocked,"ai vision: Scene clutter fails due to unrelated decorative objects (red rose bouquet, white nightstand, lamp) that have no relationship to the sheet set product."
+2026-06-19,instagram,Amazon Fire TV Cube 3rd Gen,ok,17932209882326523
+2026-06-19,instagram,LEGO Technic Bugatti Bolide 42151,ok,18413558506150024
+2026-06-19,tiktok,MSR PocketRocket 2 Stove,error,TIKTOK_ACCESS_TOKEN not set
