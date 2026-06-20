@@ -359,6 +359,12 @@ def select_category(suggested: str | None) -> str:
         print(f"  Using '{suggested}' anyway.")
         return suggested
 
+    # Non-interactive (e.g. pipeline UI / CI): never block on input(). Fail clearly.
+    if not sys.stdin.isatty():
+        print("  ERROR: No category given and no interactive terminal to prompt.")
+        print(f"  Re-run with --category, one of: {', '.join(KNOWN_CATEGORIES)}")
+        sys.exit(2)
+
     print("\n  Available categories:")
     for i, cat in enumerate(KNOWN_CATEGORIES, 1):
         print(f"    {i:2}. {cat}")
@@ -444,6 +450,9 @@ def main() -> int:
     dup = check_duplicate(product.name, catalog)
     if dup:
         print(f"\n  WARNING: A product with this name already exists: '{dup}'")
+        if not sys.stdin.isatty():
+            print("  Non-interactive run; not adding a duplicate. Use a different ASIN.")
+            return 1
         try:
             confirm = input("  Add anyway? [y/N] ").strip().lower()
         except (KeyboardInterrupt, EOFError):

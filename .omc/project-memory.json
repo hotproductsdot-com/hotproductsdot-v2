@@ -365,9 +365,15 @@
   },
   "hotPaths": [
     {
+      "path": "add_product_by_asin.py",
+      "accessCount": 3,
+      "lastAccessed": 1781979046182,
+      "type": "file"
+    },
+    {
       "path": "pipeline-ui/pipeline_config.py",
-      "accessCount": 2,
-      "lastAccessed": 1781975982582,
+      "accessCount": 3,
+      "lastAccessed": 1781979059822,
       "type": "file"
     },
     {
