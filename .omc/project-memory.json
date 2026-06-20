@@ -365,6 +365,12 @@
   },
   "hotPaths": [
     {
+      "path": "pipeline-ui/pipeline_config.py",
+      "accessCount": 2,
+      "lastAccessed": 1781975982582,
+      "type": "file"
+    },
+    {
       "path": "marketing-campaigns/affiliate-content-prompts.md",
       "accessCount": 1,
       "lastAccessed": 1781972574162,
@@ -380,6 +386,18 @@
       "path": "PYTHON_UI_SOP.md",
       "accessCount": 1,
       "lastAccessed": 1781975472470,
+      "type": "file"
+    },
+    {
+      "path": "pipeline-ui/server.py",
+      "accessCount": 1,
+      "lastAccessed": 1781975856300,
+      "type": "file"
+    },
+    {
+      "path": "generate_content_set.py",
+      "accessCount": 1,
+      "lastAccessed": 1781975974657,
       "type": "file"
     }
   ],

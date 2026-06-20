@@ -199,6 +199,20 @@ STAGES: list[Stage] = [
                 params=[Param(name="days", label="Days", flag="--days", default="7", placeholder="7")],
             ),
             Activity(
+                id="content_set",
+                title="Generate Content Set (1 product)",
+                description="Run the 7-prompt affiliate chain for one product -> Markdown in marketing-campaigns/.",
+                cmd=["python", "generate_content_set.py"],
+                long_running=True,
+                params=[
+                    Param(name="product", label="Product name/title", flag="--product",
+                          placeholder="penkou Portable Neck Fan, Hands Free...",
+                          help="Full Amazon title (required)"),
+                    Param(name="asin", label="ASIN (optional)", flag="--asin", placeholder="B0XXXXXXXX"),
+                    Param(name="dry_run", label="Dry run (no API call)", kind="bool", flag="--dry-run"),
+                ],
+            ),
+            Activity(
                 id="ad_creative",
                 title="IG Ad Creative Generator",
                 description="Generate Instagram ad creative banners.",
