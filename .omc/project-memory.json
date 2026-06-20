@@ -363,6 +363,13 @@
       "keyFiles": []
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "marketing-campaigns/affiliate-content-prompts.md",
+      "accessCount": 1,
+      "lastAccessed": 1781972574162,
+      "type": "file"
+    }
+  ],
   "userDirectives": []
 }
