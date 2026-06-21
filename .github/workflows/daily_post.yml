@@ -2,7 +2,8 @@ name: 📢 Daily Social Post + Deploy
 
 on:
   schedule:
-    - cron: '0 14 * * *'   # 14:00 UTC = 9:00 AM CDT (summer) / 8:00 AM CST (winter)
+    - cron: '0 8 * * *'   # 8:00 AM CST
+      timezone: 'America/Chicago'
   workflow_dispatch:
     inputs:
       dry_run:
