@@ -5,6 +5,7 @@ on:
     - cron: '0 12 * * *'   # 7:00 AM CDT (UTC-5)
     - cron: '0 17 * * *'   # 12:00 PM CDT
     - cron: '0 23 * * *'   # 6:00 PM CDT
+      timezone: 'America/Chicago'
   workflow_dispatch:
     inputs:
       dry_run:
