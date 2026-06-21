@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllCategories, getProductsByCategory, type Product } from "../../lib/products";
 import { SITE_URL } from "../../lib/constants";
+import { buildAffiliateUrl } from "../../lib/affiliate";
 import { getCategorySeo } from "../../lib/categorySeo";
 import { getCategoryIcon } from "../../components/CategoryIcon";
 import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
@@ -144,7 +145,7 @@ export default async function BestCategoryPage({ params }: Props) {
           priceCurrency: "USD",
           ...(p.priceMin > 0 ? { price: p.priceMin } : {}),
           availability: "https://schema.org/InStock",
-          url: p.amazonUrl,
+          url: buildAffiliateUrl(p.amazonUrl, { campaign: "jsonld", content: p.slug }),
           seller: { "@type": "Organization", name: "Amazon" },
         },
       },
