@@ -96,6 +96,15 @@ export default async function BestCategoryPage({ params }: Props) {
     ? new Date(lastUpdatedTs).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
     : "Quarterly";
 
+  // Answer-first TL;DR. A single extractable sentence naming the winner +
+  // runner-up so AI answer engines (which lift the first direct answer) and
+  // skim-readers get the verdict before any marketing prose.
+  const runnerUp = topProducts[1];
+  const tldr =
+    `Our top pick for the best ${catName.toLowerCase()} in 2026 is the ${topPick.name} ` +
+    `(${topPick.rating}★ from ${topPick.reviewCount.toLocaleString()} Amazon reviews)` +
+    (runnerUp ? `, with the ${runnerUp.name} as runner-up` : "") + ".";
+
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -200,6 +209,13 @@ export default async function BestCategoryPage({ params }: Props) {
         <h1 className="text-4xl font-bold text-white mb-4">
           {seo.h1}
         </h1>
+
+        {/* Answer-first verdict — direct, extractable answer above the fold */}
+        <div className="bg-zinc-900 border-l-4 border-orange-500 rounded-r-lg p-4 mb-6">
+          <span className="text-xs font-bold text-orange-400 uppercase tracking-wider">The short answer</span>
+          <p className="text-base text-zinc-200 mt-1 leading-relaxed">{tldr}</p>
+        </div>
+
         <p className="text-lg text-zinc-400 mb-6">
           {seo.intro}
         </p>
