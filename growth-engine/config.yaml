@@ -2,8 +2,8 @@
 # Site facts and engine settings. Edit me before running.
 
 site:
-  domain: "hotproductsdot.com"
-  url: "https://hotproductsdot.com"
+  domain: "hotproducts.online"
+  url: "https://hotproducts.online"
   name: "HotProducts"
   description: |
     Curated Amazon affiliate site featuring expert roundups, category guides,
@@ -94,7 +94,7 @@ visibility:
     - "where to find honest amazon product reviews"
   brand_terms:
     - "hotproductsdot"
-    - "hotproductsdot.com"
+    - "hotproducts.online"
     - "HotProducts"
 
 # Backlink outreach

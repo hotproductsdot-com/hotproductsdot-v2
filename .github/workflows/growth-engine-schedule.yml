@@ -25,7 +25,7 @@ jobs:
       HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
       HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
       HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
-      HOSTINGER_DEST: domains/hotproductsdot.com/public_html/
+      HOSTINGER_DEST: domains/hotproducts.online/public_html/
 
     steps:
       - name: Checkout repo

@@ -366,6 +366,13 @@
       "keyFiles": []
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "site/app/lib/products.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782064287698,
+      "type": "file"
+    }
+  ],
   "userDirectives": []
 }

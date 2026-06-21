@@ -87,6 +87,15 @@ export default async function BestCategoryPage({ params }: Props) {
   const canonical = `${SITE_URL}/best/${slug}`;
   const seo = getCategorySeo(slug, catName);
 
+  // Most-recent product refresh in this roundup → the page's "last updated"
+  // freshness signal. Drives dateModified in schema + a visible timestamp so
+  // both Google and AI answer engines can date the content.
+  const lastUpdatedTs = Math.max(0, ...topProducts.map((p) => p.refreshedTs ?? 0));
+  const lastUpdatedIso = lastUpdatedTs > 0 ? new Date(lastUpdatedTs).toISOString() : undefined;
+  const lastUpdatedLabel = lastUpdatedTs > 0
+    ? new Date(lastUpdatedTs).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+    : "Quarterly";
+
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -105,6 +114,7 @@ export default async function BestCategoryPage({ params }: Props) {
     "@type": "ItemList",
     name: `Best ${catName} for 2026`,
     url: canonical,
+    ...(lastUpdatedIso ? { dateModified: lastUpdatedIso } : {}),
     numberOfItems: topProducts.length,
     itemListElement: topProducts.map((p, i) => ({
       "@type": "ListItem",
@@ -114,6 +124,7 @@ export default async function BestCategoryPage({ params }: Props) {
         name: p.name,
         url: `${SITE_URL}/products/${p.slug}`,
         image: p.imageUrl || undefined,
+        ...(p.refreshedTs ? { dateModified: new Date(p.refreshedTs).toISOString() } : {}),
         aggregateRating: {
           "@type": "AggregateRating",
           ratingValue: p.rating,
@@ -205,7 +216,9 @@ export default async function BestCategoryPage({ params }: Props) {
           </div>
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
             <div className="text-2xl font-bold text-orange-500">Updated</div>
-            <div className="text-xs text-zinc-500 mt-1">Quarterly</div>
+            <div className="text-xs text-zinc-500 mt-1">
+              {lastUpdatedIso ? <time dateTime={lastUpdatedIso}>{lastUpdatedLabel}</time> : lastUpdatedLabel}
+            </div>
           </div>
         </div>
       </div>
