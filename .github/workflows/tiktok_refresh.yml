@@ -14,6 +14,7 @@ on:
   schedule:
     # Every 12 h at 00:00 and 12:00 UTC — 2 h before the daily post at 14:00 UTC.
     - cron: '0 0,12 * * *'
+      timezone: 'America/Chicago'
   workflow_dispatch:
 
 concurrency:
