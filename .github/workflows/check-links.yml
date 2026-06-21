@@ -3,6 +3,7 @@ name: Daily Link Checker
 on:
   schedule:
     - cron: '0 8 * * *'   # 8:00 AM UTC daily
+      timezone: 'America/Chicago'
   workflow_dispatch:       # allow manual runs
 
 jobs:
