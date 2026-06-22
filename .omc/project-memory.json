@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1782063109674,
+  "lastScanned": 1782156587863,
   "projectRoot": "/mnt/e/GITHUB/hotproductsdot-v2",
   "techStack": {
     "languages": [
@@ -58,7 +58,7 @@
       "path": "__pycache__",
       "purpose": null,
       "fileCount": 15,
-      "lastAccessed": 1782063108697,
+      "lastAccessed": 1782156584390,
       "keyFiles": [
         "amazon_local_api.cpython-312.pyc",
         "check-product-title-alignment.cpython-312.pyc",
@@ -71,14 +71,14 @@
       "path": "agent-os",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782063108723,
+      "lastAccessed": 1782156584463,
       "keyFiles": []
     },
     "agentic-os": {
       "path": "agentic-os",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1782063108749,
+      "lastAccessed": 1782156584513,
       "keyFiles": [
         "README.md",
         "SOUL.md",
@@ -89,14 +89,14 @@
       "path": "amazon_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782063108785,
+      "lastAccessed": 1782156584611,
       "keyFiles": []
     },
     "amazon_source_images": {
       "path": "amazon_source_images",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1782063108809,
+      "lastAccessed": 1782156584669,
       "keyFiles": [
         "airpods_max.jpg",
         "beats_studio3.jpg"
@@ -106,7 +106,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1782063108828,
+      "lastAccessed": 1782156584765,
       "keyFiles": [
         "image-generation-cost-analysis.md"
       ]
@@ -115,28 +115,28 @@
       "path": "facebook-cookbook",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782063108850,
+      "lastAccessed": 1782156584895,
       "keyFiles": []
     },
     "generated_images": {
       "path": "generated_images",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1782063108873,
+      "lastAccessed": 1782156585063,
       "keyFiles": []
     },
     "graphify-out": {
       "path": "graphify-out",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1782063108890,
+      "lastAccessed": 1782156585184,
       "keyFiles": []
     },
     "growth-engine": {
       "path": "growth-engine",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1782063108915,
+      "lastAccessed": 1782156585265,
       "keyFiles": [
         "README.md",
         "config.yaml",
@@ -149,7 +149,7 @@
       "path": "instagram",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1782063108938,
+      "lastAccessed": 1782156585380,
       "keyFiles": [
         "__init__.py",
         "ad_creative_gen.py",
@@ -162,7 +162,7 @@
       "path": "logs",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782063108961,
+      "lastAccessed": 1782156585474,
       "keyFiles": [
         "daily_deals.log"
       ]
@@ -171,7 +171,7 @@
       "path": "marketing-campaigns",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782063109044,
+      "lastAccessed": 1782156585610,
       "keyFiles": [
         "affiliate-content-prompts.md",
         "content_calendar.json",
@@ -184,7 +184,7 @@
       "path": "paperclip-company",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1782063109085,
+      "lastAccessed": 1782156585711,
       "keyFiles": [
         "hotproducts.zip",
         "ziEzpwid"
@@ -194,7 +194,7 @@
       "path": "pinterest-setup",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1782063109109,
+      "lastAccessed": 1782156585801,
       "keyFiles": [
         "BOARDS.csv",
         "CONTENT_CALENDAR.md",
@@ -207,7 +207,7 @@
       "path": "pipeline-ui",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1782063109153,
+      "lastAccessed": 1782156585892,
       "keyFiles": [
         "README.md",
         "jobs.py",
@@ -220,7 +220,7 @@
       "path": "products",
       "purpose": null,
       "fileCount": 17,
-      "lastAccessed": 1782063109175,
+      "lastAccessed": 1782156585962,
       "keyFiles": [
         "broken-links.csv",
         "check_duplicates.py",
@@ -233,7 +233,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 14,
-      "lastAccessed": 1782063109201,
+      "lastAccessed": 1782156586065,
       "keyFiles": [
         "_debug_ai_gate.py",
         "_debug_validator.py",
@@ -246,7 +246,7 @@
       "path": "site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1782063109222,
+      "lastAccessed": 1782156586138,
       "keyFiles": [
         "README.md",
         "eslint.config.mjs",
@@ -259,7 +259,7 @@
       "path": "tests",
       "purpose": "Test files",
       "fileCount": 3,
-      "lastAccessed": 1782063109243,
+      "lastAccessed": 1782156586216,
       "keyFiles": [
         "test_amazon_local_api.py",
         "test_fetch_daily_deals.py",
@@ -270,7 +270,7 @@
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1782063109266,
+      "lastAccessed": 1782156586281,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -279,7 +279,7 @@
       "path": "agentic-os/config",
       "purpose": "Configuration files",
       "fileCount": 2,
-      "lastAccessed": 1782063109348,
+      "lastAccessed": 1782156586566,
       "keyFiles": [
         "cursor-mcp.json",
         "personalities.yaml"
@@ -289,7 +289,7 @@
       "path": "agentic-os/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 7,
-      "lastAccessed": 1782063109369,
+      "lastAccessed": 1782156586657,
       "keyFiles": [
         "install.ps1",
         "install.sh",
@@ -300,14 +300,14 @@
       "path": "facebook-cookbook/scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 0,
-      "lastAccessed": 1782063109445,
+      "lastAccessed": 1782156586921,
       "keyFiles": []
     },
     "growth-engine/data": {
       "path": "growth-engine/data",
       "purpose": "Data files",
       "fileCount": 7,
-      "lastAccessed": 1782063109502,
+      "lastAccessed": 1782156587150,
       "keyFiles": [
         "ai_visibility.db",
         "backlinks.db",
@@ -318,7 +318,7 @@
       "path": "pipeline-ui/static",
       "purpose": "Static files",
       "fileCount": 3,
-      "lastAccessed": 1782063109565,
+      "lastAccessed": 1782156587418,
       "keyFiles": [
         "app.js",
         "index.html",
@@ -328,8 +328,8 @@
     "site/app": {
       "path": "site/app",
       "purpose": "Application code",
-      "fileCount": 5,
-      "lastAccessed": 1782063109604,
+      "fileCount": 6,
+      "lastAccessed": 1782156587563,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -340,7 +340,7 @@
       "path": "venv/Scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 23,
-      "lastAccessed": 1782063109637,
+      "lastAccessed": 1782156587723,
       "keyFiles": [
         "Activate.ps1",
         "activate",
@@ -351,7 +351,7 @@
       "path": "venv/bin",
       "purpose": "Executable scripts",
       "fileCount": 52,
-      "lastAccessed": 1782063109658,
+      "lastAccessed": 1782156587784,
       "keyFiles": [
         "Activate.ps1",
         "accelerate",
@@ -362,7 +362,7 @@
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1782063109674,
+      "lastAccessed": 1782156587863,
       "keyFiles": []
     }
   },
@@ -371,6 +371,18 @@
       "path": "site/app/best/[slug]/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1782067544296,
+      "type": "file"
+    },
+    {
+      "path": "site/package.json",
+      "accessCount": 2,
+      "lastAccessed": 1782161269159,
+      "type": "file"
+    },
+    {
+      "path": "add_product_by_asin.py",
+      "accessCount": 2,
+      "lastAccessed": 1782162269200,
       "type": "file"
     },
     {
@@ -389,6 +401,12 @@
       "path": "site/app/robots.ts",
       "accessCount": 1,
       "lastAccessed": 1782132917886,
+      "type": "file"
+    },
+    {
+      "path": "site/app/latest/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1782161967058,
       "type": "file"
     }
   ],
