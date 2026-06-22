@@ -306,3 +306,51 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-13,instagram,"Apple AirPods 4 Wireless Earbuds, Bluetooth Headphones, Personalized",ok,18093127763588644
 2026-06-13,instagram,HydroJug Traveler - 32 oz Water Bottle with Handle & Flip Straw,quality_blocked,ai vision: Product title specifies 'with Handle & Flip Straw' but no straw is visible on or with the bottle in the image.
 2026-06-13,tiktok,"Apple iPad 11-inch: A16 chip, 11-inch Model, Liquid Retina Display",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-14,instagram,"Ninja Nutri-Blender Pro with Auto-iQ | For Smoothies, Shakes, Frozen",ok,18144300247513825
+2026-06-14,instagram,Owala FreeSip Sway Insulated Stainless Steel Water Bottle with,ok,18040447811609208
+2026-06-14,instagram,Owala SmoothSip Slider Insulated Stainless Steel Coffee Tumbler,ok,18017166899889747
+2026-06-14,instagram,STANLEY Quencher H2.0 Tumbler with Handle and Straw 40 oz | Flowstate,ok,18096090277967013
+2026-06-14,instagram,Roku Express 4K+ Streaming Player,ok,18120383917755707
+2026-06-14,tiktok,Conair InfinitiPRO Hair Dryer,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-15,instagram,"LEVOIT Tower Fan for Bedroom, 90° Oscillating Standing Fan with 28dB",ok,17895052266491062
+2026-06-15,instagram,"CeraVe Hydrating Facial Cleanser, Moisturizing Face Wash For Dry",ok,18083176835429230
+2026-06-15,instagram,BISSELL Little Green Mini Portable Carpet and Upholstery Deep,ok,18118558810802556
+2026-06-15,instagram,"DREO Tower Fan for Bedroom, 2026 Upgraded DC Motor, 28ft/s High",ok,18100176509468725
+2026-06-15,instagram,"BEDLORE Waterproof Mattress Protector, Queen Size Mattress Pad",quality_blocked,ai vision: A white artifact blob is visible on the top surface of the mattress protector that does not belong to the product and was not flagged as an intentional design element.
+2026-06-15,instagram,Apple Watch Series 11 [GPS 42mm] Smartwatch with Rose Gold Aluminum,quality_blocked,"ai vision: The watch face displays a fabricated abstract purple graphic inconsistent with any real Apple Watch interface, misrepresenting the Apple brand product."
+2026-06-16,instagram,6 Pack Extra Heavy Duty Large Moving Bags with Strong Zipper &,quality_blocked,"ai vision: The bags visibly carry the 'Fygrip' brand name, which does not match or appear in the product title, creating a brand identity conflict."
+2026-06-16,instagram,"Samsung HAF-QIN/EXP Genuine Refrigerator Water Filter, Reduces 99% of",ok,17885732889588978
+2026-06-16,instagram,Brita Elite Water Filter Replacements for Pitchers and Dispensers,ok,18078041105296831
+2026-06-16,instagram,ZeroWater Official Replacement Filter - 5-Stage 0 TDS Water Filter,ok,18101625443018382
+2026-06-16,instagram,"Ninja Fit Compact Personal Blender | For Smoothies, Shakes & Frozen",ok,17892574260536898
+2026-06-16,tiktok,"Amazon Echo Dot (newest model) - Vibrant sounding speaker, Designed",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-17,instagram,"Instant Pot 6QT VORTEX Plus Air Fryer, 6-in-1, Air Fry, Broil",ok,18076313987309848
+2026-06-17,instagram,"everydrop by Whirlpool Ice and Water Refrigerator Filter 2, EDR2RXD1",ok,18112578266501923
+2026-06-17,instagram,LG LT1000P - 6 Month / 200 Gallon Capacity Replacement Refrigerator,ok,18230923591314601
+2026-06-17,instagram,"Filtrete 20x30x1 Air Filter MERV 5, 6-Pack AC Furnace HVAC Filters",ok,17933103297292732
+2026-06-17,instagram,Apple Watch Series 11 [GPS 46mm] Smartwatch with Jet Black Aluminum,quality_blocked,"ai vision: The product title references 'Apple Watch Series 11' which does not exist as a real Apple product, constituting a false/misleading product claim that must be corrected before publication."
+2026-06-17,instagram,"MCGOR 10inch Under Cabinet Lighting, 2 Pack Rechargeable Motion",quality_blocked,"ai vision: Three separate instances of the light bar are visible, exceeding the single-product display requirement."
+2026-06-18,instagram,Amazon Fire TV Stick 4K Plus (newest model) with AI-powered Fire TV,ok,18175266976411028
+2026-06-18,instagram,"HTH 52037R Pool Care Shock Advanced, Swimming Pool Chemical - Cal",ok,17980042148858870
+2026-06-18,instagram,"Filtrete 16x25x1 Air Filter MERV 5, 6-Pack AC Furnace HVAC, MPR 300",ok,18056283944737622
+2026-06-18,instagram,Rubbermaid Brilliance Tritan Plastic Food Storage Containers BPA Free,ok,18602306329023486
+2026-06-18,instagram,Amazon Basics Slim Velvet Non-Slip Space Saving Suit Clothes Hangers,ok,18102586016043142
+2026-06-18,tiktok,"Rubbermaid Brilliance Glass Food Storage Containers, Assorted Sizes",error,TIKTOK_ACCESS_TOKEN not set
+2026-06-19,instagram,"Whiskey Smoker Kit with Torch - 6 Flavors Wood Chips, 2 Glasses, 2",ok,17906470971260175
+2026-06-19,instagram,"Simply 20x20x1 Air Filter, Merv 8, MPR 600, 6 Pack, Furnace Air",quality_blocked,"ai vision: Multiple copies of the product are shown (7 units visible), failing the single-product rule."
+2026-06-19,instagram,Queen Size 4 Piece Sheet Set - Comfy Breathable & Cooling Sheets,quality_blocked,"ai vision: Scene clutter fails due to unrelated decorative objects (red rose bouquet, white nightstand, lamp) that have no relationship to the sheet set product."
+2026-06-19,instagram,Amazon Fire TV Cube 3rd Gen,ok,17932209882326523
+2026-06-19,instagram,LEGO Technic Bugatti Bolide 42151,ok,18413558506150024
+2026-06-19,tiktok,MSR PocketRocket 2 Stove,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-20,instagram,Hydro Flask 32oz Wide Mouth Water Bottle,ok,18126338383712333
+2026-06-20,instagram,Anova Culinary Sous Vide Precision Cooker Pro,ok,18140251165555566
+2026-06-20,instagram,Lenovo Tab P11 Pro Gen 2,ok,18080106770227522
+2026-06-20,instagram,"Samsung 27"" Essential S3 (S36GD) Series FHD 1800R Curved Computer Monitor",ok,18077150210289602
+2026-06-20,instagram,Canon EOS R5 Mark II Mirrorless Camera,ok,18227736979316419
+2026-06-20,tiktok,Best Choice Products 41in Beginner Acoustic Guitar Full Size All Wood Cutaway Guitar Starter Set w/Case,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-22,instagram,Simple Modern Kids Water Bottle with Straw Lid | 14oz Insulated,ok,17904555993442250
+2026-06-22,instagram,Lancôme La Vie Est Belle Eau de Parfum - Long Lasting Fragrance with Notes of Iris,ok,18102828884279717
+2026-06-22,instagram,Emergen-C 1000mg Vitamin C Powder 60 Packets,ok,18093695138191506
+2026-06-22,instagram,DeWalt DWMT75049 Mechanics Tool Kit 192-Piece,ok,18421968028197394
+2026-06-22,instagram,Hamilton Beach 2-Way Programmable Coffee Maker,ok,17995992410790711
+2026-06-22,tiktok,Garmin Venu 3 Health and Fitness Smartwatch,error,TIKTOK_ACCESS_TOKEN not set

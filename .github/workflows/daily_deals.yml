@@ -5,6 +5,7 @@ on:
     # GitHub cron is UTC. Run both possible 8am Central UTC slots, then guard
     # inside the job with TZ=America/Chicago so DST is handled correctly.
     - cron: '0 13,14 * * *'
+      timezone: 'America/Chicago'
   workflow_dispatch:
 
 concurrency:
