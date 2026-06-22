@@ -65,6 +65,8 @@ site/.omc/
 venv/
 .venv/
 env/
+.fal_test_venv/
+.gen-venv/
 
 # Generated media (output artifacts, not source)
 generated_images/
