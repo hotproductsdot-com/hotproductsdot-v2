@@ -177,7 +177,9 @@ def main() -> int:
         print(f"ERROR: CSV not found: {CSV_PATH}")
         return 1
 
-    rows = list(csv.DictReader(CSV_PATH.open(newline="", encoding="utf-8")))
+    # utf-8-sig strips the BOM so DictReader's first key is "Product Name", not
+    # "﻿Product Name" — the latter silently blanks every name on rewrite.
+    rows = list(csv.DictReader(CSV_PATH.open(newline="", encoding="utf-8-sig")))
     total = len(rows)
 
     valid = [(i + 1, r) for i, r in enumerate(rows) if ASIN_RE.search(r.get("Amazon URL", ""))]
@@ -241,12 +243,19 @@ def main() -> int:
         print("\n  [DRY RUN] No changes written.")
         return 0
 
-    # Write updated CSV
-    with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+    # Write updated CSV. Derive fieldnames from the live data, NOT the module
+    # FIELDNAMES (which is a stale schema) — this preserves the sale columns and
+    # whatever columns the file actually carries.
+    fieldnames = list(final_rows[0].keys()) if final_rows else list(FIELDNAMES)
+    for row in final_rows:
+        for k in row:
+            if k not in fieldnames:
+                fieldnames.append(k)
+    with CSV_PATH.open("w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         for row in final_rows:
-            writer.writerow({k: row.get(k, "") for k in FIELDNAMES})
+            writer.writerow({k: row.get(k, "") for k in fieldnames})
 
     print(f"\n  CSV written: {CSV_PATH}")
     print(f"  {n_updated} prices updated, {n_unchanged} unchanged.")

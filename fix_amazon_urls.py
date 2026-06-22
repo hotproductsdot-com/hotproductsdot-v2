@@ -280,16 +280,25 @@ def make_direct_url(asin: str) -> str:
 # CSV helpers
 # ---------------------------------------------------------------------------
 def load_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as f:
+    # utf-8-sig strips the BOM so DictReader's first key is "Product Name", not
+    # "﻿Product Name" — the latter silently blanks every name on rewrite.
+    with path.open(newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    with path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+    # Derive fieldnames from the live data so extra columns (e.g. sale columns)
+    # are never dropped; fall back to FIELDNAMES only when there are no rows.
+    fieldnames = list(rows[0].keys()) if rows else list(FIELDNAMES)
+    for row in rows:
+        for k in row:
+            if k not in fieldnames:
+                fieldnames.append(k)
+    with path.open("w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         for row in rows:
-            writer.writerow({k: row.get(k, "") for k in FIELDNAMES})
+            writer.writerow({k: row.get(k, "") for k in fieldnames})
 
 
 def needs_fix(row: dict[str, str]) -> bool:

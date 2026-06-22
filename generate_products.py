@@ -804,7 +804,9 @@ NEW_PRODUCTS = [
 
 
 def load_existing(filepath):
-    with open(filepath, newline="", encoding="utf-8") as f:
+    # utf-8-sig strips the BOM so DictReader's first key is "Product Name", not
+    # "﻿Product Name" — the latter silently blanks every name on rewrite.
+    with open(filepath, newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
 
@@ -845,12 +847,19 @@ def main():
     print(f"New products to add: {len(new_rows)} (skipped {skipped} duplicates)")
 
     all_rows = existing_rows + new_rows
-    fieldnames = ["Product Name", "Category", "Price Range", "Review Count",
-                  "Rating", "BSR", "Affiliate Potential", "Amazon URL",
-                  "Refreshed Date", "Action Needed"]
+    # Derive fieldnames from the live data so extra columns (e.g. sale columns)
+    # are never dropped; fall back to the base schema only when there are no rows.
+    base = ["Product Name", "Category", "Price Range", "Review Count",
+            "Rating", "BSR", "Affiliate Potential", "Amazon URL",
+            "Refreshed Date", "Action Needed"]
+    fieldnames = list(all_rows[0].keys()) if all_rows else base
+    for row in all_rows:
+        for k in row:
+            if k not in fieldnames:
+                fieldnames.append(k)
 
-    with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+    with open(CSV_PATH, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(all_rows)
 
