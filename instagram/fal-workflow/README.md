@@ -1,6 +1,6 @@
 # HotProducts Instagram → FAL Workflow
 
-Pipeline for [@hotproductsdot.official](https://www.instagram.com/hotproductsdot.official): Instagram post captions drive the img2img prompt; each product's **Amazon product image** is a workflow variable.
+Pipeline for [@hotproducts.online](https://www.instagram.com/hotproducts.online): Instagram post captions drive the img2img prompt; each product's **Amazon product image** is a workflow variable.
 
 ## Quick start (no FAL workflow UI required)
 

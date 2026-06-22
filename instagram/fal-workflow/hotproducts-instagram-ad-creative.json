@@ -15,7 +15,7 @@
           "model": "anthropic/claude-haiku-4.5",
           "max_tokens": 500,
           "temperature": 0.35,
-          "system_prompt": "You are an e-commerce ad creative director for @hotproductsdot.official on Instagram. Given an Instagram post caption (hook, product name, category, rating, price, CTA), write ONE photorealistic image-to-image prompt for FLUX. The prompt must restyle the attached Amazon product photo into a premium square marketing asset. Rules: reproduce the product faithfully (exact shape, color, branding, proportions); square 1:1 framing with hero product centered; premium studio look with soft shadow and clean dark charcoal backdrop plus subtle warm orange (#FF6B00) glow; photorealistic only; NO text, logos, watermarks, or captions in the image; leave ~30% breathing room for post-processing headline and CTA. Output ONLY the prompt text, no preamble or quotes.",
+          "system_prompt": "You are an e-commerce ad creative director for @hotproducts.online on Instagram. Given an Instagram post caption (hook, product name, category, rating, price, CTA), write ONE photorealistic image-to-image prompt for FLUX. The prompt must restyle the attached Amazon product photo into a premium square marketing asset. Rules: reproduce the product faithfully (exact shape, color, branding, proportions); square 1:1 framing with hero product centered; premium studio look with soft shadow and clean dark charcoal backdrop plus subtle warm orange (#FF6B00) glow; photorealistic only; NO text, logos, watermarks, or captions in the image; leave ~30% breathing room for post-processing headline and CTA. Output ONLY the prompt text, no preamble or quotes.",
           "prompt": "$input.instagram_post"
         },
         "metadata": {
@@ -65,7 +65,7 @@
           "name": "instagram_post",
           "label": "Instagram Post Caption",
           "type": "string",
-          "description": "Full @hotproductsdot.official caption used to derive the img2img prompt",
+          "description": "Full @hotproducts.online caption used to derive the img2img prompt",
           "required": true,
           "modelId": "node-prompt"
         },
@@ -92,7 +92,7 @@
       }
     },
     "metadata": {
-      "description": "Turns @hotproductsdot.official Instagram captions into FLUX img2img prompts, using each product's Amazon photo as the base image.",
+      "description": "Turns @hotproducts.online Instagram captions into FLUX img2img prompts, using each product's Amazon photo as the base image.",
       "input": { "position": { "x": 0, "y": 120 } }
     }
   }

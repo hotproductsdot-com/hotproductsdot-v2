@@ -161,12 +161,12 @@ export default function HomePage() {
               <p className="text-zinc-500 text-sm mt-1">
                 The products we featured on{" "}
                 <a
-                  href="https://www.instagram.com/hotproductsdot.official"
+                  href="https://www.instagram.com/hotproducts.online"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-orange-400 hover:text-orange-300"
                 >
-                  @hotproductsdot.official
+                  @hotproducts.online
                 </a>{" "}
                 — newest first.
               </p>

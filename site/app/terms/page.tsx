@@ -27,7 +27,7 @@ export default function TermsPage() {
             By accessing <strong className="text-zinc-200">hotproducts.online</strong> (the &ldquo;Site&rdquo;) or
             interacting with content we publish on third-party platforms — including TikTok
             (<a href="https://www.tiktok.com/@hotproductsdot.of" target="_blank" rel="noopener noreferrer nofollow" className="text-orange-400 hover:text-orange-300 underline">@hotproductsdot.of</a>)
-            and Instagram (<a href="https://www.instagram.com/hotproductsdot.official" target="_blank" rel="noopener noreferrer nofollow" className="text-orange-400 hover:text-orange-300 underline">@hotproductsdot.official</a>) —
+            and Instagram (<a href="https://www.instagram.com/hotproducts.online" target="_blank" rel="noopener noreferrer nofollow" className="text-orange-400 hover:text-orange-300 underline">@hotproducts.online</a>) —
             you agree to be bound by these Terms of Service. If you do not agree, please do not use the Site
             or our content.
           </p>

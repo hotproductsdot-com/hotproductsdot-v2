@@ -66,7 +66,7 @@ export default function Footer() {
                 TikTok
               </a>
               <a
-                href="https://www.instagram.com/hotproductsdot.official"
+                href="https://www.instagram.com/hotproducts.online"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors flex items-center gap-1.5"
