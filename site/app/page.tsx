@@ -13,7 +13,7 @@ import ProductGrid from "./components/ProductGrid";
 import DealCard from "./components/DealCard";
 import LimitedDealCard from "./components/LimitedDealCard";
 import { getCategoryIcon } from "./components/CategoryIcon";
-import { SITE_NAME, SITE_URL } from "./lib/constants";
+import { SITE_NAME, SITE_URL, BRAND_ORG } from "./lib/constants";
 
 export const metadata: Metadata = {
   title: "HotProducts — Top-Rated Amazon Picks Across 40+ Categories",
@@ -41,17 +41,7 @@ export default function HomePage() {
 
   // Organization + WebSite schema help Google understand brand queries and
   // enable sitelinks search box. Useful for brand queries like "hotproducts".
-  const organizationLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/app-icon.png`,
-    sameAs: [
-      "https://www.instagram.com/hotproductsdot.official",
-      "https://www.tiktok.com/@hotproductsdot.of",
-    ],
-  };
+  const organizationLd = { "@context": "https://schema.org", ...BRAND_ORG };
 
   const websiteLd = {
     "@context": "https://schema.org",

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "HotProducts terms of service — the rules for using hotproductsdot.com and our social media accounts.",
+  description: "HotProducts terms of service — the rules for using hotproducts.online and our social media accounts.",
   robots: { index: true, follow: true },
 };
 
@@ -24,7 +24,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">1. Acceptance of Terms</h2>
           <p>
-            By accessing <strong className="text-zinc-200">hotproductsdot.com</strong> (the &ldquo;Site&rdquo;) or
+            By accessing <strong className="text-zinc-200">hotproducts.online</strong> (the &ldquo;Site&rdquo;) or
             interacting with content we publish on third-party platforms — including TikTok
             (<a href="https://www.tiktok.com/@hotproductsdot.of" target="_blank" rel="noopener noreferrer nofollow" className="text-orange-400 hover:text-orange-300 underline">@hotproductsdot.of</a>)
             and Instagram (<a href="https://www.instagram.com/hotproductsdot.official" target="_blank" rel="noopener noreferrer nofollow" className="text-orange-400 hover:text-orange-300 underline">@hotproductsdot.official</a>) —

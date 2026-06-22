@@ -378,6 +378,18 @@
       "accessCount": 1,
       "lastAccessed": 1782064287698,
       "type": "file"
+    },
+    {
+      "path": "site/app/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1782101533096,
+      "type": "file"
+    },
+    {
+      "path": "site/app/robots.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782132917886,
+      "type": "file"
     }
   ],
   "userDirectives": []

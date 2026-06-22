@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllCategories, getProductsByCategory, type Product } from "../../lib/products";
-import { SITE_URL } from "../../lib/constants";
+import { SITE_URL, BRAND_ORG } from "../../lib/constants";
 import { buildAffiliateUrl } from "../../lib/affiliate";
 import { getCategorySeo } from "../../lib/categorySeo";
 import { getCategoryIcon } from "../../components/CategoryIcon";
@@ -106,6 +106,21 @@ export default async function BestCategoryPage({ params }: Props) {
     `(${topPick.rating}★ from ${topPick.reviewCount.toLocaleString()} Amazon reviews)` +
     (runnerUp ? `, with the ${runnerUp.name} as runner-up` : "") + ".";
 
+  // Article schema — carries author + publisher (E-E-A-T) for this buying
+  // guide. AI answer engines and Google weight who stands behind a
+  // recommendation; both resolve to the single canonical BRAND_ORG entity.
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: seo.h1.slice(0, 110),
+    description: seo.description,
+    mainEntityOfPage: canonical,
+    ...(topPick.imageUrl ? { image: topPick.imageUrl } : {}),
+    ...(lastUpdatedIso ? { dateModified: lastUpdatedIso } : {}),
+    author: BRAND_ORG,
+    publisher: BRAND_ORG,
+  };
+
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -186,6 +201,7 @@ export default async function BestCategoryPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
