@@ -4,6 +4,7 @@ import { buildAffiliateUrl } from "../lib/affiliate";
 import RatingStars from "./RatingStars";
 import ProductImage from "./ProductImage";
 import TrackedAffiliateLink from "./TrackedAffiliateLink";
+import DealFreshness from "./DealFreshness";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
@@ -85,6 +86,7 @@ export default function LimitedDealCard({ product }: { product: Product }) {
           <span className="bg-red-950/60 text-red-400 px-2 py-0.5 rounded-full">
             Limited time
           </span>
+          <DealFreshness dealDateTs={product.dealDateTs} />
         </div>
 
         {/* CTA */}

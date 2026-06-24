@@ -13,8 +13,9 @@ name: 🎵 Refresh TikTok token
 on:
   schedule:
     # Every 12 h at 00:00 and 12:00 UTC — 2 h before the daily post at 14:00 UTC.
+    # GitHub schedule cron is UTC-only; `timezone:` is unsupported and was
+    # invalidating this workflow. These UTC times are already correct.
     - cron: '0 0,12 * * *'
-      timezone: 'America/Chicago'
   workflow_dispatch:
 
 concurrency:
