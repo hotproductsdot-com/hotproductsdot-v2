@@ -368,6 +368,18 @@
   },
   "hotPaths": [
     {
+      "path": "fetch_daily_deals.py",
+      "accessCount": 16,
+      "lastAccessed": 1782327083316,
+      "type": "file"
+    },
+    {
+      "path": "amazon_local_api.py",
+      "accessCount": 7,
+      "lastAccessed": 1782326858525,
+      "type": "file"
+    },
+    {
       "path": "site/app/best/[slug]/page.tsx",
       "accessCount": 5,
       "lastAccessed": 1782067544296,
@@ -383,6 +395,12 @@
       "path": "add_product_by_asin.py",
       "accessCount": 2,
       "lastAccessed": 1782162269200,
+      "type": "file"
+    },
+    {
+      "path": "tests/test_amazon_local_api.py",
+      "accessCount": 2,
+      "lastAccessed": 1782326977502,
       "type": "file"
     },
     {
