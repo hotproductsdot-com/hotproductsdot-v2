@@ -38,6 +38,7 @@ export default async function GuidePage({ params }: Props) {
     .map((s) => getProductBySlug(s))
     .filter(Boolean) as NonNullable<ReturnType<typeof getProductBySlug>>[];
   const topPick = featuredProducts[0];
+  const comparisonProducts = featuredProducts.slice(0, 5); // ponytail: limit to 5 for table readability
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -84,38 +85,86 @@ export default async function GuidePage({ params }: Props) {
         <Link href="/disclaimer" className="underline hover:text-zinc-300">Learn more</Link>
       </div>
 
-      {/* Top Pick — above-the-fold CTA so readers reach Amazon without scrolling */}
+      {/* Top Pick — enlarged above-the-fold CTA (Phase 2 upgrade) */}
       {topPick && (
         <a
           href={buildAffiliateUrl(topPick.amazonUrl, { campaign: "guide", content: `${guide.slug}_toppick` })}
           target="_blank"
           rel="noopener noreferrer nofollow sponsored"
           data-affiliate="true"
-          className="flex items-center gap-5 bg-gradient-to-r from-orange-500/10 to-zinc-900 border border-orange-500/30 rounded-2xl p-5 mb-12 hover:border-orange-500/60 transition-all group"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 bg-gradient-to-r from-orange-500/15 to-zinc-900 border-2 border-orange-500/40 rounded-3xl p-8 mb-14 hover:border-orange-500/70 hover:shadow-2xl hover:shadow-orange-500/20 transition-all group"
         >
-          <div className="w-24 h-24 bg-white rounded-xl shrink-0 flex items-center justify-center overflow-hidden">
+          <div className="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-2xl shrink-0 flex items-center justify-center overflow-hidden">
             {topPick.imageUrl && (
               <ProductImage
                 src={topPick.imageUrl}
                 alt={topPick.name}
-                className="w-full h-full object-contain p-1.5"
-                sizes="96px"
+                className="w-full h-full object-contain p-2"
+                sizes="160px"
               />
             )}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[11px] font-bold text-orange-400 uppercase tracking-widest mb-1">★ Our Top Pick</div>
-            <div className="text-base font-bold text-zinc-100 group-hover:text-orange-400 transition-colors line-clamp-2">
-              {topPick.name}
+          <div className="flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <div className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-2">✨ Best Overall Pick</div>
+              <div className="text-2xl font-bold text-zinc-100 group-hover:text-orange-400 transition-colors line-clamp-3 leading-snug mb-2">
+                {topPick.name}
+              </div>
+              <div className="text-sm text-zinc-400 mt-2">
+                {topPick.rating}★ ({topPick.reviewCount.toLocaleString()} reviews)
+              </div>
             </div>
-            <div className="text-xs text-zinc-500 mt-1">
-              {topPick.rating}★ · {topPick.reviewCount.toLocaleString()} reviews
-            </div>
-          </div>
-          <div className="shrink-0 bg-orange-500 group-hover:bg-orange-400 text-zinc-950 text-sm font-bold rounded-xl px-5 py-3 whitespace-nowrap transition-colors">
-            Check Price on Amazon →
+            <a
+              href={buildAffiliateUrl(topPick.amazonUrl, { campaign: "guide", content: `${guide.slug}_toppick_cta` })}
+              target="_blank"
+              rel="noopener noreferrer nofollow sponsored"
+              className="mt-4 inline-block bg-orange-500 hover:bg-orange-400 text-zinc-950 font-bold rounded-xl px-8 py-4 whitespace-nowrap transition-colors w-full sm:w-auto text-center text-base"
+            >
+              See Best Price on Amazon →
+            </a>
           </div>
         </a>
+      )}
+
+      {/* Comparison table — Phase 3 link placement */}
+      {comparisonProducts.length > 1 && (
+        <section className="mb-14 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-zinc-800">
+            <h2 className="text-lg font-bold text-white">Quick Comparison</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-800 bg-zinc-800/50">
+                  <th className="text-left px-6 py-3 font-semibold text-zinc-300">Product</th>
+                  <th className="text-center px-4 py-3 font-semibold text-zinc-300 whitespace-nowrap">Rating</th>
+                  <th className="text-right px-6 py-3 font-semibold text-zinc-300">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonProducts.map((product, idx) => (
+                  <tr key={product.slug} className="border-b border-zinc-800 hover:bg-zinc-800/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-zinc-100">{product.name}</div>
+                      <div className="text-xs text-zinc-500 mt-1">{product.rating}★ · {product.reviewCount.toLocaleString()} reviews</div>
+                    </td>
+                    <td className="text-center px-4 py-4 text-zinc-400">{product.rating}★</td>
+                    <td className="text-right px-6 py-4">
+                      <a
+                        href={buildAffiliateUrl(product.amazonUrl, { campaign: "guide", content: `${guide.slug}_comparison_${idx}` })}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow sponsored"
+                        className="inline-block text-orange-400 hover:text-orange-300 font-semibold transition-colors"
+                      >
+                        View →
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
 
       {/* Sections */}
@@ -170,11 +219,57 @@ export default async function GuidePage({ params }: Props) {
         })}
       </div>
 
+      {/* FAQ Section — Phase 4 engagement booster */}
+      <section className="border-t border-zinc-800 mt-16 pt-12 mb-14">
+        <h2 className="text-xl font-bold text-white mb-8">Frequently Asked Questions</h2>
+        <div className="space-y-6">
+          <details className="group bg-zinc-900 border border-zinc-800 rounded-lg p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+            <summary className="font-semibold text-zinc-100 flex items-center gap-2">
+              <span className="text-orange-400 group-open:rotate-180 transition-transform">▶</span>
+              What should I look for when buying {guide.category.toLowerCase()}?
+            </summary>
+            <p className="text-zinc-400 text-sm mt-4 ml-6 leading-relaxed">
+              The guides above cover the key factors for {guide.category.toLowerCase()}. Focus on your specific use case: professional vs. casual use, budget constraints, and feature priorities. Read the guide&apos;s &quot;What to Look For&quot; section for detailed guidance.
+            </p>
+          </details>
+
+          <details className="group bg-zinc-900 border border-zinc-800 rounded-lg p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+            <summary className="font-semibold text-zinc-100 flex items-center gap-2">
+              <span className="text-orange-400 group-open:rotate-180 transition-transform">▶</span>
+              Are these products available on Amazon?
+            </summary>
+            <p className="text-zinc-400 text-sm mt-4 ml-6 leading-relaxed">
+              Yes, all products recommended in this guide are available on Amazon. We use Amazon affiliate links so we earn a small commission when you buy through them — at no extra cost to you.
+            </p>
+          </details>
+
+          <details className="group bg-zinc-900 border border-zinc-800 rounded-lg p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+            <summary className="font-semibold text-zinc-100 flex items-center gap-2">
+              <span className="text-orange-400 group-open:rotate-180 transition-transform">▶</span>
+              How do you choose these products?
+            </summary>
+            <p className="text-zinc-400 text-sm mt-4 ml-6 leading-relaxed">
+              We research Amazon reviews, ratings, and real-world performance data to identify products that genuinely deliver value. Our goal is to save you research time by surfacing the best options in each category and price range.
+            </p>
+          </details>
+
+          <details className="group bg-zinc-900 border border-zinc-800 rounded-lg p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+            <summary className="font-semibold text-zinc-100 flex items-center gap-2">
+              <span className="text-orange-400 group-open:rotate-180 transition-transform">▶</span>
+              Can I trust these reviews?
+            </summary>
+            <p className="text-zinc-400 text-sm mt-4 ml-6 leading-relaxed">
+              We only recommend products with high review counts (typically 100+ reviews) and strong ratings. We avoid new or unproven products, and we disclose that we earn a commission through Amazon affiliate links.
+            </p>
+          </details>
+        </div>
+      </section>
+
       {/* All featured products grid */}
       {featuredProducts.length > 0 && (
-        <section className="border-t border-zinc-800 mt-14 pt-12">
-          <h2 className="text-xl font-bold text-white mb-2">Products in This Guide</h2>
-          <p className="text-zinc-500 text-sm mb-8">All recommended products, side by side.</p>
+        <section className="border-t border-zinc-800 mt-8 pt-12">
+          <h2 className="text-xl font-bold text-white mb-2">All Products in This Guide</h2>
+          <p className="text-zinc-500 text-sm mb-8">Complete list of every recommendation, sorted by our ranking.</p>
           <ProductGrid products={featuredProducts as NonNullable<typeof featuredProducts[0]>[]} />
         </section>
       )}
