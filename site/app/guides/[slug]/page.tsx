@@ -36,7 +36,8 @@ export default async function GuidePage({ params }: Props) {
   const featuredSlugs = guide.sections.flatMap((s) => s.productSlugs ?? []);
   const featuredProducts = featuredSlugs
     .map((s) => getProductBySlug(s))
-    .filter(Boolean) as ReturnType<typeof getProductBySlug>[];
+    .filter(Boolean) as NonNullable<ReturnType<typeof getProductBySlug>>[];
+  const topPick = featuredProducts[0];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -82,6 +83,40 @@ export default async function GuidePage({ params }: Props) {
         <strong className="text-zinc-400">Disclosure:</strong> This guide contains affiliate links. If you click and buy, we may earn a commission at no extra cost to you.{" "}
         <Link href="/disclaimer" className="underline hover:text-zinc-300">Learn more</Link>
       </div>
+
+      {/* Top Pick — above-the-fold CTA so readers reach Amazon without scrolling */}
+      {topPick && (
+        <a
+          href={buildAffiliateUrl(topPick.amazonUrl, { campaign: "guide", content: `${guide.slug}_toppick` })}
+          target="_blank"
+          rel="noopener noreferrer nofollow sponsored"
+          data-affiliate="true"
+          className="flex items-center gap-5 bg-gradient-to-r from-orange-500/10 to-zinc-900 border border-orange-500/30 rounded-2xl p-5 mb-12 hover:border-orange-500/60 transition-all group"
+        >
+          <div className="w-24 h-24 bg-white rounded-xl shrink-0 flex items-center justify-center overflow-hidden">
+            {topPick.imageUrl && (
+              <ProductImage
+                src={topPick.imageUrl}
+                alt={topPick.name}
+                className="w-full h-full object-contain p-1.5"
+                sizes="96px"
+              />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[11px] font-bold text-orange-400 uppercase tracking-widest mb-1">★ Our Top Pick</div>
+            <div className="text-base font-bold text-zinc-100 group-hover:text-orange-400 transition-colors line-clamp-2">
+              {topPick.name}
+            </div>
+            <div className="text-xs text-zinc-500 mt-1">
+              {topPick.rating}★ · {topPick.reviewCount.toLocaleString()} reviews
+            </div>
+          </div>
+          <div className="shrink-0 bg-orange-500 group-hover:bg-orange-400 text-zinc-950 text-sm font-bold rounded-xl px-5 py-3 whitespace-nowrap transition-colors">
+            Check Price on Amazon →
+          </div>
+        </a>
+      )}
 
       {/* Sections */}
       <div className="space-y-10">

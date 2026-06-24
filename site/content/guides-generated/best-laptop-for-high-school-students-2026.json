@@ -9,7 +9,13 @@
     {
       "heading": "What High School Students Actually Need in a Laptop",
       "body": "Finding the best laptop for high school students comes down to a handful of real-world priorities that marketing specs often obscure. A teenager does not need a workstation. They need something that survives a backpack, lasts through a full school day on a single charge, handles Google Docs, Zoom, YouTube, and the occasional light photo or video project, and does not cost so much that a cracked screen becomes a family crisis.\n\nHere is what actually matters. Battery life should clear eight hours under real mixed-use conditions — not the manufacturer's quoted figure, which is almost always measured under ideal lab settings. Weight matters more than most parents expect; a laptop that gets left at home because it is too heavy to carry is a useless laptop. Display quality needs to be good enough to read comfortably in a bright classroom, which means at least 250 nits of brightness and a 1080p resolution. RAM should be 8GB at minimum in 2026; 4GB machines will frustrate students within a year. Storage of 64GB or more is workable if the student uses cloud storage, but 128GB is the practical floor for Windows machines.\n\nDurability is underrated. Military-grade MIL-STD-810 testing is a meaningful indicator, not just a marketing badge — it means the chassis has been tested against drops, vibration, temperature swings, and humidity. A reinforced keyboard deck and a hinge that can handle being opened one-handed are small details that add up over three or four years of daily use.\n\nFinally, price. Most high school students do not need to spend more than $600. The sweet spot for a capable, durable machine sits between $250 and $500, and Chromebooks occupy the lower half of that range for good reason.",
-      "productSlugs": []
+      "productSlugs": [
+        "google-pixelbook-go-chromebook",
+        "acer-aspire-5-slim-laptop",
+        "apple-2026-macbook-neo-13-inch-laptop-with-a18-pro-chip",
+        "microsoft-surface-laptop-6",
+        "asus-vivobook-15-oled-laptop"
+      ]
     },
     {
       "heading": "Chromebook vs Windows vs MacBook for High School",

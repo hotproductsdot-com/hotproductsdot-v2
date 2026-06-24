@@ -9,7 +9,13 @@
     {
       "heading": "What Graphic Design Students Actually Need in a Laptop",
       "body": "Finding the right laptop for graphic design students is not about buying the most expensive machine on the shelf. It is about understanding which specs actually move the needle for design work and which ones are marketing noise. Let us be direct about what matters.\n\nDisplay quality is non-negotiable. If your screen cannot render accurate colors, your work will look different on every other monitor, and that will cost you in critiques and client presentations. You want at minimum a display that covers 100% of the sRGB color gamut. For serious print work, DCI-P3 coverage above 90% is the real target. Resolution matters too — 2K or higher keeps your type and vector edges sharp.\n\nRAM is the next critical factor. Adobe Creative Cloud applications are memory-hungry. Photoshop, Illustrator, and Premiere Pro all benefit enormously from 16GB of RAM, and 32GB is worth the investment if your budget allows. Running below 16GB in 2026 is a false economy — you will feel the slowdown every time you open a large layered file.\n\nThe GPU situation is more nuanced for design students than for video editors or 3D artists. Most 2D graphic design work in Photoshop and Illustrator is not GPU-limited in the same way gaming or 3D rendering is. However, a capable integrated GPU — like Apple's M-series unified memory architecture or Intel Iris Xe — handles most tasks well. If you are doing motion graphics, video editing, or 3D work in Cinema 4D or Blender, a discrete GPU becomes genuinely important.\n\nPortability is a real constraint for students. You are carrying this machine to class, to studios, to coffee shops. Anything above 2kg starts to feel punishing by the end of a long day. Battery life matters just as much — a laptop that needs to be plugged in every three hours is a liability in a lecture hall.\n\nFinally, storage. Design files, font libraries, and project assets accumulate fast. A 512GB SSD is the realistic minimum. 1TB is the comfortable choice. Do not compromise here — running out of local storage mid-semester is a genuine productivity killer.",
-      "productSlugs": []
+      "productSlugs": [
+        "apple-macbook-pro-16-inch-m4-max",
+        "samsung-galaxy-book5-pro-360",
+        "asus-vivobook-15-oled-laptop",
+        "acer-aspire-5-slim-laptop",
+        "apple-2026-macbook-neo-13-inch-laptop-with-a18-pro-chip"
+      ]
     },
     {
       "heading": "Top Picks at a Glance: How These Laptops Stack Up",
