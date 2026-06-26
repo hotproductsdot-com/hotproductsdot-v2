@@ -18,7 +18,7 @@ PRODUCTS_JSON = WORKFLOW_DIR / "products.json"
 
 LLM_MODEL = "anthropic/claude-haiku-4.5"
 SYSTEM_PROMPT = (
-    "You are an e-commerce ad creative director for @hotproductsdot.official on Instagram. "
+    "You are an e-commerce ad creative director for @hotproducts.online on Instagram. "
     "Given an Instagram post caption (hook, product name, category, rating, price, CTA), "
     "write ONE photorealistic image-to-image prompt for FLUX. The prompt must restyle the "
     "attached Amazon product photo into a premium square marketing asset. Rules: reproduce "

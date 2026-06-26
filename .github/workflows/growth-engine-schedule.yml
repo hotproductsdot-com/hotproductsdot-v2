@@ -2,10 +2,11 @@ name: Growth Engine - 3x Daily
 
 on:
   schedule:
+    # GitHub schedule cron is UTC-only; `timezone:` is unsupported and
+    # invalidates the workflow. These UTC times already target Central (CDT).
     - cron: '0 12 * * *'   # 7:00 AM CDT (UTC-5)
     - cron: '0 17 * * *'   # 12:00 PM CDT
     - cron: '0 23 * * *'   # 6:00 PM CDT
-      timezone: 'America/Chicago'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -26,7 +27,7 @@ jobs:
       HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
       HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
       HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
-      HOSTINGER_DEST: domains/hotproductsdot.com/public_html/
+      HOSTINGER_DEST: domains/hotproducts.online/public_html/
 
     steps:
       - name: Checkout repo

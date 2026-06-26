@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllCategories, getProductsByCategory, type Product } from "../../lib/products";
-import { SITE_URL } from "../../lib/constants";
+import { SITE_URL, BRAND_ORG } from "../../lib/constants";
+import { buildAffiliateUrl } from "../../lib/affiliate";
 import { getCategorySeo } from "../../lib/categorySeo";
 import { getCategoryIcon } from "../../components/CategoryIcon";
 import TrackedAffiliateLink from "../../components/TrackedAffiliateLink";
@@ -87,6 +88,39 @@ export default async function BestCategoryPage({ params }: Props) {
   const canonical = `${SITE_URL}/best/${slug}`;
   const seo = getCategorySeo(slug, catName);
 
+  // Most-recent product refresh in this roundup → the page's "last updated"
+  // freshness signal. Drives dateModified in schema + a visible timestamp so
+  // both Google and AI answer engines can date the content.
+  const lastUpdatedTs = Math.max(0, ...topProducts.map((p) => p.refreshedTs ?? 0));
+  const lastUpdatedIso = lastUpdatedTs > 0 ? new Date(lastUpdatedTs).toISOString() : undefined;
+  const lastUpdatedLabel = lastUpdatedTs > 0
+    ? new Date(lastUpdatedTs).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+    : "Quarterly";
+
+  // Answer-first TL;DR. A single extractable sentence naming the winner +
+  // runner-up so AI answer engines (which lift the first direct answer) and
+  // skim-readers get the verdict before any marketing prose.
+  const runnerUp = topProducts[1];
+  const tldr =
+    `Our top pick for the best ${catName.toLowerCase()} in 2026 is the ${topPick.name} ` +
+    `(${topPick.rating}★ from ${topPick.reviewCount.toLocaleString()} Amazon reviews)` +
+    (runnerUp ? `, with the ${runnerUp.name} as runner-up` : "") + ".";
+
+  // Article schema — carries author + publisher (E-E-A-T) for this buying
+  // guide. AI answer engines and Google weight who stands behind a
+  // recommendation; both resolve to the single canonical BRAND_ORG entity.
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: seo.h1.slice(0, 110),
+    description: seo.description,
+    mainEntityOfPage: canonical,
+    ...(topPick.imageUrl ? { image: topPick.imageUrl } : {}),
+    ...(lastUpdatedIso ? { dateModified: lastUpdatedIso } : {}),
+    author: BRAND_ORG,
+    publisher: BRAND_ORG,
+  };
+
   // BreadcrumbList schema — mirrors the on-page breadcrumb navigation.
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -105,6 +139,7 @@ export default async function BestCategoryPage({ params }: Props) {
     "@type": "ItemList",
     name: `Best ${catName} for 2026`,
     url: canonical,
+    ...(lastUpdatedIso ? { dateModified: lastUpdatedIso } : {}),
     numberOfItems: topProducts.length,
     itemListElement: topProducts.map((p, i) => ({
       "@type": "ListItem",
@@ -114,6 +149,7 @@ export default async function BestCategoryPage({ params }: Props) {
         name: p.name,
         url: `${SITE_URL}/products/${p.slug}`,
         image: p.imageUrl || undefined,
+        ...(p.refreshedTs ? { dateModified: new Date(p.refreshedTs).toISOString() } : {}),
         aggregateRating: {
           "@type": "AggregateRating",
           ratingValue: p.rating,
@@ -124,7 +160,7 @@ export default async function BestCategoryPage({ params }: Props) {
           priceCurrency: "USD",
           ...(p.priceMin > 0 ? { price: p.priceMin } : {}),
           availability: "https://schema.org/InStock",
-          url: p.amazonUrl,
+          url: buildAffiliateUrl(p.amazonUrl, { campaign: "jsonld", content: p.slug }),
           seller: { "@type": "Organization", name: "Amazon" },
         },
       },
@@ -165,6 +201,7 @@ export default async function BestCategoryPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
@@ -189,6 +226,13 @@ export default async function BestCategoryPage({ params }: Props) {
         <h1 className="text-4xl font-bold text-white mb-4">
           {seo.h1}
         </h1>
+
+        {/* Answer-first verdict — direct, extractable answer above the fold */}
+        <div className="bg-zinc-900 border-l-4 border-orange-500 rounded-r-lg p-4 mb-6">
+          <span className="text-xs font-bold text-orange-400 uppercase tracking-wider">The short answer</span>
+          <p className="text-base text-zinc-200 mt-1 leading-relaxed">{tldr}</p>
+        </div>
+
         <p className="text-lg text-zinc-400 mb-6">
           {seo.intro}
         </p>
@@ -205,7 +249,9 @@ export default async function BestCategoryPage({ params }: Props) {
           </div>
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
             <div className="text-2xl font-bold text-orange-500">Updated</div>
-            <div className="text-xs text-zinc-500 mt-1">Quarterly</div>
+            <div className="text-xs text-zinc-500 mt-1">
+              {lastUpdatedIso ? <time dateTime={lastUpdatedIso}>{lastUpdatedLabel}</time> : lastUpdatedLabel}
+            </div>
           </div>
         </div>
       </div>

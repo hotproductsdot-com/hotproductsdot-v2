@@ -390,7 +390,9 @@ def main() -> int:
         print(f"ERROR: CSV not found: {args.csv}", file=sys.stderr)
         return 1
 
-    with args.csv.open(newline="", encoding="utf-8") as f:
+    # utf-8-sig strips the BOM so DictReader's first key is "Product Name", not
+    # "﻿Product Name" — the latter silently blanks every name on rewrite.
+    with args.csv.open(newline="", encoding="utf-8-sig") as f:
         catalog = list(csv.DictReader(f))
     print(f"Loaded {len(catalog)} products from {args.csv}")
     print(f"Duplicate threshold: {args.threshold}")
@@ -443,12 +445,18 @@ def main() -> int:
     cleaned = [row for i, row in enumerate(catalog) if i not in to_remove]
     print(f"\n  Removing {len(to_remove)} products: {len(catalog)} -> {len(cleaned)}")
 
-    with args.csv.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+    # Derive fieldnames from the live data so extra columns (e.g. sale columns)
+    # are never dropped; fall back to FIELDNAMES only when there are no rows.
+    fieldnames = list(cleaned[0].keys()) if cleaned else list(FIELDNAMES)
+    for row in cleaned:
+        for k in row:
+            if k not in fieldnames:
+                fieldnames.append(k)
+    with args.csv.open("w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         for row in cleaned:
-            clean = {k: row.get(k, "") for k in FIELDNAMES}
-            writer.writerow(clean)
+            writer.writerow({k: row.get(k, "") for k in fieldnames})
 
     print(f"  CSV updated: {args.csv}")
     print(f"  Final product count: {len(cleaned)}")

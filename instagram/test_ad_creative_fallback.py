@@ -125,3 +125,25 @@ def test_reference_images_are_passed_to_fal(monkeypatch, tmp_path, product, src_
     assert result == str(out)
     assert out.exists()
     assert len(captured["references"]) == 2, "both usable references must be forwarded"
+
+
+def test_identity_mismatch_blocks_generated_creative(monkeypatch, tmp_path, product, src_jpg):
+    """A polished but wrong img2img result must be quarantined before upload."""
+    monkeypatch.setenv("BANNER_AI_GATE", "enforce")
+    monkeypatch.setattr(ad_creative_gen, "_tavily_image_urls", lambda q, n: [])
+    monkeypatch.setattr(
+        image_gen_fal,
+        "_fal_generate_image",
+        lambda *a, **k: _jpeg_bytes((10, 10, 10), size=1080),
+    )
+    monkeypatch.setattr(
+        ad_creative_gen,
+        "_ai_validate_product_identity",
+        lambda *a, **k: (False, "generated product does not match source"),
+    )
+    out = tmp_path / "banner.jpg"
+
+    with pytest.raises(ad_creative_gen.BannerQualityError, match="ai identity"):
+        ad_creative_gen.compose_ad_creative_banner(product, src_jpg, out)
+
+    assert not out.exists(), "wrong-product creative must not be written or uploaded"

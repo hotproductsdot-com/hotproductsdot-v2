@@ -80,6 +80,11 @@ _PRICE_TEXT_REJECT_RE = re.compile(
     re.IGNORECASE,
 )
 _BARE_COUNT_RE = re.compile(r"^[\(\s]*[\d,]+[\)\s]*$")
+# "1K+ bought in past month" social-proofing badge (deals ranking signal).
+_BOUGHT_RE = re.compile(
+    r"([\d,]+(?:\.\d+)?)\s*([KkMm]?)\+?\s*bought\s+in\s+past\s+month",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -96,6 +101,8 @@ class ProductData:
     is_in_stock: bool | None = None
     bsr: int | None = None
     bsr_category: str | None = None
+    list_price: float | None = None      # strikethrough / "List Price" reference
+    bought_past_month: int | None = None  # "N+ bought in past month" badge
     url: str = ""
     page_status: str = "ok"          # ok | blocked | not_found | server_error | suspect | error
     engine: str | None = None
@@ -288,6 +295,47 @@ def _price_from_parts(soup: BeautifulSoup) -> float | None:
     return None
 
 
+_LIST_PRICE_SELECTORS = [
+    "span[data-a-strike='true'] .a-offscreen",
+    ".basisPrice .a-offscreen",
+    "#corePriceDisplay_desktop_feature_div .a-price.a-text-price .a-offscreen",
+    "#corePrice_feature_div .a-price.a-text-price .a-offscreen",
+    "#listPrice",
+    "#priceblock_listprice",
+]
+
+
+def _extract_list_price(soup: BeautifulSoup) -> float | None:
+    """Strikethrough / 'List Price' reference (markdown source). Only the
+    `a-text-price` / `data-a-strike` markup, so the current buy-box price is
+    never mistaken for the list price."""
+    for sel in _LIST_PRICE_SELECTORS:
+        for el in soup.select(sel):
+            if _in_trap_container(el):
+                continue
+            value = parse_price_string(el.get_text(strip=True), require_currency=True)
+            if value is not None:
+                return value
+    return None
+
+
+def _extract_bought_past_month(body: str) -> int | None:
+    """'1K+ bought in past month' → 1000; absent → None."""
+    m = _BOUGHT_RE.search(body)
+    if not m:
+        return None
+    try:
+        num = float(m.group(1).replace(",", ""))
+    except ValueError:
+        return None
+    unit = m.group(2).lower()
+    if unit == "k":
+        num *= 1_000
+    elif unit == "m":
+        num *= 1_000_000
+    return int(num)
+
+
 def _price_broad_fallback(soup: BeautifulSoup) -> float | None:
     for el in soup.select(".a-price .a-offscreen"):
         if _in_trap_container(el):
@@ -377,7 +425,10 @@ def _extract_bsr(body: str) -> tuple[int | None, str | None]:
 
 def parse_product(body: str, asin: str) -> ProductData:
     """Parse a full Amazon product page into ProductData. Network-free."""
-    soup = BeautifulSoup(body, "lxml")
+    try:
+        soup = BeautifulSoup(body, "lxml")
+    except Exception:
+        soup = BeautifulSoup(body, "html.parser")
     title_el = soup.select_one("#productTitle")
     title = title_el.get_text(strip=True) if title_el else None
     price, twister_confirmed = _extract_price(body, soup)
@@ -386,6 +437,8 @@ def parse_product(body: str, asin: str) -> ProductData:
     reviews = _extract_reviews(soup)
     price = _reject_price_rating_collision(price, rating, twister_confirmed=twister_confirmed)
     bsr, bsr_category = _extract_bsr(body)
+    list_price = _extract_list_price(soup)
+    bought_past_month = _extract_bought_past_month(body)
     return ProductData(
         asin=asin,
         title=title,
@@ -397,6 +450,8 @@ def parse_product(body: str, asin: str) -> ProductData:
         is_in_stock=in_stock,
         bsr=bsr,
         bsr_category=bsr_category,
+        list_price=list_price,
+        bought_past_month=bought_past_month,
         url=AMAZON_URL.format(asin=asin),
         fetched_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
     )

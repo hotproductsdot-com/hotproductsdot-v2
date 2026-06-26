@@ -28,8 +28,11 @@ Failure policy (AD_CREATIVE_FALLBACK env var):
 """
 from __future__ import annotations
 
+import base64
+import json
 import logging
 import os
+import re
 from io import BytesIO
 from pathlib import Path
 
@@ -165,6 +168,95 @@ def _normalize_to_jpeg(data: bytes, max_dim: int = REFERENCE_MAX_DIM) -> bytes |
         return None
 
 
+def _extract_json_object(text: str) -> dict | None:
+    """Parse a strict JSON response, tolerating markdown fences."""
+    cleaned = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE).strip()
+    try:
+        data = json.loads(cleaned)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _ai_validate_product_identity(
+    source_jpeg: bytes, generated_jpeg: bytes, product_name: str
+) -> tuple[bool, str]:
+    """Return whether the generated creative still depicts the source product.
+
+    This catches the failure mode where img2img produces a polished but
+    materially different product. Like the final banner QA gate, API failures
+    fail open so an Anthropic outage does not halt the rotation.
+    """
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        return True, ""
+
+    try:
+        import anthropic  # type: ignore
+    except ImportError:
+        return True, ""
+
+    src_b64 = base64.standard_b64encode(source_jpeg).decode("ascii")
+    gen_b64 = base64.standard_b64encode(generated_jpeg).decode("ascii")
+    prompt = (
+        f'You are a strict product-identity QA reviewer for an Instagram ad. '
+        f'The product title is "{product_name}".\n\n'
+        f'Image A is the original catalog product photo. Image B is an AI-generated '
+        f'creative derived from Image A.\n\n'
+        f'Approve only if Image B shows the same physical product as Image A. '
+        f'Ignore acceptable ad-styling changes: background, lighting, shadows, '
+        f'angle, scale, crop, and removal of plain catalog background. Reject if '
+        f'Image B changes the product type, brand/model, colorway, shape, visible '
+        f'key parts, printed labels, bundled components, or invents a different '
+        f'product/accessory as the hero.\n\n'
+        f'Reply with ONLY a single JSON object, no markdown fences, no preamble:\n'
+        f'{{"approved": true|false, "reason": "<one short sentence; required when approved=false>"}}'
+    )
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=300,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": src_b64,
+                            },
+                        },
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": gen_b64,
+                            },
+                        },
+                        {"type": "text", "text": prompt},
+                    ],
+                }
+            ],
+        )
+        response_text = msg.content[0].text.strip()
+    except Exception:
+        return True, ""
+
+    data = _extract_json_object(response_text)
+    if data is None:
+        return True, ""
+    approved = bool(data.get("approved"))
+    if approved:
+        return True, ""
+    reason = str(data.get("reason") or "").strip()
+    return False, reason or "AI product identity check rejected creative"
+
+
 def _load_image_bytes(path_or_url: str) -> bytes | None:
     try:
         if path_or_url.startswith("http"):
@@ -261,6 +353,16 @@ def compose_ad_creative_banner(
     if out_bytes is None:
         return _fallback_or_raise(product, src, out, "FAL returned no image")
 
+    mode = (os.environ.get("BANNER_AI_GATE") or "shadow").lower().strip()
+    if mode != "off" and name:
+        identity_ok, identity_reason = _ai_validate_product_identity(src_jpeg, out_bytes, name)
+        if mode == "enforce":
+            if not identity_ok:
+                raise BannerQualityError(f"ai identity: {identity_reason}")
+        else:
+            verdict = "APPROVED" if identity_ok else f"REJECTED ({identity_reason})"
+            print(f"   [ai-identity shadow] {verdict}")
+
     canvas = _resize_to_canvas(out_bytes).convert("RGBA")
     canvas = _add_text(canvas, product)
 
@@ -274,7 +376,6 @@ def compose_ad_creative_banner(
     )
 
     # Final-stage AI vision gate (BANNER_AI_GATE: off | shadow | enforce).
-    mode = (os.environ.get("BANNER_AI_GATE") or "shadow").lower().strip()
     if mode != "off" and name:
         ai_ok, ai_reason = _ai_vision_validate_banner(out, name)
         if mode == "enforce":

@@ -2,8 +2,8 @@ name: Daily Link Checker
 
 on:
   schedule:
+    # GitHub schedule cron is UTC-only; `timezone:` is unsupported.
     - cron: '0 8 * * *'   # 8:00 AM UTC daily
-      timezone: 'America/Chicago'
   workflow_dispatch:       # allow manual runs
 
 jobs:
@@ -28,29 +28,57 @@ jobs:
         run: node check-links.js --csv products/top-1000.csv --concurrency 5 --output link-report.json
         continue-on-error: true   # don't fail the workflow; we handle it below
 
+      - name: Check title alignment
+        id: titlecheck
+        run: python3 check-product-title-alignment.py --csv products/top-1000.csv --output title-report.json
+        continue-on-error: true
+
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
           name: link-report-${{ github.run_id }}
-          path: link-report.json
+          path: |
+            link-report.json
+            title-report.json
           retention-days: 30
 
       - name: Open or update GitHub Issue for broken links
-        if: steps.check.outcome == 'failure'
+        if: steps.check.outcome == 'failure' || steps.titlecheck.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
             const report = JSON.parse(fs.readFileSync('link-report.json', 'utf8'));
+            const titleReport = fs.existsSync('title-report.json')
+              ? JSON.parse(fs.readFileSync('title-report.json', 'utf8'))
+              : { summary: { mismatches: 0, errors: 0 }, mismatches: [], errors: [] };
             const { summary, broken, timeouts } = report;
+            const mismatches = titleReport.mismatches || [];
+            const titleErrors = titleReport.errors || [];
 
             let body = `## Link Check Report — ${report.date.slice(0,10)}\n\n`;
-            body += `**Total:** ${summary.total} | **OK:** ${summary.ok} | **Broken:** ${summary.broken} | **Timeouts:** ${summary.timeouts}\n\n`;
+            body += `**Total:** ${summary.total} | **OK:** ${summary.ok} | **Broken:** ${summary.broken} | **Title mismatches:** ${titleReport.summary?.mismatches || 0} | **Title errors:** ${titleReport.summary?.errors || 0} | **Timeouts:** ${summary.timeouts}\n\n`;
 
             if (broken.length > 0) {
               body += `### Broken Links\n\n| Product | URL | Reason |\n|---------|-----|--------|\n`;
               for (const r of broken) {
                 body += `| ${r.name} | [link](${r.url}) | ${r.detail} |\n`;
+              }
+              body += '\n';
+            }
+
+            if (titleErrors.length > 0) {
+              body += `### Title Check Errors\n\n| Product | URL | Status | Error |\n|---------|-----|--------|-------|\n`;
+              for (const r of titleErrors) {
+                body += `| ${r.name} | [link](${r.url}) | ${r.page_status || ''} | ${r.error || ''} |\n`;
+              }
+              body += '\n';
+            }
+
+            if (mismatches.length > 0) {
+              body += `### Title Mismatches\n\n| Product | URL | Amazon Title | Coverage |\n|---------|-----|--------------|----------|\n`;
+              for (const r of mismatches) {
+                body += `| ${r.name} | [link](${r.url}) | ${r.amazonTitle || ''} | ${r.coverage ?? ''} |\n`;
               }
               body += '\n';
             }

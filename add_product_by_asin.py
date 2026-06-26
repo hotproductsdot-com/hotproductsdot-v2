@@ -279,18 +279,33 @@ def build_row(
 # CSV helpers
 # ---------------------------------------------------------------------------
 def load_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as f:
+    # utf-8-sig strips the leading BOM; without it DictReader's first key becomes
+    # "﻿Product Name" and every name silently reads back as "" on rewrite.
+    with path.open(newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
+
+
+def _resolve_fieldnames(path: Path, extra_keys: list[str]) -> list[str]:
+    """Use the existing CSV header as the source of truth so columns are never dropped."""
+    with path.open(newline="", encoding="utf-8-sig") as f:
+        header = [h for h in next(csv.reader(f), []) if h]
+    names = header or list(FIELDNAMES)
+    for k in extra_keys:
+        if k not in names:
+            names.append(k)
+    return names
 
 
 def append_to_csv(path: Path, row: dict[str, str]) -> None:
     existing = load_csv(path)
+    fieldnames = _resolve_fieldnames(path, list(row.keys()))
     rows = existing + [row]
-    with path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+    # utf-8-sig keeps the BOM the file already carries (Excel/Sheets expect it).
+    with path.open("w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for r in rows:
-            writer.writerow({k: r.get(k, "") for k in FIELDNAMES})
+            writer.writerow({k: r.get(k, "") for k in fieldnames})
 
 
 # ---------------------------------------------------------------------------
@@ -358,6 +373,12 @@ def select_category(suggested: str | None) -> str:
         print(f"  Known categories: {', '.join(KNOWN_CATEGORIES)}")
         print(f"  Using '{suggested}' anyway.")
         return suggested
+
+    # Non-interactive (e.g. pipeline UI / CI): never block on input(). Fail clearly.
+    if not sys.stdin.isatty():
+        print("  ERROR: No category given and no interactive terminal to prompt.")
+        print(f"  Re-run with --category, one of: {', '.join(KNOWN_CATEGORIES)}")
+        sys.exit(2)
 
     print("\n  Available categories:")
     for i, cat in enumerate(KNOWN_CATEGORIES, 1):
@@ -444,6 +465,9 @@ def main() -> int:
     dup = check_duplicate(product.name, catalog)
     if dup:
         print(f"\n  WARNING: A product with this name already exists: '{dup}'")
+        if not sys.stdin.isatty():
+            print("  Non-interactive run; not adding a duplicate. Use a different ASIN.")
+            return 1
         try:
             confirm = input("  Add anyway? [y/N] ").strip().lower()
         except (KeyboardInterrupt, EOFError):

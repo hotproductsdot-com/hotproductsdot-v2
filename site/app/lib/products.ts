@@ -333,8 +333,8 @@ export function getSaleProducts(count = 6): Product[] {
     .slice(0, count);
 }
 
-/** Deal batches older than this are stale (cron missed a run) — hide them. */
-const LIMITED_DEAL_MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000;
+/** Deal batches older than this are stale (morning refresh missed) — hide them. */
+const LIMITED_DEAL_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 /**
  * "Limited Time Sale" section: today's on-sale batch from fetch_daily_deals.py,

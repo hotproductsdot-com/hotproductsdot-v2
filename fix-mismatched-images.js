@@ -8,6 +8,8 @@ function sleep(ms) {
 // Products whose image doesn't match — add { slug, search } entries here
 const toFix = [
   { slug: 'herman-miller-aeron-chair', search: 'Herman Miller Aeron Chair ergonomic office' },
+  { slug: 'autel-evo-nano-drone', search: 'Autel EVO Nano+ Drone' },
+  { slug: 'facebook-portal-plus-smart-display', search: 'Facebook Portal Plus Smart Display' },
 ];
 
 const USER_AGENTS = [

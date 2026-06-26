@@ -9,7 +9,13 @@
     {
       "heading": "How We Tested: Our Smart Speaker Evaluation Criteria",
       "body": "Finding the best smart home speaker in 2026 means holding every device to the same hard standard. Marketing copy will tell you every speaker sounds \"rich\" and \"immersive\" — that tells you nothing. Here is what actually matters and how we weighted it.\n\nSound quality was judged on three dimensions: bass extension, midrange clarity, and stereo separation. We listened to the same playlist across all devices at matched volume levels, using a mix of vocal-heavy tracks, orchestral pieces, and bass-forward electronic music. No EQ adjustments, no room correction toggling — just out-of-the-box performance.\n\nSmart assistant responsiveness was measured by timing wake-word recognition and command execution across 50 queries per device, including multi-step home automation commands. We also tested far-field recognition from across a 20-foot room with background noise at 65 dB.\n\nEcosystem integration depth was evaluated by counting the number of supported smart home protocols (Matter, Zigbee, Z-Wave, Thread, Wi-Fi), the quality of native app control, and how seamlessly each speaker acted as a hub versus a simple endpoint.\n\nPrivacy controls, multi-room audio capability, and price-to-performance ratio rounded out the criteria. We did not factor in brand loyalty or ecosystem lock-in as negatives — if you are already in an ecosystem, that is a feature, not a flaw.",
-      "productSlugs": []
+      "productSlugs": [
+        "amazon-echo-dot-5th-gen",
+        "google-nest-mini-2nd-gen",
+        "google-nest-learning-thermostat-4th-gen",
+        "nest-learning-thermostat",
+        "ecobee-smart-thermostat-premium"
+      ]
     },
     {
       "heading": "Best Smart Home Speakers at a Glance",

@@ -10,7 +10,7 @@ const PAGE_SIZE = 50;
 export const metadata: Metadata = {
   title: "Latest Picks — Recently Featured on Instagram",
   description:
-    "Every product we've recently featured on @hotproductsdot.official, newest first. See what's trending across electronics, smart home, fitness, kitchen and more.",
+    "Every product we've recently featured on @hotproducts.online, newest first. See what's trending across electronics, smart home, fitness, kitchen and more.",
   alternates: { canonical },
   openGraph: {
     title: "Latest Picks — Recently Featured on Instagram",
@@ -61,12 +61,12 @@ export default function LatestPage() {
         <p className="text-zinc-500 mt-2">
           Every product we&apos;ve recently featured on{" "}
           <a
-            href="https://www.instagram.com/hotproductsdot.official"
+            href="https://www.instagram.com/hotproducts.online"
             target="_blank"
             rel="noopener noreferrer"
             className="text-orange-500 hover:text-orange-400 transition-colors"
           >
-            @hotproductsdot.official
+            @hotproducts.online
           </a>
           , newest first.
           {lastPosted ? ` Last post: ${lastPosted}.` : null}

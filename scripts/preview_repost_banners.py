@@ -1,6 +1,6 @@
 """
 Dry-render Instagram banners for the 7 posts deleted from
-@hotproductsdot.official, using the catalog images as source.
+@hotproducts.online, using the catalog images as source.
 
 Writes JPGs to generated_images/reposts-preview/{slug}-banner.jpg
 and prints the absolute paths so the user can eyeball them before

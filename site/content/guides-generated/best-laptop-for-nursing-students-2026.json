@@ -9,7 +9,13 @@
     {
       "heading": "What Nursing Students Actually Need in a Laptop",
       "body": "Finding the best laptop for nursing students is not the same as finding the best laptop for college students in general. Nursing school has specific, non-negotiable demands that most generic buying guides ignore entirely. You are running ATI Testing software, NCLEX prep platforms like UWorld and Kaplan, electronic health record simulators, and video-heavy courseware simultaneously. These are not lightweight web apps. They need a machine with enough processing headroom to handle multiple browser tabs, a video stream, and a proctored testing environment without choking.\n\nHere is what actually matters. First, RAM: 16 GB is the new floor. 8 GB will technically run most nursing software, but the moment you open your EHR simulator alongside a UWorld session and a YouTube lecture, you will feel the slowdown. Second, processor: a modern mid-range CPU, whether Intel Core i5 or i7 from the 12th generation onward, or AMD Ryzen 5 or 7, is more than adequate. You do not need a gaming chip. Third, storage: 256 GB SSD is the absolute minimum, but 512 GB gives you breathing room for offline study materials, recorded lectures, and software installations. Fourth, display: a 13- to 15-inch screen at 1080p resolution is the sweet spot. Anything smaller strains your eyes during long study sessions; anything larger defeats the purpose of portability. Fifth, build quality: nursing school involves a lot of bag-tossing, cafeteria-table setups, and clinical-site improvisation. A sturdy chassis matters.",
-      "productSlugs": []
+      "productSlugs": [
+        "apple-2026-macbook-neo-13-inch-laptop-with-a18-pro-chip",
+        "microsoft-surface-laptop-6",
+        "acer-aspire-5-slim-laptop",
+        "asus-vivobook-15-oled-laptop",
+        "google-pixelbook-go-chromebook"
+      ]
     },
     {
       "heading": "Windows vs. macOS for Nursing School Software Compatibility",

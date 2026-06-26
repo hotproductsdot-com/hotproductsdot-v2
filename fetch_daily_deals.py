@@ -6,9 +6,9 @@ run_daily_deals.sh):
 
   1. DISCOVER  Scrape Amazon Best Sellers pages (reuses find_bestsellers.py's
                fetch/parse functions — free, no credentials).
-  2. VERIFY    Oxylabs amazon_product per candidate ASIN (paid, capped by
-               --max-verify) to get the real current price, strikethrough
-               list price, and the "N+ bought in past month" sales badge.
+  2. VERIFY    amazon_local_api.fetch_product per candidate ASIN (free local
+               scraper, capped by --max-verify) to get the real current price,
+               strikethrough list price, and "N+ bought in past month" badge.
   3. RANK      deal_score = sales_velocity × discount%. Sales velocity is the
                "bought in past month" badge number; products without a badge
                fall back to review_count / 10 (cumulative-sales proxy).
@@ -31,8 +31,8 @@ Usage:
   python fetch_daily_deals.py [--max-verify 60] [--min-discount 10]
                               [--deal-count 25] [--dry-run] [-v]
 
-Env: OXYLABS_USERNAME / OXYLABS_PASSWORD (read from .env if not exported),
-     AMAZON_ASSOCIATE_TAG (default hotproduct033-20).
+Env: AMAZON_ASSOCIATE_TAG (default hotproduct033-20). No paid credentials —
+     verification uses the free local scraper (amazon_local_api).
 
 Exit codes: 0 = catalog updated · 2 = no qualifying deals (catalog untouched)
             1 = fatal error
@@ -55,6 +55,7 @@ from pathlib import Path
 import requests
 
 import find_bestsellers as fb
+from amazon_local_api import fetch_product
 
 logger = logging.getLogger("daily_deals")
 
@@ -63,9 +64,9 @@ CSV_PATH = REPO_ROOT / "products" / "top-1000.csv"
 IMAGE_DIR = REPO_ROOT / "site" / "public" / "products"
 AUDIT_DIR = REPO_ROOT / "products" / "discovery"
 
-OXY_ENDPOINT = "https://realtime.oxylabs.io/v1/queries"
-OXY_CONCURRENCY = 5
-OXY_TIMEOUT = 60
+# Local scraper has a process-wide 1.5s request throttle, so wide concurrency
+# buys nothing and only raises Amazon's block risk — keep it modest.
+VERIFY_CONCURRENCY = 4
 
 DEAL_FLAG = "daily-deal"
 DEAL_COLUMNS = ("Temporary", "Deal Date", "List Price", "Discount %", "Bought Past Month")
@@ -191,8 +192,8 @@ def discover_candidates(categories: dict[str, str]) -> list[dict]:
             cand = fb.parse_item(item, category)
             if cand is None or cand.asin in seen:
                 continue
-            # Price can be 0 on grid pages — Oxylabs verifies it later, so
-            # only enforce the price band when the scrape produced one.
+            # Price can be 0 on grid pages — the verify pass re-fetches it
+            # later, so only enforce the price band when the scrape produced one.
             price_ok = cand.price == 0 or (
                 DISCOVER_FILTERS["min_price"] <= cand.price <= DISCOVER_FILTERS["max_price"]
             )
@@ -209,92 +210,50 @@ def discover_candidates(categories: dict[str, str]) -> list[dict]:
     return candidates
 
 
-# ─── Phase 2: verify via Oxylabs ─────────────────────────────────────────────
+# ─── Phase 2: verify via the local Amazon scraper (free) ─────────────────────
 
-def _oxylabs_fetch(asin: str, username: str, password: str) -> dict | None:
-    """One amazon_product query. Returns parsed content dict or None."""
-    payload = {
-        "source": "amazon_product",
-        "query": asin,
-        "domain": "com",
-        "geo_location": "90210",
-        "parse": True,
-    }
-    try:
-        resp = requests.post(
-            OXY_ENDPOINT, json=payload, auth=(username, password), timeout=OXY_TIMEOUT
-        )
-        if resp.status_code != 200:
-            logger.warning("Oxylabs HTTP %s for %s", resp.status_code, asin)
-            return None
-        results = resp.json().get("results") or []
-        return (results[0].get("content") or {}) if results else None
-    except Exception as exc:
-        logger.warning("Oxylabs error for %s: %s", asin, str(exc)[:120])
-        return None
-
-
-def _extract_list_price(content: dict) -> float:
-    """Strikethrough/list price from the common amazon_product field variants."""
-    for value in (
-        content.get("price_strikethrough"),
-        (content.get("pricing") or {}).get("list_price") if isinstance(content.get("pricing"), dict) else None,
-        content.get("list_price"),
-    ):
-        try:
-            if value is not None and float(value) > 0:
-                return float(value)
-        except (TypeError, ValueError):
-            continue
-    return 0.0
-
-
-def verify_deal(candidate: dict, *, username: str, password: str, min_discount: int) -> Deal | None:
-    """Confirm a candidate is genuinely on sale. Returns None when not."""
+def verify_deal(candidate: dict, *, min_discount: int) -> Deal | None:
+    """Confirm a candidate is genuinely on sale via amazon_local_api (free,
+    no paid API). Returns None when not on sale or the page didn't parse."""
     asin = candidate["asin"]
-    content = _oxylabs_fetch(asin, username, password)
-    if not content:
+    product = fetch_product(asin)
+    # Only a cleanly parsed product page can be a deal — listing_removed /
+    # blocked / unavailable verdicts carry no usable price.
+    if product.page_status != "ok" or product.price is None:
         return None
 
-    try:
-        price = float(content.get("price") or 0)
-    except (TypeError, ValueError):
-        price = 0.0
-    list_price = _extract_list_price(content)
+    price = float(product.price or 0)
+    list_price = float(product.list_price or 0)
     discount = compute_discount_pct(price, list_price)
     if discount < min_discount:
         return None
     if not (DISCOVER_FILTERS["min_price"] <= price <= DISCOVER_FILTERS["max_price"]):
         return None
-
-    stock_text = str(content.get("availability") or content.get("stock") or "")
-    if re.search(r"unavailable|out of stock|sold out", stock_text, re.IGNORECASE):
+    if product.is_in_stock is False:
         return None
 
     try:
-        rating = float(content.get("rating") or candidate.get("rating") or 0)
+        rating = float(product.rating or candidate.get("rating") or 0)
     except (TypeError, ValueError):
         rating = float(candidate.get("rating") or 0)
     if rating < DISCOVER_FILTERS["min_rating"]:
         return None
 
     try:
-        reviews = int(content.get("reviews_count") or candidate.get("reviews_count") or 0)
+        reviews = int(product.reviews_count or candidate.get("reviews_count") or 0)
     except (TypeError, ValueError):
         reviews = int(candidate.get("reviews_count") or 0)
     if reviews < DISCOVER_FILTERS["min_reviews"]:
         return None
 
-    bought = parse_sales_volume(content.get("sales_volume"))
-    title = truncate_title(str(content.get("title") or candidate.get("title") or ""))
+    bought = int(product.bought_past_month or 0)
+    title = truncate_title(str(product.title or candidate.get("title") or ""))
     if not title:
         return None
 
-    images = content.get("images")
-    image = ""
-    if isinstance(images, list) and images:
-        image = str(images[0])
-    image = image or str(candidate.get("image") or "")
+    # The scraper doesn't capture gallery images; reuse the Best Sellers grid
+    # thumbnail the discovery pass already collected.
+    image = str(candidate.get("image") or "")
 
     return Deal(
         asin=asin,
@@ -313,17 +272,14 @@ def verify_deal(candidate: dict, *, username: str, password: str, min_discount: 
 
 
 def verify_candidates(
-    candidates: list[dict], *, username: str, password: str,
-    max_verify: int, min_discount: int,
+    candidates: list[dict], *, max_verify: int, min_discount: int,
 ) -> list[Deal]:
     """Verify up to max_verify candidates concurrently; ranked best-first."""
     batch = candidates[:max_verify]
     deals: list[Deal] = []
-    with ThreadPoolExecutor(max_workers=OXY_CONCURRENCY) as pool:
+    with ThreadPoolExecutor(max_workers=VERIFY_CONCURRENCY) as pool:
         futures = {
-            pool.submit(
-                verify_deal, c, username=username, password=password, min_discount=min_discount
-            ): c["asin"]
+            pool.submit(verify_deal, c, min_discount=min_discount): c["asin"]
             for c in batch
         }
         for fut in as_completed(futures):
@@ -449,7 +405,7 @@ def main() -> int:
     parser.add_argument("--deal-count", type=int, default=25, metavar="N",
                         help="How many deals to keep (default: 25)")
     parser.add_argument("--max-verify", type=int, default=60, metavar="N",
-                        help="Oxylabs verification budget — paid calls (default: 60)")
+                        help="Max candidates to scrape-verify locally (free, default: 60)")
     parser.add_argument("--min-discount", type=int, default=10, metavar="PCT",
                         help="Minimum discount %% to qualify as a deal (default: 10)")
     parser.add_argument("--dry-run", action="store_true",
@@ -464,12 +420,8 @@ def main() -> int:
     )
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+    # .env still loaded for AMAZON_ASSOCIATE_TAG; no paid credentials needed.
     load_dotenv_if_needed()
-    username = os.environ.get("OXYLABS_USERNAME", "")
-    password = os.environ.get("OXYLABS_PASSWORD", "")
-    if not username or not password:
-        logger.error("OXYLABS_USERNAME / OXYLABS_PASSWORD missing (set in .env)")
-        return 1
 
     today_iso = date.today().isoformat()
 
@@ -480,8 +432,7 @@ def main() -> int:
 
     # Verify cheapest-signal-first: page-rank order already favors movers.
     deals = verify_candidates(
-        candidates, username=username, password=password,
-        max_verify=args.max_verify, min_discount=args.min_discount,
+        candidates, max_verify=args.max_verify, min_discount=args.min_discount,
     )[: args.deal_count]
     if not deals:
         logger.error("0 qualifying deals after verification — catalog untouched")

@@ -4,8 +4,11 @@ on:
   schedule:
     # GitHub cron is UTC. Run both possible 8am Central UTC slots, then guard
     # inside the job with TZ=America/Chicago so DST is handled correctly.
+    # GitHub schedule cron is UTC-only — the `timezone:` key is NOT supported
+    # and makes the workflow file invalid (silently disabling all schedules;
+    # this is what froze the deals batch at 2026-06-22). Both 8am-Central DST
+    # slots are listed and the job guards on TZ=America/Chicago hour == 08.
     - cron: '0 13,14 * * *'
-      timezone: 'America/Chicago'
   workflow_dispatch:
 
 concurrency:

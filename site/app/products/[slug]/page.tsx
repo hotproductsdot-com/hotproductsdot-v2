@@ -64,6 +64,12 @@ export default async function ProductDetailPage({ params }: Props) {
     "@type": "Product",
     name: product.name,
     category: product.category,
+    // Freshness signal for Google rich results + AI answer engines, which
+    // favor (and timestamp) recently-updated content. Sourced from the
+    // product's real refresh date — omitted when we have no date.
+    ...(product.refreshedTs
+      ? { dateModified: new Date(product.refreshedTs).toISOString() }
+      : {}),
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: product.rating,

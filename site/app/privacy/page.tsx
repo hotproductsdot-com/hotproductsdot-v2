@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">Overview</h2>
           <p>
-            HotProducts (<strong className="text-zinc-200">hotproductsdot.com</strong>) is a static website that
+            HotProducts (<strong className="text-zinc-200">hotproducts.online</strong>) is a static website that
             curates Amazon product recommendations. We take your privacy seriously. This policy explains what
             data is collected and how it is used.
           </p>

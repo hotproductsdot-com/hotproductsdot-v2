@@ -140,6 +140,24 @@ RATING_AS_PRICE_HTML = """
 """
 
 
+# Strikethrough "List Price" markup — the markdown reference (must outrank the
+# current buy-box price, which lives in priceToPay, not a-text-price).
+LIST_PRICE_HTML = """
+<div id="corePriceDisplay_desktop_feature_div">
+  <span class="a-price a-text-price" data-a-strike="true" data-a-color="secondary">
+    <span class="a-offscreen">$199.99</span><span aria-hidden="true">$199.99</span>
+  </span>
+</div>
+"""
+
+# "1K+ bought in past month" social-proofing badge (sales-velocity signal).
+BOUGHT_BADGE_HTML = """
+<div id="social-proofing-faceout-title">
+  <span id="social-proofing-faceout-title-tk_bought" class="a-text-bold">1K+ bought in past month</span>
+</div>
+"""
+
+
 def full_page(*parts: str) -> str:
     return "<html><body>" + "".join(parts) + "</body></html>"
 
@@ -332,3 +350,32 @@ class TestProductDataImmutable:
         p = ProductData(asin="B0TEST00AA")
         with pytest.raises(Exception):
             p.price = 1.0  # type: ignore[misc]
+
+
+# ── list price + "bought in past month" badge (deals signals) ────────────────
+
+class TestDealSignals:
+    def test_list_price_from_strikethrough(self):
+        page = full_page(TITLE_HTML, TWISTER_JSON_HTML, LIST_PRICE_HTML)
+        p = parse_product(page, asin="B0TEST00AA")
+        assert p.list_price == 199.99
+        # current buy-box price still comes from twister JSON, not the strike
+        assert p.price == 2570.00
+
+    def test_list_price_absent_is_none(self):
+        p = parse_product(GOOD_PAGE, asin="B0TEST00AA")
+        assert p.list_price is None
+
+    def test_bought_badge_k_suffix(self):
+        page = full_page(TITLE_HTML, BOUGHT_BADGE_HTML)
+        p = parse_product(page, asin="B0TEST00AA")
+        assert p.bought_past_month == 1000
+
+    def test_bought_badge_plain_number(self):
+        page = full_page(TITLE_HTML, '<span>400+ bought in past month</span>')
+        p = parse_product(page, asin="B0TEST00AA")
+        assert p.bought_past_month == 400
+
+    def test_bought_badge_absent_is_none(self):
+        p = parse_product(GOOD_PAGE, asin="B0TEST00AA")
+        assert p.bought_past_month is None

@@ -25,7 +25,7 @@ export default function DisclaimerPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">Amazon Associates Disclosure</h2>
           <p>
-            HotProducts (<strong className="text-zinc-200">hotproductsdot.com</strong>) is a participant in the{" "}
+            HotProducts (<strong className="text-zinc-200">hotproducts.online</strong>) is a participant in the{" "}
             <strong className="text-zinc-200">Amazon Services LLC Associates Program</strong>, an affiliate advertising
             program designed to provide a means for sites to earn advertising fees by advertising and linking to
             Amazon.com.
