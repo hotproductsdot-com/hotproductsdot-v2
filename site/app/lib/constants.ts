@@ -18,7 +18,7 @@ export const BRAND_ORG = {
   url: SITE_URL,
   logo: SITE_LOGO,
   sameAs: [
-    "https://www.instagram.com/hotproducts.online",
+    "https://www.instagram.com/hotproducts.online/",
     "https://www.tiktok.com/@hotproductsdot.of",
   ],
 } as const;
