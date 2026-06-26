@@ -24,7 +24,7 @@ export default function Header() {
             </svg>
           </a>
           <a
-            href="https://www.instagram.com/hotproducts.online"
+            href="https://www.instagram.com/hotproducts.online/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"

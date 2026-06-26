@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build FAL workflow product presets from @hotproductsdot.official feed + catalog."""
+"""Build FAL workflow product presets from @hotproducts.online feed + catalog."""
 from __future__ import annotations
 
 import csv

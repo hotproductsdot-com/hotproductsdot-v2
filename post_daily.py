@@ -903,7 +903,7 @@ def instagram_caption(product: dict) -> str:
 
 
 # ── First-comment templates ──────────────────────────────────────────────────
-# Posted as the first comment by @hotproductsdot.official right after the
+# Posted as the first comment by @hotproducts.online right after the
 # main post publishes. Drives (a) bio-link taps via a second CTA and
 # (b) replies via an open question — both are algorithmic engagement signals.
 INSTAGRAM_FIRST_COMMENT_TEMPLATES = (
