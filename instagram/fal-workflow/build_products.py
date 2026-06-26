@@ -184,7 +184,7 @@ def build() -> list[dict]:
                 "amazon_url": product["amazon_url"],
                 "amazon_image_url": amazon_image_url,
                 "instagram_post": _instagram_caption(product),
-                "instagram_feed_image": f"https://hotproductsdot.com/instagram-feed/{slug}.jpg",
+                "instagram_feed_image": f"https://hotproducts.online/instagram-feed/{slug}.jpg",
             }
         )
         print(f"  OK {slug}")
@@ -194,7 +194,7 @@ def build() -> list[dict]:
 def main() -> None:
     products = build()
     payload = {
-        "source": "https://www.instagram.com/hotproductsdot.official",
+        "source": "https://www.instagram.com/hotproducts.online/",
         "workflow": "hotproducts-instagram-ad-creative",
         "products": products,
     }

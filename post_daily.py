@@ -59,7 +59,7 @@ except ImportError:
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 
-SITE_URL        = "https://hotproductsdot.com"
+SITE_URL        = "https://hotproducts.online"
 CSV_PATH        = Path(__file__).parent / "products" / "top-1000.csv"
 LOG_PATH        = Path(__file__).parent / "marketing-campaigns" / "post_log.csv"
 ROTATION_POOL   = 60   # rotate through top-N products by affiliate potential
