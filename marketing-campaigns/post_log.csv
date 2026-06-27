@@ -354,3 +354,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-22,instagram,DeWalt DWMT75049 Mechanics Tool Kit 192-Piece,ok,18421968028197394
 2026-06-22,instagram,Hamilton Beach 2-Way Programmable Coffee Maker,ok,17995992410790711
 2026-06-22,tiktok,Garmin Venu 3 Health and Fitness Smartwatch,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-27,instagram,Apple Watch Series 10,ok,17872114995684712
+2026-06-27,instagram,"Beats Solo 4 - Wireless On-Ear Bluetooth Headphones, Up to 50-Hour",ok,18095819900211901
+2026-06-27,instagram,HP Pavilion Gaming Desktop TG01,ok,18101992466152830
+2026-06-27,instagram,Garden of Life Vitamin Code Raw Probiotics,quality_blocked,"ai vision: The product title names 'Raw Probiotics' but the actual product shown is 'Raw B-Complex', and the product appears twice as separate box and bottle instances."
+2026-06-27,instagram,Ninja Foodi Grill,ok,17932374939323705
+2026-06-27,tiktok,48 Laws of Power,error,TIKTOK_ACCESS_TOKEN not set
