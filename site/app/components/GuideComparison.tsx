@@ -40,7 +40,7 @@ export default function GuideComparison({ products, features }: ComparisonProps)
                   <span className="line-clamp-2 text-xs">{product.name}</span>
                 </div>
               </td>
-              <td className="p-4 text-zinc-400 whitespace-nowrap">${product.price?.toFixed(2) || "–"}</td>
+              <td className="p-4 text-zinc-400 whitespace-nowrap">{product.priceRange || "–"}</td>
               <td className="p-4 text-zinc-400">{product.rating}★ ({product.reviewCount.toLocaleString()})</td>
               <td className="p-4 text-zinc-400 text-xs">Best for premium quality</td>
               <td className="p-4">

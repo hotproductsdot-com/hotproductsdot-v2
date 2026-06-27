@@ -168,58 +168,57 @@ export default async function GuidePage({ params }: Props) {
         </div>
       </div>
 
-        {/* Sections */}
-        <div className="space-y-10">
-          {guide.sections.map((section) => {
-            const sectionId = section.heading.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-            const sectionProducts = (section.productSlugs ?? [])
-              .map((s) => getProductBySlug(s))
-              .filter(Boolean) as ReturnType<typeof getProductBySlug>[];
+      {/* Sections */}
+      <div className="space-y-10">
+        {guide.sections.map((section) => {
+          const sectionId = section.heading.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+          const sectionProducts = (section.productSlugs ?? [])
+            .map((s) => getProductBySlug(s))
+            .filter(Boolean) as ReturnType<typeof getProductBySlug>[];
 
-            return (
-              <section key={section.heading} id={sectionId}>
-                <h2 className="text-xl font-bold text-white mb-3">{section.heading}</h2>
-                <p className="text-zinc-400 leading-relaxed mb-4">{section.body}</p>
-                {sectionProducts.length > 0 && (
-                  <div className="mt-4 space-y-3">
-                    {sectionProducts.map((product) => product && (
-                      <a
-                        key={product.slug}
-                        href={buildAffiliateUrl(product.amazonUrl, { campaign: "guide", content: guide.slug })}
-                        target="_blank"
-                        rel="noopener noreferrer nofollow sponsored"
-                        data-affiliate="true"
-                        className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-orange-500/40 transition-all group"
-                      >
-                        <div className="w-16 h-16 bg-white rounded-lg shrink-0 flex items-center justify-center overflow-hidden">
-                          {product.imageUrl && (
-                            <ProductImage
-                              src={product.imageUrl}
-                              alt={product.name}
-                              className="w-full h-full object-contain p-1"
-                              sizes="64px"
-                            />
-                          )}
+          return (
+            <section key={section.heading} id={sectionId}>
+              <h2 className="text-xl font-bold text-white mb-3">{section.heading}</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">{section.body}</p>
+              {sectionProducts.length > 0 && (
+                <div className="mt-4 space-y-3">
+                  {sectionProducts.map((product) => product && (
+                    <a
+                      key={product.slug}
+                      href={buildAffiliateUrl(product.amazonUrl, { campaign: "guide", content: guide.slug })}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow sponsored"
+                      data-affiliate="true"
+                      className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-orange-500/40 transition-all group"
+                    >
+                      <div className="w-16 h-16 bg-white rounded-lg shrink-0 flex items-center justify-center overflow-hidden">
+                        {product.imageUrl && (
+                          <ProductImage
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-contain p-1"
+                            sizes="64px"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-zinc-100 group-hover:text-orange-400 transition-colors line-clamp-2">
+                          {product.name}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold text-zinc-100 group-hover:text-orange-400 transition-colors line-clamp-2">
-                            {product.name}
-                          </div>
-                          <div className="text-xs text-zinc-500 mt-1">
-                            {product.rating}★ · {product.reviewCount.toLocaleString()} reviews
-                          </div>
+                        <div className="text-xs text-zinc-500 mt-1">
+                          {product.rating}★ · {product.reviewCount.toLocaleString()} reviews
                         </div>
-                        <div className="shrink-0 text-xs font-bold text-orange-500 group-hover:text-orange-400 transition-colors whitespace-nowrap">
-                          Buy on Amazon →
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </section>
-            );
-          })}
-        </div>
+                      </div>
+                      <div className="shrink-0 text-xs font-bold text-orange-500 group-hover:text-orange-400 transition-colors whitespace-nowrap">
+                        Buy on Amazon →
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
       </div>
 
       {/* All featured products grid */}

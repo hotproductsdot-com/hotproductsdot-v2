@@ -345,13 +345,30 @@ export function getLimitedTimeDeals(count = 25): Product[] {
   const now = Date.now();
   const velocity = (p: Product) =>
     (p.boughtPastMonth || Math.max(p.reviewCount, 1) / 10) * (p.discountPct ?? 0);
-  return getAllProducts()
+
+  const fresh = getAllProducts()
     .filter(
       (p) =>
         p.limitedDeal &&
         (p.discountPct ?? 0) > 0 &&
         (p.dealDateTs ?? 0) > 0 &&
         now - (p.dealDateTs ?? 0) <= LIMITED_DEAL_MAX_AGE_MS,
+    )
+    .sort((a, b) => velocity(b) - velocity(a));
+
+  if (fresh.length > 0) {
+    return fresh.slice(0, count);
+  }
+
+  // No fresh batch within the 24h window yet (cron missed or build is stale):
+  // show the most recent deal rows so the section is never completely empty,
+  // with a staleness indicator handled client-side by DealFreshness.
+  return getAllProducts()
+    .filter(
+      (p) =>
+        p.limitedDeal &&
+        (p.discountPct ?? 0) > 0 &&
+        (p.dealDateTs ?? 0) > 0,
     )
     .sort((a, b) => velocity(b) - velocity(a))
     .slice(0, count);
