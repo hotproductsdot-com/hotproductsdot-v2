@@ -256,24 +256,23 @@ jobs:
         id: deal_count
         run: |
           deal_count=0
-          if [ -f products/discovery/daily-deals-*.json ]; then
-            deal_count=$(ls -1 products/discovery/daily-deals-*.json 2>/dev/null | wc -l)
-            if [ "$deal_count" -gt "0" ]; then
-              # Count items in the latest audit file
-              latest=$(ls -t products/discovery/daily-deals-*.json 2>/dev/null | head -1)
-              if [ -f "$latest" ]; then
-                deal_count=$(jq 'length' "$latest" 2>/dev/null || echo "0")
-              fi
-            fi
+          latest=$(ls -t products/discovery/daily-deals-*.json 2>/dev/null | head -1)
+          if [ -n "$latest" ] && [ -f "$latest" ]; then
+            deal_count=$(jq 'length' "$latest" 2>/dev/null || echo "0")
           fi
           echo "count=$deal_count" >> "$GITHUB_OUTPUT"
 
       - name: Send Telegram notification
-        if: always() && secrets.TELEGRAM_BOT_TOKEN != ''
+        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "::notice::Telegram secrets not configured; skipping notification"
+            exit 0
+          fi
+
           status="${{ job.status }}"
           deals="${{ steps.deal_count.outputs.count }}"
           timestamp="$(date -u +'%Y-%m-%d %H:%M UTC')"
