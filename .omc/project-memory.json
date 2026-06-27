@@ -389,20 +389,38 @@
   "hotPaths": [
     {
       "path": "site/app/guides/[slug]/page.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1782577491372,
+      "accessCount": 9,
+      "lastAccessed": 1782581395417,
+      "type": "file"
+    },
+    {
+      "path": "site/app/guides/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1782583617206,
       "type": "file"
     },
     {
       "path": "site/app/components/GuideComparison.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1782577667903,
+      "accessCount": 3,
+      "lastAccessed": 1782581398499,
       "type": "file"
     },
     {
       "path": "site/app/lib/products.ts",
+      "accessCount": 2,
+      "lastAccessed": 1782581392581,
+      "type": "file"
+    },
+    {
+      "path": "site/next.config.ts",
       "accessCount": 1,
-      "lastAccessed": 1782577661558,
+      "lastAccessed": 1782581428245,
+      "type": "file"
+    },
+    {
+      "path": "site/app/components/GuidesFilter.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1782583602063,
       "type": "file"
     }
   ],
