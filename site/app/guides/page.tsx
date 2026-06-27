@@ -29,7 +29,11 @@ export const metadata: Metadata = {
 export default function GuidesPage() {
   const guides = getAllGuides();
   const categories = Array.from(new Set(guides.map((g) => g.category))).sort();
-  const byCategory = Object.groupBy(guides, (g) => g.category);
+  const byCategory = guides.reduce((acc, g) => {
+    if (!acc[g.category]) acc[g.category] = [];
+    acc[g.category].push(g);
+    return acc;
+  }, {} as Record<string, typeof guides>);
 
   // ponytail: CollectionPage + FAQPage schema for richer SERP appearance
   const jsonLdCollection = {
