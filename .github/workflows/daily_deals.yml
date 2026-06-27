@@ -1,23 +1,18 @@
-name: Limited Time Sale Refresh + Deploy
+name: Daily Deals Refresh + Deploy
 
 on:
   schedule:
-    # GitHub cron is UTC. Run both possible 8am Central UTC slots, then guard
-    # inside the job with TZ=America/Chicago so DST is handled correctly.
-    # GitHub schedule cron is UTC-only — the `timezone:` key is NOT supported
-    # and makes the workflow file invalid (silently disabling all schedules;
-    # this is what froze the deals batch at 2026-06-22). Both 8am-Central DST
-    # slots are listed and the job guards on TZ=America/Chicago hour == 08.
-    - cron: '0 13,14 * * *'
+    # Run every day at 13:00 UTC (8:00 AM Central)
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 concurrency:
-  group: limited-time-sale-refresh
+  group: daily-deals-refresh
   cancel-in-progress: false
 
 jobs:
   refresh-and-deploy:
-    name: 8am Central deals -> build -> rsync
+    name: Daily deal discovery, build, deploy
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -30,38 +25,25 @@ jobs:
       HOSTINGER_DEST: domains/hotproducts.online/public_html/
 
     steps:
-      - name: Guard schedule to 8am Central
-        id: guard
+      - name: Confirm workflow started
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
-            central_hour="$(TZ=America/Chicago date +%H)"
-            if [ "$central_hour" != "08" ]; then
-              echo "run=false" >> "$GITHUB_OUTPUT"
-              echo "Skipping: local Central hour is ${central_hour}, not 08."
-              exit 0
-            fi
-          fi
-          echo "run=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::Daily deals refresh workflow started at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
 
       - name: Checkout repo
-        if: steps.guard.outputs.run == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        if: steps.guard.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
 
       - name: Install Python dependencies
-        if: steps.guard.outputs.run == 'true'
         run: pip install -r requirements.txt
 
       - name: Set up Node.js
-        if: steps.guard.outputs.run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -69,12 +51,10 @@ jobs:
           cache-dependency-path: site/package-lock.json
 
       - name: Install site dependencies
-        if: steps.guard.outputs.run == 'true'
         working-directory: site
         run: npm ci
 
       - name: Restore Next.js build cache
-        if: steps.guard.outputs.run == 'true'
         uses: actions/cache@v4
         with:
           path: site/.next/cache
@@ -84,27 +64,43 @@ jobs:
             nextjs-${{ runner.os }}-
 
       - name: Fetch limited-time sale batch
-        if: steps.guard.outputs.run == 'true'
         id: deals
         env:
-          OXYLABS_USERNAME: ${{ secrets.OXYLABS_USERNAME }}
-          OXYLABS_PASSWORD: ${{ secrets.OXYLABS_PASSWORD }}
           AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
         run: |
           export AMAZON_ASSOCIATE_TAG="${AMAZON_ASSOCIATE_TAG:-hotproduct033-20}"
-          set +e
-          python fetch_daily_deals.py --max-verify 60 --min-discount 10 --deal-count 25 -v
-          rc=$?
-          set -e
-          echo "rc=$rc" >> "$GITHUB_OUTPUT"
-          if [ "$rc" = "2" ]; then
-            echo "::warning::No qualifying limited-time deals found; continuing to build/deploy so stale batches age out."
-            exit 0
-          fi
-          exit "$rc"
+
+          # Self-healing retry: attempt up to 3 times
+          for attempt in 1 2 3; do
+            echo "::notice::Deal fetch attempt $attempt/3 at $(date -u +'%H:%M:%S UTC')"
+            set +e
+            python fetch_daily_deals.py --max-verify 60 --min-discount 10 --deal-count 25 -v
+            rc=$?
+            set -e
+
+            if [ "$rc" = "0" ]; then
+              echo "::notice::Deal fetch succeeded on attempt $attempt"
+              echo "rc=0" >> "$GITHUB_OUTPUT"
+              exit 0
+            elif [ "$rc" = "2" ]; then
+              echo "::warning::No qualifying deals found (attempt $attempt); continuing to build/deploy anyway"
+              echo "rc=2" >> "$GITHUB_OUTPUT"
+              exit 0
+            else
+              if [ "$attempt" -lt "3" ]; then
+                wait_s=$((attempt * 30))
+                echo "::warning::Deal fetch failed with rc=$rc on attempt $attempt; retrying in ${wait_s}s"
+                sleep "$wait_s"
+              else
+                echo "::error::Deal fetch failed after 3 attempts with rc=$rc"
+                echo "rc=$rc" >> "$GITHUB_OUTPUT"
+                exit "$rc"
+              fi
+            fi
+          done
 
       - name: Upload deal audit artifact
-        if: steps.guard.outputs.run == 'true' && always()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: daily-deals-${{ github.run_id }}
@@ -113,53 +109,57 @@ jobs:
           retention-days: 30
 
       - name: Commit deal catalog changes
-        if: steps.guard.outputs.run == 'true' && steps.deals.outputs.rc == '0'
+        if: steps.deals.outputs.rc == '0'
         run: |
           set -e
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add products/top-1000.csv site/public/products
           if git diff --staged --quiet; then
-            echo "No deal catalog/image changes to commit."
+            echo "::notice::No deal catalog/image changes to commit"
             exit 0
           fi
           git commit -m "feat: limited-time sale batch $(date -u +%F) [skip ci]"
 
+          # Self-healing push retry with auto-rebase
           for attempt in 1 2 3; do
             if git push origin HEAD:main; then
-              echo "Deal catalog pushed (attempt ${attempt})."
+              echo "::notice::Deal catalog pushed successfully (attempt $attempt)"
               exit 0
             fi
-            echo "::warning::Push attempt ${attempt} failed; rebasing on origin/main"
-            git fetch origin main
-            git rebase origin/main
-            sleep 10
+            if [ "$attempt" -lt "3" ]; then
+              echo "::warning::Push attempt $attempt failed; rebasing on origin/main and retrying"
+              git fetch origin main
+              git rebase origin/main
+              sleep 10
+            fi
           done
           echo "::error::Failed to push deal catalog after 3 attempts"
           exit 1
 
       - name: Build static site
-        if: steps.guard.outputs.run == 'true'
         working-directory: site
         run: npm run build
 
-      - name: Verify SSH secrets are configured
-        if: steps.guard.outputs.run == 'true'
-        run: |
-          [ -z "$HOSTINGER_HOST" ] && echo "::error::HOSTINGER_HOST secret not set" || echo "HOSTINGER_HOST configured"
-          [ -z "$HOSTINGER_USER" ] && echo "::error::HOSTINGER_USER secret not set" || echo "HOSTINGER_USER configured"
-          [ -z "$HOSTINGER_PORT" ] && echo "::error::HOSTINGER_PORT secret not set" || echo "HOSTINGER_PORT configured"
-          [ -z "$HOSTINGER_SSH_KEY_B64" ] && echo "::error::HOSTINGER_SSH_KEY_B64 secret not set" || echo "HOSTINGER_SSH_KEY_B64 configured"
-          [ -z "$HOSTINGER_KNOWN_HOSTS" ] && echo "::error::HOSTINGER_KNOWN_HOSTS secret not set" || echo "HOSTINGER_KNOWN_HOSTS configured"
-          if [ -z "$HOSTINGER_HOST" ] || [ -z "$HOSTINGER_USER" ] || [ -z "$HOSTINGER_PORT" ] || [ -z "$HOSTINGER_SSH_KEY_B64" ] || [ -z "$HOSTINGER_KNOWN_HOSTS" ]; then
-            exit 1
-          fi
+      - name: Verify deployment secrets
         env:
           HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
           HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+        run: |
+          missing=""
+          [ -z "$HOSTINGER_HOST" ] && missing="$missing HOSTINGER_HOST"
+          [ -z "$HOSTINGER_USER" ] && missing="$missing HOSTINGER_USER"
+          [ -z "$HOSTINGER_PORT" ] && missing="$missing HOSTINGER_PORT"
+          [ -z "$HOSTINGER_SSH_KEY_B64" ] && missing="$missing HOSTINGER_SSH_KEY_B64"
+          [ -z "$HOSTINGER_KNOWN_HOSTS" ] && missing="$missing HOSTINGER_KNOWN_HOSTS"
+
+          if [ -n "$missing" ]; then
+            echo "::error::Missing deployment secrets:$missing"
+            exit 1
+          fi
+          echo "::notice::All deployment secrets configured"
 
       - name: Set up SSH for Hostinger
-        if: steps.guard.outputs.run == 'true'
         env:
           HOSTINGER_SSH_KEY_B64: ${{ secrets.HOSTINGER_SSH_KEY_B64 }}
           HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
@@ -171,7 +171,7 @@ jobs:
           printf '%s' "$HOSTINGER_SSH_KEY_B64" | tr -d '[:space:]' | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           if ! ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null; then
-            echo "::error::ssh-keygen rejected HOSTINGER_SSH_KEY_B64"
+            echo "::error::Invalid HOSTINGER_SSH_KEY_B64: ssh-keygen validation failed"
             exit 1
           fi
 
@@ -189,9 +189,9 @@ jobs:
               ControlPersist 10m
           EOF
           chmod 600 ~/.ssh/config
+          echo "::notice::SSH configuration completed"
 
       - name: SSH connectivity smoke test
-        if: steps.guard.outputs.run == 'true'
         run: |
           set -e
           attempt=1
@@ -207,21 +207,20 @@ jobs:
                 -o UserKnownHostsFile=~/.ssh/known_hosts \
                 "$HOSTINGER_USER@$HOSTINGER_HOST" \
                 "echo OK from \$(hostname) && pwd && ls -ld $HOSTINGER_DEST"; then
-              echo "Smoke test succeeded on attempt $attempt"
+              echo "::notice::SSH connectivity verified (attempt $attempt)"
               break
             fi
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "::error::SSH smoke test failed after $max_attempts attempts"
+              echo "::error::SSH connectivity failed after $max_attempts attempts"
               exit 1
             fi
             wait_s=$((attempt * 15))
-            echo "::warning::SSH smoke test attempt $attempt failed; retrying in ${wait_s}s"
+            echo "::warning::SSH attempt $attempt failed; retrying in ${wait_s}s"
             sleep "$wait_s"
             attempt=$((attempt + 1))
           done
 
       - name: Rsync to Hostinger
-        if: steps.guard.outputs.run == 'true'
         run: |
           set -e
           attempt=1
@@ -239,11 +238,11 @@ jobs:
                 -e "ssh -p $HOSTINGER_PORT -i ~/.ssh/id_rsa -o BatchMode=yes -o ConnectTimeout=30 -o ConnectionAttempts=3 -o ServerAliveInterval=20 -o ServerAliveCountMax=6 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
                 site/out/ \
                 "$HOSTINGER_USER@$HOSTINGER_HOST:$HOSTINGER_DEST"; then
-              echo "Rsync succeeded on attempt $attempt"
+              echo "::notice::Deployment to Hostinger succeeded (attempt $attempt)"
               break
             fi
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "::error::Rsync failed after $max_attempts attempts"
+              echo "::error::Deployment to Hostinger failed after $max_attempts attempts"
               exit 1
             fi
             wait_s=$((attempt * 30))
@@ -251,3 +250,65 @@ jobs:
             sleep "$wait_s"
             attempt=$((attempt + 1))
           done
+
+      - name: Count deals for notification
+        if: always()
+        id: deal_count
+        run: |
+          deal_count=0
+          if [ -f products/discovery/daily-deals-*.json ]; then
+            deal_count=$(ls -1 products/discovery/daily-deals-*.json 2>/dev/null | wc -l)
+            if [ "$deal_count" -gt "0" ]; then
+              # Count items in the latest audit file
+              latest=$(ls -t products/discovery/daily-deals-*.json 2>/dev/null | head -1)
+              if [ -f "$latest" ]; then
+                deal_count=$(jq 'length' "$latest" 2>/dev/null || echo "0")
+              fi
+            fi
+          fi
+          echo "count=$deal_count" >> "$GITHUB_OUTPUT"
+
+      - name: Send Telegram notification
+        if: always() && secrets.TELEGRAM_BOT_TOKEN != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          status="${{ job.status }}"
+          deals="${{ steps.deal_count.outputs.count }}"
+          timestamp="$(date -u +'%Y-%m-%d %H:%M UTC')"
+
+          if [ "$status" = "success" ]; then
+            status_emoji="✅"
+            status_text="SUCCESS"
+          else
+            status_emoji="❌"
+            status_text="FAILED"
+          fi
+
+          message="$status_emoji Daily Deals Workflow $status_text
+
+Time: $timestamp
+Deals Found: $deals
+Job Status: $status"
+
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="Markdown" \
+            -d text="$message" > /dev/null 2>&1
+
+          if [ $? -eq 0 ]; then
+            echo "::notice::Telegram notification sent"
+          else
+            echo "::warning::Failed to send Telegram notification"
+          fi
+
+      - name: Workflow completion summary
+        if: always()
+        run: |
+          echo "::notice::Daily deals workflow completed at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "::notice::✓ Workflow succeeded (Deals: ${{ steps.deal_count.outputs.count }})"
+          else
+            echo "::error::✗ Workflow failed with status: ${{ job.status }}"
+          fi
