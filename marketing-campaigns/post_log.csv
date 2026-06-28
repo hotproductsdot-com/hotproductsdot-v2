@@ -360,3 +360,9 @@ If every URL looked fine but Meta still failed: ImgBB and some hosts are blocked
 2026-06-27,instagram,Garden of Life Vitamin Code Raw Probiotics,quality_blocked,"ai vision: The product title names 'Raw Probiotics' but the actual product shown is 'Raw B-Complex', and the product appears twice as separate box and bottle instances."
 2026-06-27,instagram,Ninja Foodi Grill,ok,17932374939323705
 2026-06-27,tiktok,48 Laws of Power,error,TIKTOK_ACCESS_TOKEN not set
+2026-06-28,instagram,Fullstar The Original Pro Chopper - Vegetable Chopper and Spiralizer,quality_blocked,"ai vision: An unrelated red onion prop appears beside the product, constituting scene clutter unrelated to the bundled accessories."
+2026-06-28,instagram,"COSRX Snail Mucin 96% Repairing Serum, Hydrating Serum for Face with",ok,18100480346174664
+2026-06-28,instagram,Mueller The Real Original Pro Chopper since 2013 Vegetable Chopper,ok,18088749806438518
+2026-06-28,instagram,Ninja Kitchen System | All-in-One Food Processor & Blender for,ok,18138098059507365
+2026-06-28,instagram,"Anua PDRN Hyaluronic Acid 100 Moisturizing Cream, Lightweight",ok,17865584994651768
+2026-06-28,tiktok,Lutron Caseta Wireless Smart Lighting Starter Kit,error,TIKTOK_ACCESS_TOKEN not set
