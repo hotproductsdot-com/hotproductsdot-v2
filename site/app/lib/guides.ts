@@ -196,12 +196,27 @@ function loadGeneratedGuides(): Guide[] {
   return out;
 }
 
+// Generated guides come from many independent growth-engine runs and drift in
+// casing ("kitchen" vs "Kitchen"). Derive one canonical display name per
+// categorySlug so the guides page never shows duplicate category chips.
+function titleCaseFromSlug(slug: string): string {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function normalizeCategory(guide: Guide): Guide {
+  if (!guide.categorySlug) return guide;
+  return { ...guide, category: titleCaseFromSlug(guide.categorySlug) };
+}
+
 const generatedGuides: Guide[] = loadGeneratedGuides();
 const inlineSlugs = new Set(guides.map((g) => g.slug));
 const mergedGuides: Guide[] = [
   ...guides,
   ...generatedGuides.filter((g) => !inlineSlugs.has(g.slug)),
-];
+].map(normalizeCategory);
 
 export function getAllGuides(): Guide[] {
   return mergedGuides;
